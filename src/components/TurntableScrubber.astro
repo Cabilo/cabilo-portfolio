@@ -7,7 +7,8 @@ const { frames } = Astro.props;
 const frameDataString = JSON.stringify(frames);
 ---
 
-<turntable-scrubber data-frames={frameDataString} class="block w-full">
+<turntable-scrubber data-frames={frameDataString} class="flex flex-col gap-3 w-full">
+  
   <div id="tt-container" class="relative w-full bg-cabilo-obsidian overflow-hidden ring-1 ring-cabilo-card shadow-lg cursor-ew-resize">
     
     <img id="tt-display" src={frames[0]} alt="3D Turntable" class="block w-full h-auto transition-transform duration-150 ease-out" style="transform: scale(1); transform-origin: 50% 50%;" draggable="false" />
@@ -20,11 +21,14 @@ const frameDataString = JSON.stringify(frames);
       </div>
     </div>
 
-    <div class="absolute bottom-4 left-1/2 -translate-x-1/2 bg-cabilo-obsidian/80 backdrop-blur-sm px-3 py-1 rounded-md text-[10px] tracking-widest text-text-silver font-mono pointer-events-none border border-cabilo-card flex gap-4 z-20 whitespace-nowrap">
-      <span>FRAME <span id="tt-counter" class="text-text-white">001</span> / {String(frames.length).padStart(3, '0')}</span>
-      <span>ZOOM <span id="tt-zoom" class="text-text-white">1.0</span>x</span>
-    </div>
   </div>
+
+  <!-- COUNTER MOVED OUTSIDE THE IMAGE -->
+  <div class="flex items-center justify-center gap-6 text-[10px] tracking-widest text-text-silver font-mono bg-cabilo-dark/50 py-2 rounded border border-cabilo-card w-fit mx-auto px-6">
+    <span>FRAME <span id="tt-counter" class="text-text-white font-bold">001</span> / {String(frames.length).padStart(3, '0')}</span>
+    <span>ZOOM <span id="tt-zoom" class="text-text-white font-bold">1.0</span>x</span>
+  </div>
+
 </turntable-scrubber>
 
 <script>
