@@ -1,6 +1,6 @@
 ---
 import '../styles/global.css';
-import Navbar from '../components/Navbar.astro'; // <--- We import your new component here!
+import Navbar from '../components/Navbar.astro'; 
 ---
 
 <!DOCTYPE html>
@@ -8,14 +8,25 @@ import Navbar from '../components/Navbar.astro'; // <--- We import your new comp
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>CABILO | 3D Artist & Cinematics</title>
+    
+    <!-- Core SEO Meta Tags -->
+    <title>CABILO | Senior 3D Artist & Cinematics</title>
+    <meta name="description" content="Portfolio of CABILO, a Senior 3D Artist specializing in high-end cinematics, Lookdev, and game animation." />
+    <meta name="author" content="CABILO" />
+    
+    <!-- Open Graph (For beautiful Discord / LinkedIn previews) -->
+    <meta property="og:title" content="CABILO | Senior 3D Artist" />
+    <meta property="og:description" content="Specializing in high-end cinematics, Lookdev, and game animation." />
+    <meta property="og:type" content="website" />
+    <meta property="og:url" content="https://cabilo.vercel.app/" />
+    <!-- We will use your headscan as the default thumbnail when sharing the link! -->
+    <meta property="og:image" content="https://cdna.artstation.com/p/assets/images/images/046/504/170/large/lucas-cabilo-ls-portraitheadscans-square-v001-0001.jpg" />
+    
   </head>
   <body class="bg-cabilo-obsidian text-text-silver min-h-screen font-sans antialiased">
     
-    <!-- The Navbar stays locked to the top -->
     <Navbar />
     
-    <!-- We add pt-24 (padding-top) so the page content doesn't get hidden behind the fixed Navbar -->
     <div class="pt-24">
       <slot />
     </div>

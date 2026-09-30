@@ -6,41 +6,29 @@
   
   <div class="relative w-full aspect-video rounded-md overflow-hidden bg-cabilo-obsidian select-none border border-cabilo-card shadow-lg" id="aov-container">
     
-    <!-- Left Side Image (A) - Added draggable="false" -->
-    <img id="img-a" src="https://images.unsplash.com/photo-1618331835717-801e976710b2?q=80&w=1200" alt="Side A" class="absolute inset-0 w-full h-full object-cover" draggable="false" />
+    <!-- Left Side Image (A) Defaults to Viewport -->
+    <img id="img-a" src="https://cdna.artstation.com/p/assets/images/images/046/500/860/large/lucas-cabilo-xgen.jpg?1645267427" alt="Side A" class="absolute inset-0 w-full h-full object-cover" draggable="false" />
     
     <div id="clipper-b" class="absolute inset-0 w-full h-full object-cover border-l-2 border-brand-amber overflow-hidden" style="width: 50%; left: 50%;">
-      <!-- Right Side Image (B) - Added draggable="false" -->
-      <img id="img-b" src="https://images.unsplash.com/photo-1618331835717-801e976710b2?q=80&w=1200&sat=-100" alt="Side B" class="absolute inset-0 w-full h-full object-cover max-w-none" style="transform: translateX(-50%);" draggable="false" />
+      <!-- Right Side Image (B) Defaults to Wireframe -->
+      <img id="img-b" src="https://cdnb.artstation.com/p/assets/images/images/046/504/715/large/lucas-cabilo-uv-and-topo.jpg?1645276624" alt="Side B" class="absolute inset-0 w-full h-full object-cover max-w-none" style="transform: translateX(-50%);" draggable="false" />
     </div>
 
-    <!-- The Draggable Handle (Upgraded Hitbox and Arrows!) -->
-    <!-- Notice w-12: This makes the invisible grab area 48 pixels wide so it's super easy to click! -->
     <div id="aov-slider" class="absolute top-0 bottom-0 w-12 cursor-ew-resize flex items-center justify-center z-10 group" style="left: 50%; transform: translateX(-50%); touch-action: none;">
-      
-      <!-- This is the thin visual vertical line inside the wide invisible box -->
       <div class="absolute inset-y-0 w-0.5 bg-brand-amber/50 group-hover:bg-brand-amber transition-colors"></div>
-      
-      <!-- The glowing button -->
       <div class="relative w-10 h-10 bg-brand-amber rounded-full shadow-[0_0_15px_rgba(230,115,0,0.8)] flex items-center justify-center pointer-events-none">
         
-       <!-- Separated Left & Right Arrows with a gap -->
-        <div class="flex items-center gap-1 text-cabilo-obsidian">
-          <!-- Left Arrow -->
-          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M15 19l-7-7 7-7"></path>
-          </svg>
-          <!-- Right Arrow -->
-          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M9 5l7 7-7 7"></path>
-          </svg>
+        <!-- Separated Left & Right Arrows with a gap -->
+        <div class="flex items-center gap-1.5 text-cabilo-obsidian">
+          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M15 19l-7-7 7-7"></path></svg>
+          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M9 5l7 7-7 7"></path></svg>
         </div>
 
       </div>
     </div>
 
-    <div id="label-a" class="absolute bottom-4 left-4 bg-cabilo-obsidian/80 backdrop-blur-sm px-3 py-1 rounded text-xs tracking-widest text-text-white uppercase pointer-events-none">Beauty</div>
-    <div id="label-b" class="absolute bottom-4 right-4 bg-cabilo-obsidian/80 backdrop-blur-sm px-3 py-1 rounded text-xs tracking-widest text-text-white uppercase pointer-events-none">Specular</div>
+    <div id="label-a" class="absolute bottom-4 left-4 bg-cabilo-obsidian/80 backdrop-blur-sm px-3 py-1 rounded text-xs tracking-widest text-text-white uppercase pointer-events-none">Viewport</div>
+    <div id="label-b" class="absolute bottom-4 right-4 bg-cabilo-obsidian/80 backdrop-blur-sm px-3 py-1 rounded text-xs tracking-widest text-text-white uppercase pointer-events-none">Wireframe</div>
   </div>
 
   <div class="grid grid-cols-1 md:grid-cols-2 gap-8 bg-cabilo-dark p-6 rounded-md border border-cabilo-card">
@@ -48,18 +36,16 @@
     <div>
       <h4 class="text-text-silver text-xs tracking-widest uppercase mb-3">Left Side (A)</h4>
       <div class="flex flex-wrap gap-2">
-        <button class="btn-a bg-brand-amber text-text-white px-3 py-1.5 rounded text-xs font-bold tracking-wider uppercase transition-colors" data-name="Beauty" data-image="https://images.unsplash.com/photo-1618331835717-801e976710b2?q=80&w=1200">Beauty</button>
-        <button class="btn-a bg-cabilo-card text-text-silver hover:text-text-white px-3 py-1.5 rounded text-xs font-bold tracking-wider uppercase transition-colors" data-name="Diffuse" data-image="https://images.unsplash.com/photo-1550684848-fac1c5b4e853?q=80&w=1200">Diffuse</button>
-        <button class="btn-a bg-cabilo-card text-text-silver hover:text-text-white px-3 py-1.5 rounded text-xs font-bold tracking-wider uppercase transition-colors" data-name="Specular" data-image="https://images.unsplash.com/photo-1618331835717-801e976710b2?q=80&w=1200&sat=-100">Specular</button>
+        <button class="btn-a bg-brand-amber text-text-white px-3 py-1.5 rounded-md text-xs font-bold tracking-wider uppercase transition-colors" data-name="Viewport" data-image="https://cdna.artstation.com/p/assets/images/images/046/500/860/large/lucas-cabilo-xgen.jpg?1645267427">Viewport</button>
+        <button class="btn-a bg-cabilo-card text-text-silver hover:text-text-white px-3 py-1.5 rounded-md text-xs font-bold tracking-wider uppercase transition-colors" data-name="Wireframe" data-image="https://cdnb.artstation.com/p/assets/images/images/046/504/715/large/lucas-cabilo-uv-and-topo.jpg?1645276624">Wireframe</button>
       </div>
     </div>
 
     <div>
       <h4 class="text-text-silver text-xs tracking-widest uppercase mb-3">Right Side (B)</h4>
       <div class="flex flex-wrap gap-2">
-        <button class="btn-b bg-cabilo-card text-text-silver hover:text-text-white px-3 py-1.5 rounded text-xs font-bold tracking-wider uppercase transition-colors" data-name="Beauty" data-image="https://images.unsplash.com/photo-1618331835717-801e976710b2?q=80&w=1200">Beauty</button>
-        <button class="btn-b bg-cabilo-card text-text-silver hover:text-text-white px-3 py-1.5 rounded text-xs font-bold tracking-wider uppercase transition-colors" data-name="Diffuse" data-image="https://images.unsplash.com/photo-1550684848-fac1c5b4e853?q=80&w=1200">Diffuse</button>
-        <button class="btn-b bg-brand-amber text-text-white px-3 py-1.5 rounded text-xs font-bold tracking-wider uppercase transition-colors" data-name="Specular" data-image="https://images.unsplash.com/photo-1618331835717-801e976710b2?q=80&w=1200&sat=-100">Specular</button>
+        <button class="btn-b bg-cabilo-card text-text-silver hover:text-text-white px-3 py-1.5 rounded-md text-xs font-bold tracking-wider uppercase transition-colors" data-name="Viewport" data-image="https://cdna.artstation.com/p/assets/images/images/046/500/860/large/lucas-cabilo-xgen.jpg?1645267427">Viewport</button>
+        <button class="btn-b bg-brand-amber text-text-white px-3 py-1.5 rounded-md text-xs font-bold tracking-wider uppercase transition-colors" data-name="Wireframe" data-image="https://cdnb.artstation.com/p/assets/images/images/046/504/715/large/lucas-cabilo-uv-and-topo.jpg?1645276624">Wireframe</button>
       </div>
     </div>
 
@@ -88,10 +74,7 @@
 
     const moveSlider = (e: MouseEvent | TouchEvent) => {
       if (!isDragging) return;
-      
-      // Prevent default text/image selection while dragging
       e.preventDefault(); 
-      
       const rect = container.getBoundingClientRect();
       const x = ('touches' in e) ? e.touches[0].clientX : (e as MouseEvent).clientX;
       let position = ((x - rect.left) / rect.width) * 100;
