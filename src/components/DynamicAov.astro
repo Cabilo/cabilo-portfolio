@@ -1,116 +1,142 @@
 ---
 // src/components/DynamicAov.astro
+export interface Props {
+  passes: {
+    name: string;
+    image: string;
+  }[];
+}
+
+const { passes } = Astro.props;
+const defaultA = passes[0];
+const defaultB = passes.length > 1 ? passes[1] : passes[0];
 ---
 
-<div class="flex flex-col gap-6" id="dynamic-aov-wrapper">
-  
-  <div class="relative w-full aspect-video rounded-md overflow-hidden bg-cabilo-obsidian select-none border border-cabilo-card shadow-lg" id="aov-container">
+<!-- 1. Notice how the <dynamic-aov> tag now wraps the ENTIRE HTML block! -->
+<dynamic-aov class="block w-full">
+  <div class="flex flex-col gap-6">
     
-    <!-- Left Side Image (A) Defaults to Viewport -->
-    <img id="img-a" src="https://cdna.artstation.com/p/assets/images/images/046/500/860/large/lucas-cabilo-xgen.jpg?1645267427" alt="Side A" class="absolute inset-0 w-full h-full object-cover" draggable="false" />
-    
-    <div id="clipper-b" class="absolute inset-0 w-full h-full object-cover border-l-2 border-brand-amber overflow-hidden" style="width: 50%; left: 50%;">
-      <!-- Right Side Image (B) Defaults to Wireframe -->
-      <img id="img-b" src="https://cdnb.artstation.com/p/assets/images/images/046/504/715/large/lucas-cabilo-uv-and-topo.jpg?1645276624" alt="Side B" class="absolute inset-0 w-full h-full object-cover max-w-none" style="transform: translateX(-50%);" draggable="false" />
-    </div>
+    <div class="relative w-full aspect-video rounded-md overflow-hidden bg-cabilo-obsidian select-none border border-cabilo-card shadow-lg aov-container">
+      
+      <img src={defaultA.image} alt="Side A" class="img-a absolute inset-0 w-full h-full object-cover" draggable="false" />
+      
+      <div class="clipper-b absolute inset-0 w-full h-full object-cover border-l-2 border-brand-amber overflow-hidden" style="width: 50%; left: 50%;">
+        <img src={defaultB.image} alt="Side B" class="img-b absolute inset-0 w-full h-full object-cover max-w-none" style="transform: translateX(-50%);" draggable="false" />
+      </div>
 
-    <div id="aov-slider" class="absolute top-0 bottom-0 w-12 cursor-ew-resize flex items-center justify-center z-10 group" style="left: 50%; transform: translateX(-50%); touch-action: none;">
-      <div class="absolute inset-y-0 w-0.5 bg-brand-amber/50 group-hover:bg-brand-amber transition-colors"></div>
-      <div class="relative w-10 h-10 bg-brand-amber rounded-full shadow-[0_0_15px_rgba(230,115,0,0.8)] flex items-center justify-center pointer-events-none">
-        
-        <!-- Separated Left & Right Arrows with a gap -->
-        <div class="flex items-center gap-1.5 text-cabilo-obsidian">
-          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M15 19l-7-7 7-7"></path></svg>
-          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M9 5l7 7-7 7"></path></svg>
+      <div class="aov-slider absolute top-0 bottom-0 w-12 cursor-ew-resize flex items-center justify-center z-10 group" style="left: 50%; transform: translateX(-50%); touch-action: none;">
+        <div class="absolute inset-y-0 w-0.5 bg-brand-amber/50 group-hover:bg-brand-amber transition-colors"></div>
+        <div class="relative w-10 h-10 bg-brand-amber rounded-full shadow-[0_0_15px_rgba(230,115,0,0.8)] flex items-center justify-center pointer-events-none">
+          <div class="flex items-center gap-1.5 text-cabilo-obsidian">
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M15 19l-7-7 7-7"></path></svg>
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M9 5l7 7-7 7"></path></svg>
+          </div>
         </div>
-
       </div>
+
+      <div class="label-a absolute bottom-4 left-4 bg-cabilo-obsidian/80 backdrop-blur-sm px-3 py-1 rounded text-xs tracking-widest text-text-white uppercase pointer-events-none">{defaultA.name}</div>
+      <div class="label-b absolute bottom-4 right-4 bg-cabilo-obsidian/80 backdrop-blur-sm px-3 py-1 rounded text-xs tracking-widest text-text-white uppercase pointer-events-none">{defaultB.name}</div>
     </div>
 
-    <div id="label-a" class="absolute bottom-4 left-4 bg-cabilo-obsidian/80 backdrop-blur-sm px-3 py-1 rounded text-xs tracking-widest text-text-white uppercase pointer-events-none">Viewport</div>
-    <div id="label-b" class="absolute bottom-4 right-4 bg-cabilo-obsidian/80 backdrop-blur-sm px-3 py-1 rounded text-xs tracking-widest text-text-white uppercase pointer-events-none">Wireframe</div>
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-8 bg-cabilo-dark p-6 rounded-md border border-cabilo-card">
+      
+      <div>
+        <h4 class="text-text-silver text-xs tracking-widest uppercase mb-3">Left Side (A)</h4>
+        <div class="flex flex-wrap gap-2">
+          {passes.map((pass, index) => (
+            <button 
+              class={`btn-a px-3 py-1.5 rounded-md text-xs font-bold tracking-wider uppercase transition-colors ${index === 0 ? 'bg-brand-amber text-text-white' : 'bg-cabilo-card text-text-silver hover:text-text-white'}`} 
+              data-name={pass.name} 
+              data-image={pass.image}
+            >
+              {pass.name}
+            </button>
+          ))}
+        </div>
+      </div>
+
+      <div>
+        <h4 class="text-text-silver text-xs tracking-widest uppercase mb-3">Right Side (B)</h4>
+        <div class="flex flex-wrap gap-2">
+          {passes.map((pass, index) => (
+            <button 
+              class={`btn-b px-3 py-1.5 rounded-md text-xs font-bold tracking-wider uppercase transition-colors ${index === 1 ? 'bg-brand-amber text-text-white' : 'bg-cabilo-card text-text-silver hover:text-text-white'}`} 
+              data-name={pass.name} 
+              data-image={pass.image}
+            >
+              {pass.name}
+            </button>
+          ))}
+        </div>
+      </div>
+
+    </div>
   </div>
-
-  <div class="grid grid-cols-1 md:grid-cols-2 gap-8 bg-cabilo-dark p-6 rounded-md border border-cabilo-card">
-    
-    <div>
-      <h4 class="text-text-silver text-xs tracking-widest uppercase mb-3">Left Side (A)</h4>
-      <div class="flex flex-wrap gap-2">
-        <button class="btn-a bg-brand-amber text-text-white px-3 py-1.5 rounded-md text-xs font-bold tracking-wider uppercase transition-colors" data-name="Viewport" data-image="https://cdna.artstation.com/p/assets/images/images/046/500/860/large/lucas-cabilo-xgen.jpg?1645267427">Viewport</button>
-        <button class="btn-a bg-cabilo-card text-text-silver hover:text-text-white px-3 py-1.5 rounded-md text-xs font-bold tracking-wider uppercase transition-colors" data-name="Wireframe" data-image="https://cdnb.artstation.com/p/assets/images/images/046/504/715/large/lucas-cabilo-uv-and-topo.jpg?1645276624">Wireframe</button>
-      </div>
-    </div>
-
-    <div>
-      <h4 class="text-text-silver text-xs tracking-widest uppercase mb-3">Right Side (B)</h4>
-      <div class="flex flex-wrap gap-2">
-        <button class="btn-b bg-cabilo-card text-text-silver hover:text-text-white px-3 py-1.5 rounded-md text-xs font-bold tracking-wider uppercase transition-colors" data-name="Viewport" data-image="https://cdna.artstation.com/p/assets/images/images/046/500/860/large/lucas-cabilo-xgen.jpg?1645267427">Viewport</button>
-        <button class="btn-b bg-brand-amber text-text-white px-3 py-1.5 rounded-md text-xs font-bold tracking-wider uppercase transition-colors" data-name="Wireframe" data-image="https://cdnb.artstation.com/p/assets/images/images/046/504/715/large/lucas-cabilo-uv-and-topo.jpg?1645276624">Wireframe</button>
-      </div>
-    </div>
-
-  </div>
-</div>
+</dynamic-aov>
 
 <script>
-  const wrapper = document.getElementById('dynamic-aov-wrapper');
-  if (wrapper) {
-    const container = document.getElementById('aov-container') as HTMLElement;
-    const clipperB = document.getElementById('clipper-b') as HTMLElement;
-    const slider = document.getElementById('aov-slider') as HTMLElement;
-    const imgA = document.getElementById('img-a') as HTMLImageElement;
-    const imgB = document.getElementById('img-b') as HTMLImageElement;
-    const labelA = document.getElementById('label-a') as HTMLElement;
-    const labelB = document.getElementById('label-b') as HTMLElement;
-    
-    const buttonsA = document.querySelectorAll('.btn-a');
-    const buttonsB = document.querySelectorAll('.btn-b');
+  class DynamicAov extends HTMLElement {
+    // 2. connectedCallback is the correct way to wake up a Custom Element
+    connectedCallback() {
+      const container = this.querySelector('.aov-container') as HTMLElement;
+      const clipperB = this.querySelector('.clipper-b') as HTMLElement;
+      const slider = this.querySelector('.aov-slider') as HTMLElement;
+      const imgA = this.querySelector('.img-a') as HTMLImageElement;
+      const imgB = this.querySelector('.img-b') as HTMLImageElement;
+      const labelA = this.querySelector('.label-a') as HTMLElement;
+      const labelB = this.querySelector('.label-b') as HTMLElement;
+      const buttonsA = this.querySelectorAll('.btn-a');
+      const buttonsB = this.querySelectorAll('.btn-b');
 
-    let isDragging = false;
-    
-    const fixImageWidth = () => { if(imgB) imgB.style.width = `${container.clientWidth}px`; };
-    window.addEventListener('resize', fixImageWidth);
-    fixImageWidth();
+      if (!container) return; // Safety check
 
-    const moveSlider = (e: MouseEvent | TouchEvent) => {
-      if (!isDragging) return;
-      e.preventDefault(); 
-      const rect = container.getBoundingClientRect();
-      const x = ('touches' in e) ? e.touches[0].clientX : (e as MouseEvent).clientX;
-      let position = ((x - rect.left) / rect.width) * 100;
-      position = Math.max(0, Math.min(100, position)); 
+      let isDragging = false;
       
-      slider.style.left = `${position}%`;
-      clipperB.style.width = `${100 - position}%`;
-      clipperB.style.left = `${position}%`;
-      imgB.style.transform = `translateX(-${position}%)`;
-    };
+      const fixImageWidth = () => { if(imgB) imgB.style.width = `${container.clientWidth}px`; };
+      window.addEventListener('resize', fixImageWidth);
+      fixImageWidth();
 
-    slider.addEventListener('mousedown', () => isDragging = true);
-    slider.addEventListener('touchstart', (e) => { isDragging = true; e.preventDefault(); }, { passive: false });
-    window.addEventListener('mouseup', () => isDragging = false);
-    window.addEventListener('touchend', () => isDragging = false);
-    window.addEventListener('mousemove', moveSlider);
-    window.addEventListener('touchmove', moveSlider, { passive: false });
+      const moveSlider = (e: MouseEvent | TouchEvent) => {
+        if (!isDragging) return;
+        e.preventDefault(); 
+        const rect = container.getBoundingClientRect();
+        const x = ('touches' in e) ? e.touches[0].clientX : (e as MouseEvent).clientX;
+        let position = ((x - rect.left) / rect.width) * 100;
+        position = Math.max(0, Math.min(100, position)); 
+        
+        slider.style.left = `${position}%`;
+        clipperB.style.width = `${100 - position}%`;
+        clipperB.style.left = `${position}%`;
+        imgB.style.transform = `translateX(-${position}%)`;
+      };
 
-    buttonsA.forEach(btn => {
-      btn.addEventListener('click', (e) => {
-        const target = e.currentTarget as HTMLButtonElement;
-        imgA.src = target.getAttribute('data-image') || '';
-        labelA.innerText = target.getAttribute('data-name') || '';
-        buttonsA.forEach(b => { b.classList.remove('bg-brand-amber', 'text-text-white'); b.classList.add('bg-cabilo-card', 'text-text-silver'); });
-        target.classList.remove('bg-cabilo-card', 'text-text-silver'); target.classList.add('bg-brand-amber', 'text-text-white');
+      slider.addEventListener('mousedown', () => isDragging = true);
+      slider.addEventListener('touchstart', (e) => { isDragging = true; e.preventDefault(); }, { passive: false });
+      window.addEventListener('mouseup', () => isDragging = false);
+      window.addEventListener('touchend', () => isDragging = false);
+      window.addEventListener('mousemove', moveSlider);
+      window.addEventListener('touchmove', moveSlider, { passive: false });
+
+      buttonsA.forEach(btn => {
+        btn.addEventListener('click', (e) => {
+          const target = e.currentTarget as HTMLButtonElement;
+          imgA.src = target.getAttribute('data-image') || '';
+          labelA.innerText = target.getAttribute('data-name') || '';
+          buttonsA.forEach(b => { b.classList.remove('bg-brand-amber', 'text-text-white'); b.classList.add('bg-cabilo-card', 'text-text-silver'); });
+          target.classList.remove('bg-cabilo-card', 'text-text-silver'); target.classList.add('bg-brand-amber', 'text-text-white');
+        });
       });
-    });
 
-    buttonsB.forEach(btn => {
-      btn.addEventListener('click', (e) => {
-        const target = e.currentTarget as HTMLButtonElement;
-        imgB.src = target.getAttribute('data-image') || '';
-        labelB.innerText = target.getAttribute('data-name') || '';
-        buttonsB.forEach(b => { b.classList.remove('bg-brand-amber', 'text-text-white'); b.classList.add('bg-cabilo-card', 'text-text-silver'); });
-        target.classList.remove('bg-cabilo-card', 'text-text-silver'); target.classList.add('bg-brand-amber', 'text-text-white');
+      buttonsB.forEach(btn => {
+        btn.addEventListener('click', (e) => {
+          const target = e.currentTarget as HTMLButtonElement;
+          imgB.src = target.getAttribute('data-image') || '';
+          labelB.innerText = target.getAttribute('data-name') || '';
+          buttonsB.forEach(b => { b.classList.remove('bg-brand-amber', 'text-text-white'); b.classList.add('bg-cabilo-card', 'text-text-silver'); });
+          target.classList.remove('bg-cabilo-card', 'text-text-silver'); target.classList.add('bg-brand-amber', 'text-text-white');
+        });
       });
-    });
+    }
   }
+  customElements.define('dynamic-aov', DynamicAov);
 </script>

@@ -1,7 +1,11 @@
 ---
 // src/components/PortfolioGrid.astro
-// We import the card we just made!
 import ProjectCard from './ProjectCard.astro';
+// We import Astro's collection fetching tool!
+import { getCollection } from 'astro:content';
+
+// Fetch all markdown files from the 'projects' folder
+const allProjects = await getCollection('projects');
 ---
 
 <section id="work" class="max-w-7xl mx-auto px-6 py-12 md:py-24">
@@ -11,7 +15,6 @@ import ProjectCard from './ProjectCard.astro';
       Selected <span class="text-text-silver font-light">Works</span>
     </h2>
     
-    <!-- We will make these filter buttons work later, for now they are visual -->
     <div class="hidden md:flex gap-6 text-sm uppercase tracking-widest font-medium">
       <button class="text-brand-gold">All</button>
       <button class="text-text-silver hover:text-text-white transition-colors">Cinematics</button>
@@ -19,33 +22,17 @@ import ProjectCard from './ProjectCard.astro';
     </div>
   </div>
 
-  <!-- 
-    This CSS Grid automatically makes 1 column on phones, 
-    2 columns on tablets, and 3 columns on desktops!
-  -->
   <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
     
-<!-- Stamping out Prefabs! We pass the Props to each card -->
-    <ProjectCard 
-      title="Cinematic Headscan" 
-      category="Lookdev" 
-      image="https://cdna.artstation.com/p/assets/images/images/046/504/170/large/lucas-cabilo-ls-portraitheadscans-square-v001-0001.jpg?1645275374" 
-      link="/project-01" 
-    />
-    
-    <ProjectCard 
-      title="Hex Procedural Concept" 
-      category="Lookdev" 
-      image="https://cdnb.artstation.com/p/assets/images/images/017/488/445/large/lucas-cabilo-hex-big.jpg?1556184275" 
-      link="#" 
-    />
-    
-    <ProjectCard 
-      title="Hard Surface Armor" 
-      category="Cinematics" 
-      image="https://cdna.artstation.com/p/assets/images/images/021/496/060/large/lucas-cabilo-screenshot037.jpg?1571899681" 
-      link="#" 
-    />
-    
+    <!-- We dynamically loop through the Markdown files to create the grid! -->
+    {allProjects.map((project) => (
+      <ProjectCard 
+        title={project.data.title} 
+        category={project.data.category} 
+        image={project.data.thumbnail} 
+        link={`/projects/${project.id}`} 
+      />
+    ))}
+
   </div>
 </section>
