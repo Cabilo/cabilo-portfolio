@@ -1,0 +1,53 @@
+---
+import { getCollection, render } from 'astro:content';
+import Layout from '../../layouts/Layout.astro';
+
+export async function getStaticPaths() {
+  const learningDocs = await getCollection('learning');
+  // Only build pages for Tutorials here!
+  const tutorials = learningDocs.filter(doc => doc.data.type === 'Breakdown');
+  return tutorials.map(doc => ({
+    params: { id: doc.id },
+    props: { doc },
+  }));
+}
+
+const { doc } = Astro.props;
+const { Content } = await render(doc);
+---
+
+<Layout>
+  <main class="max-w-4xl mx-auto px-6 py-12 md:py-20">
+    
+    <!-- Header -->
+    <div class="mb-12 text-center flex flex-col items-center">
+      <div class="flex flex-wrap justify-center gap-2 mb-6">
+        {doc.data.tags.map(tag => (
+          <span class="text-xs font-bold tracking-widest uppercase text-brand-gold bg-brand-gold/10 px-3 py-1.5 rounded">{tag}</span>
+        ))}
+      </div>
+      <h1 class="text-3xl md:text-5xl font-bold text-text-white mb-6 leading-tight uppercase">{doc.data.title}</h1>
+      <p class="text-text-silver text-lg max-w-2xl">{doc.data.description}</p>
+    </div>
+
+    <!-- Media (YouTube Player or Thumbnail) -->
+    <div class="mb-16 rounded-md overflow-hidden shadow-2xl border border-cabilo-card relative aspect-video bg-cabilo-obsidian">
+      {doc.data.youtubeId ? (
+        <iframe 
+          class="absolute inset-0 w-full h-full"
+          src={`https://www.youtube.com/embed/${doc.data.youtubeId}?rel=0&color=white`}
+          frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen>
+        </iframe>
+      ) : (
+        <img src={doc.data.thumbnail} alt={doc.data.title} class="absolute inset-0 w-full h-full object-cover" />
+      )}
+    </div>
+
+    <!-- Markdown Content Reader -->
+    <div class="prose prose-invert prose-p:text-text-silver prose-headings:text-text-white prose-a:text-brand-amber max-w-none 
+                prose-img:rounded-md prose-img:border prose-img:border-cabilo-card prose-hr:border-cabilo-card">
+      <Content />
+    </div>
+
+  </main>
+</Layout>

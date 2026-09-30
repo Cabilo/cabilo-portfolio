@@ -1,35 +1,53 @@
 ---
 // src/components/Navbar.astro
-// No backend scripts needed for the basic navbar yet!
+// This line grabs the current URL path so we can highlight the active link!
+const pathname = new URL(Astro.request.url).pathname;
 ---
 
-<!-- 
-  We use 'fixed', 'z-50', and 'backdrop-blur' so it stays at the top of the screen 
-  and has a high-end cinematic glass effect when you scroll over projects. 
--->
 <nav class="fixed top-0 left-0 w-full z-50 bg-cabilo-obsidian/90 backdrop-blur-md border-b border-cabilo-card">
   
   <div class="max-w-7xl mx-auto px-6 h-24 flex items-center justify-between">
     
-    <!-- BRAND LOGO AREA -->
     <a href="/" class="flex items-center group">
-      <!-- 
-        Because your logo is in the "public" folder, we can just use "/logo-horizontal.svg"
-        Change the .png to .svg here if your file is an SVG!
-      -->
-      <img 
-        src="/logo-horizontal.svg" 
-        alt="CABILO Cinematic 3D" 
-        class="h-10 w-auto object-contain group-hover:opacity-80 transition-opacity duration-300" 
-      />
+      <img src="/logo-horizontal.svg" alt="CABILO Cinematic 3D" class="h-10 w-auto object-contain group-hover:opacity-80 transition-opacity duration-300" />
     </a>
     
-    <!-- NAVIGATION LINKS (Hidden on tiny phones, visible on tablets/desktops) -->
-    <div class="hidden md:flex gap-10 text-sm font-medium tracking-widest uppercase">
-      <a href="/" class="text-text-white hover:text-brand-gold transition-colors duration-300">Work</a>
-      <a href="/tutorials" class="text-text-silver hover:text-brand-gold transition-colors duration-300">Tutorials</a>
-      <a href="/about" class="text-text-silver hover:text-brand-gold transition-colors duration-300">About</a>
-      <a href="/contact" class="text-text-silver hover:text-brand-gold transition-colors duration-300">Contact</a>
+    <div class="hidden md:flex items-center gap-10 text-sm font-medium tracking-widest uppercase h-full">
+      
+      <!-- Work Link -->
+      <a href="/" class={`transition-colors duration-300 ${pathname === '/' ? 'text-text-white' : 'text-text-silver hover:text-brand-gold'}`}>
+        Work
+      </a>
+      
+      <!-- LEARNING DROPDOWN (Alignment Fixed using h-full and items-center) -->
+      <div class="relative group h-full flex items-center">
+        
+        <button class={`flex items-center gap-1 uppercase font-medium transition-colors duration-300 cursor-default ${(pathname.startsWith('/tutorials') || pathname.startsWith('/breakdowns')) ? 'text-text-white' : 'text-text-silver group-hover:text-brand-gold'}`}>
+          LEARNING
+          <svg class="w-4 h-4 transition-transform duration-300 group-hover:rotate-180" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
+        </button>
+        
+        <div class="absolute top-[80px] left-0 w-48 bg-cabilo-obsidian/95 backdrop-blur-md border border-cabilo-card rounded-md shadow-2xl opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-300 flex flex-col overflow-hidden z-50">
+          <!-- We add a slight highlight to these sub-links if you are on their specific pages -->
+          <a href="/tutorials" class={`px-5 py-4 text-xs tracking-widest hover:bg-cabilo-card hover:text-brand-amber transition-colors border-b border-cabilo-card ${pathname.startsWith('/tutorials') ? 'text-brand-gold' : 'text-text-silver'}`}>
+            Tutorials
+          </a>
+          <a href="/breakdowns" class={`px-5 py-4 text-xs tracking-widest hover:bg-cabilo-card hover:text-brand-amber transition-colors ${pathname.startsWith('/breakdowns') ? 'text-brand-gold' : 'text-text-silver'}`}>
+            Breakdowns
+          </a>
+        </div>
+      </div>
+
+      <!-- About Link -->
+      <a href="/about" class={`transition-colors duration-300 ${pathname === '/about' ? 'text-text-white' : 'text-text-silver hover:text-brand-gold'}`}>
+        About
+      </a>
+      
+      <!-- Contact Link -->
+      <a href="/contact" class={`transition-colors duration-300 ${pathname === '/contact' ? 'text-text-white' : 'text-text-silver hover:text-brand-gold'}`}>
+        Contact
+      </a>
+
     </div>
 
   </div>
