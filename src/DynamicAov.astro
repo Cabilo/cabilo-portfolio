@@ -1,0 +1,140 @@
+---
+// src/components/DynamicAov.astro
+---
+
+<div class="flex flex-col gap-6" id="dynamic-aov-wrapper">
+  
+  <!-- THE A/B SLIDER SCREEN -->
+  <div class="relative w-full aspect-video rounded-md overflow-hidden bg-cabilo-obsidian select-none border border-cabilo-card shadow-lg" id="aov-container">
+    
+    <!-- Left Side Image (A) -->
+    <img id="img-a" src="https://images.unsplash.com/photo-1618331835717-801e976710b2?q=80&w=1200" alt="Side A" class="absolute inset-0 w-full h-full object-cover" />
+    
+    <!-- Right Side Image (B) wrapped in a clipping mask -->
+    <div id="clipper-b" class="absolute inset-0 w-full h-full object-cover border-l-2 border-brand-amber overflow-hidden" style="width: 50%; left: 50%;">
+      <!-- Notice how this image is pulled left by 50% so it stays aligned! -->
+      <img id="img-b" src="https://images.unsplash.com/photo-1618331835717-801e976710b2?q=80&w=1200&sat=-100" alt="Side B" class="absolute inset-0 w-full h-full object-cover max-w-none" style="transform: translateX(-50%);" />
+    </div>
+
+    <!-- The Draggable Handle (With correct Left/Right Arrows!) -->
+    <div id="aov-slider" class="absolute top-0 bottom-0 w-1 bg-transparent cursor-ew-resize flex items-center justify-center z-10" style="left: 50%; transform: translateX(-50%);">
+      <div class="w-8 h-8 bg-brand-amber rounded-full shadow-[0_0_15px_rgba(230,115,0,0.8)] flex items-center justify-center pointer-events-none">
+        <!-- FIXED ARROWS HERE -->
+        <svg class="w-5 h-5 text-cabilo-obsidian" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"></path>
+        </svg>
+      </div>
+    </div>
+
+    <!-- Floating Labels -->
+    <div id="label-a" class="absolute bottom-4 left-4 bg-cabilo-obsidian/80 backdrop-blur-sm px-3 py-1 rounded text-xs tracking-widest text-text-white uppercase pointer-events-none">Beauty</div>
+    <div id="label-b" class="absolute bottom-4 right-4 bg-cabilo-obsidian/80 backdrop-blur-sm px-3 py-1 rounded text-xs tracking-widest text-text-white uppercase pointer-events-none">Specular</div>
+  </div>
+
+  <!-- THE PASS SELECTION CONTROLS -->
+  <div class="grid grid-cols-1 md:grid-cols-2 gap-8 bg-cabilo-dark p-6 rounded-md border border-cabilo-card">
+    
+    <!-- Side A Controls -->
+    <div>
+      <h4 class="text-text-silver text-xs tracking-widest uppercase mb-3">Left Side (A)</h4>
+      <div class="flex flex-wrap gap-2">
+        <button class="btn-a bg-brand-amber text-text-white px-3 py-1.5 rounded text-xs font-bold tracking-wider uppercase transition-colors" data-name="Beauty" data-image="https://images.unsplash.com/photo-1618331835717-801e976710b2?q=80&w=1200">Beauty</button>
+        <button class="btn-a bg-cabilo-card text-text-silver hover:text-text-white px-3 py-1.5 rounded text-xs font-bold tracking-wider uppercase transition-colors" data-name="Diffuse" data-image="https://images.unsplash.com/photo-1550684848-fac1c5b4e853?q=80&w=1200">Diffuse</button>
+        <button class="btn-a bg-cabilo-card text-text-silver hover:text-text-white px-3 py-1.5 rounded text-xs font-bold tracking-wider uppercase transition-colors" data-name="Specular" data-image="https://images.unsplash.com/photo-1618331835717-801e976710b2?q=80&w=1200&sat=-100">Specular</button>
+      </div>
+    </div>
+
+    <!-- Side B Controls -->
+    <div>
+      <h4 class="text-text-silver text-xs tracking-widest uppercase mb-3">Right Side (B)</h4>
+      <div class="flex flex-wrap gap-2">
+        <button class="btn-b bg-cabilo-card text-text-silver hover:text-text-white px-3 py-1.5 rounded text-xs font-bold tracking-wider uppercase transition-colors" data-name="Beauty" data-image="https://images.unsplash.com/photo-1618331835717-801e976710b2?q=80&w=1200">Beauty</button>
+        <button class="btn-b bg-cabilo-card text-text-silver hover:text-text-white px-3 py-1.5 rounded text-xs font-bold tracking-wider uppercase transition-colors" data-name="Diffuse" data-image="https://images.unsplash.com/photo-1550684848-fac1c5b4e853?q=80&w=1200">Diffuse</button>
+        <button class="btn-b bg-brand-amber text-text-white px-3 py-1.5 rounded text-xs font-bold tracking-wider uppercase transition-colors" data-name="Specular" data-image="https://images.unsplash.com/photo-1618331835717-801e976710b2?q=80&w=1200&sat=-100">Specular</button>
+      </div>
+    </div>
+
+  </div>
+
+</div>
+
+<script>
+  const wrapper = document.getElementById('dynamic-aov-wrapper');
+  if (wrapper) {
+    const container = document.getElementById('aov-container') as HTMLElement;
+    const clipperB = document.getElementById('clipper-b') as HTMLElement;
+    const slider = document.getElementById('aov-slider') as HTMLElement;
+    const imgA = document.getElementById('img-a') as HTMLImageElement;
+    const imgB = document.getElementById('img-b') as HTMLImageElement;
+    const labelA = document.getElementById('label-a') as HTMLElement;
+    const labelB = document.getElementById('label-b') as HTMLElement;
+    
+    const buttonsA = document.querySelectorAll('.btn-a');
+    const buttonsB = document.querySelectorAll('.btn-b');
+
+    // --- 1. DRAG SLIDER LOGIC ---
+    let isDragging = false;
+    
+    const fixImageWidth = () => { 
+      if(imgB) {
+        imgB.style.width = `${container.clientWidth}px`; 
+      }
+    };
+    window.addEventListener('resize', fixImageWidth);
+    fixImageWidth(); // Run once on load
+
+    const moveSlider = (e: MouseEvent | TouchEvent) => {
+      if (!isDragging) return;
+      const rect = container.getBoundingClientRect();
+      const x = ('touches' in e) ? e.touches[0].clientX : (e as MouseEvent).clientX;
+      let position = ((x - rect.left) / rect.width) * 100;
+      position = Math.max(0, Math.min(100, position)); // Keep between 0 and 100
+      
+      // Update UI
+      slider.style.left = `${position}%`;
+      clipperB.style.width = `${100 - position}%`;
+      clipperB.style.left = `${position}%`;
+      imgB.style.transform = `translateX(-${position}%)`;
+    };
+
+    slider.addEventListener('mousedown', () => isDragging = true);
+    slider.addEventListener('touchstart', () => isDragging = true);
+    window.addEventListener('mouseup', () => isDragging = false);
+    window.addEventListener('touchend', () => isDragging = false);
+    window.addEventListener('mousemove', moveSlider);
+    window.addEventListener('touchmove', moveSlider);
+
+    // --- 2. BUTTON LOGIC ---
+    // Handle Side A (Left)
+    buttonsA.forEach(btn => {
+      btn.addEventListener('click', (e) => {
+        const target = e.currentTarget as HTMLButtonElement;
+        imgA.src = target.getAttribute('data-image') || '';
+        labelA.innerText = target.getAttribute('data-name') || '';
+        
+        buttonsA.forEach(b => {
+          b.classList.remove('bg-brand-amber', 'text-text-white');
+          b.classList.add('bg-cabilo-card', 'text-text-silver');
+        });
+        target.classList.remove('bg-cabilo-card', 'text-text-silver');
+        target.classList.add('bg-brand-amber', 'text-text-white');
+      });
+    });
+
+    // Handle Side B (Right)
+    buttonsB.forEach(btn => {
+      btn.addEventListener('click', (e) => {
+        const target = e.currentTarget as HTMLButtonElement;
+        imgB.src = target.getAttribute('data-image') || '';
+        labelB.innerText = target.getAttribute('data-name') || '';
+        
+        buttonsB.forEach(b => {
+          b.classList.remove('bg-brand-amber', 'text-text-white');
+          b.classList.add('bg-cabilo-card', 'text-text-silver');
+        });
+        target.classList.remove('bg-cabilo-card', 'text-text-silver');
+        target.classList.add('bg-brand-amber', 'text-text-white');
+      });
+    });
+  }
+</script>

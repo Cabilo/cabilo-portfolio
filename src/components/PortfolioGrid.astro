@@ -1,0 +1,51 @@
+---
+// src/components/PortfolioGrid.astro
+// We import the card we just made!
+import ProjectCard from './ProjectCard.astro';
+---
+
+<section id="work" class="max-w-7xl mx-auto px-6 py-12 md:py-24">
+  
+  <div class="flex items-center justify-between mb-12">
+    <h2 class="text-3xl md:text-4xl font-bold text-text-white uppercase tracking-wider">
+      Selected <span class="text-text-silver font-light">Works</span>
+    </h2>
+    
+    <!-- We will make these filter buttons work later, for now they are visual -->
+    <div class="hidden md:flex gap-6 text-sm uppercase tracking-widest font-medium">
+      <button class="text-brand-gold">All</button>
+      <button class="text-text-silver hover:text-text-white transition-colors">Cinematics</button>
+      <button class="text-text-silver hover:text-text-white transition-colors">Lookdev</button>
+    </div>
+  </div>
+
+  <!-- 
+    This CSS Grid automatically makes 1 column on phones, 
+    2 columns on tablets, and 3 columns on desktops!
+  -->
+  <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+    
+    <!-- Stamping out Prefabs! We pass the Props to each card -->
+    <ProjectCard 
+      title="Sci-Fi Corridor Lighting" 
+      category="Lookdev" 
+      image="https://images.unsplash.com/photo-1618331835717-801e976710b2?q=80&w=800&auto=format&fit=crop" 
+      link="#" 
+    />
+    
+    <ProjectCard 
+      title="Cyberpunk Character Turnaround" 
+      category="Animation" 
+      image="https://images.unsplash.com/photo-1535295972055-1c762f4483e5?q=80&w=800&auto=format&fit=crop" 
+      link="#" 
+    />
+    
+    <ProjectCard 
+      title="Unreal Engine Cinematic" 
+      category="Cinematics" 
+      image="https://images.unsplash.com/photo-1605379399642-870262d3d051?q=80&w=800&auto=format&fit=crop" 
+      link="#" 
+    />
+
+  </div>
+</section>

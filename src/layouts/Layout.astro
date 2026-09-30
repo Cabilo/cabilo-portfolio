@@ -1,0 +1,24 @@
+---
+import '../styles/global.css';
+import Navbar from '../components/Navbar.astro'; // <--- We import your new component here!
+---
+
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>CABILO | 3D Artist & Cinematics</title>
+  </head>
+  <body class="bg-cabilo-obsidian text-text-silver min-h-screen font-sans antialiased">
+    
+    <!-- The Navbar stays locked to the top -->
+    <Navbar />
+    
+    <!-- We add pt-24 (padding-top) so the page content doesn't get hidden behind the fixed Navbar -->
+    <div class="pt-24">
+      <slot />
+    </div>
+
+  </body>
+</html>

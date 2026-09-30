@@ -1,0 +1,36 @@
+---
+// src/components/Navbar.astro
+// No backend scripts needed for the basic navbar yet!
+---
+
+<!-- 
+  We use 'fixed', 'z-50', and 'backdrop-blur' so it stays at the top of the screen 
+  and has a high-end cinematic glass effect when you scroll over projects. 
+-->
+<nav class="fixed top-0 left-0 w-full z-50 bg-cabilo-obsidian/90 backdrop-blur-md border-b border-cabilo-card">
+  
+  <div class="max-w-7xl mx-auto px-6 h-24 flex items-center justify-between">
+    
+    <!-- BRAND LOGO AREA -->
+    <a href="/" class="flex items-center group">
+      <!-- 
+        Because your logo is in the "public" folder, we can just use "/logo-horizontal.svg"
+        Change the .png to .svg here if your file is an SVG!
+      -->
+      <img 
+        src="/logo-horizontal.svg" 
+        alt="CABILO Cinematic 3D" 
+        class="h-10 w-auto object-contain group-hover:opacity-80 transition-opacity duration-300" 
+      />
+    </a>
+    
+    <!-- NAVIGATION LINKS (Hidden on tiny phones, visible on tablets/desktops) -->
+    <div class="hidden md:flex gap-10 text-sm font-medium tracking-widest uppercase">
+      <a href="/" class="text-text-white hover:text-brand-gold transition-colors duration-300">Work</a>
+      <a href="/tutorials" class="text-text-silver hover:text-brand-gold transition-colors duration-300">Tutorials</a>
+      <a href="/about" class="text-text-silver hover:text-brand-gold transition-colors duration-300">About</a>
+      <a href="/contact" class="text-text-silver hover:text-brand-gold transition-colors duration-300">Contact</a>
+    </div>
+
+  </div>
+</nav>

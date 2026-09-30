@@ -1,0 +1,36 @@
+---
+// src/components/ProjectCard.astro
+// Here we define the "Props" (variables) this card needs to work.
+export interface Props {
+  title: string;
+  category: string;
+  image: string;
+  link: string;
+}
+
+// This extracts the variables so we can use them in the HTML below
+const { title, category, image, link } = Astro.props;
+---
+
+<!-- 
+  The "group" class tells Tailwind to watch for hovers on the whole card.
+  Notice the hover border changes to your brand amber!
+-->
+<a href={link} class="group block relative overflow-hidden rounded-md bg-cabilo-card border border-cabilo-dark hover:border-brand-amber transition-all duration-300 shadow-lg hover:shadow-[0_0_20px_rgba(230,115,0,0.15)]">
+  
+  <!-- Image Container (16:9 ratio) -->
+  <div class="aspect-video overflow-hidden bg-cabilo-obsidian">
+    <img 
+      src={image} 
+      alt={title} 
+      class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700 ease-out opacity-80 group-hover:opacity-100"
+    />
+  </div>
+
+  <!-- Text Info Container -->
+  <div class="p-5 flex flex-col gap-1">
+    <span class="text-xs font-bold tracking-widest uppercase text-brand-gold">{category}</span>
+    <h3 class="text-lg font-medium text-text-white group-hover:text-brand-amber transition-colors duration-300">{title}</h3>
+  </div>
+
+</a>

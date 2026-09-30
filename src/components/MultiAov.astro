@@ -1,0 +1,68 @@
+---
+// src/components/MultiAov.astro
+---
+
+<div class="flex flex-col gap-4">
+  
+  <!-- Main Display Screen -->
+  <div class="w-full aspect-video rounded-md overflow-hidden bg-cabilo-dark border border-cabilo-card shadow-lg">
+    <img 
+      id="multi-aov-display" 
+      src="https://images.unsplash.com/photo-1618331835717-801e976710b2?q=80&w=1200" 
+      alt="AOV Pass" 
+      class="w-full h-full object-cover"
+    />
+  </div>
+
+  <!-- AOV Selection Buttons -->
+  <!-- We use 'data-image' to store the image link for each pass -->
+  <div class="flex flex-wrap gap-2" id="aov-button-container">
+    
+    <button 
+      class="aov-btn px-4 py-2 rounded text-xs font-bold tracking-widest uppercase transition-colors bg-brand-amber text-text-white" 
+      data-image="https://images.unsplash.com/photo-1618331835717-801e976710b2?q=80&w=1200">
+      Beauty
+    </button>
+    
+    <!-- (Notice I added ?sat=-100 to this URL just to make it black & white so you can see it change!) -->
+    <button 
+      class="aov-btn px-4 py-2 rounded text-xs font-bold tracking-widest uppercase transition-colors bg-cabilo-card text-text-silver hover:text-text-white" 
+      data-image="https://images.unsplash.com/photo-1618331835717-801e976710b2?q=80&w=1200&sat=-100">
+      Specular
+    </button>
+    
+    <!-- I used a different image here to fake a Normal Map -->
+    <button 
+      class="aov-btn px-4 py-2 rounded text-xs font-bold tracking-widest uppercase transition-colors bg-cabilo-card text-text-silver hover:text-text-white" 
+      data-image="https://images.unsplash.com/photo-1550684848-fac1c5b4e853?q=80&w=1200">
+      Normal Map
+    </button>
+    
+  </div>
+
+</div>
+
+<!-- The Script that makes the buttons work -->
+<script>
+  const displayImage = document.getElementById('multi-aov-display') as HTMLImageElement;
+  const buttons = document.querySelectorAll('.aov-btn');
+
+  buttons.forEach(button => {
+    button.addEventListener('click', (e) => {
+      const target = e.currentTarget as HTMLButtonElement;
+      
+      // 1. Change the main image to this button's data-image
+      displayImage.src = target.getAttribute('data-image') || '';
+
+      // 2. Reset all buttons back to gray (unselected)
+      buttons.forEach(btn => {
+        btn.classList.remove('bg-brand-amber', 'text-text-white');
+        btn.classList.add('bg-cabilo-card', 'text-text-silver');
+      });
+
+      // 3. Light up the clicked button with your CABILO Amber!
+      target.classList.remove('bg-cabilo-card', 'text-text-silver');
+      target.classList.add('bg-brand-amber', 'text-text-white');
+    });
+  });
+</script>

@@ -1,0 +1,73 @@
+---
+// src/components/AovSlider.astro
+export interface Props {
+  imageBase: string; // The Beauty Pass (Bottom Layer)
+  imageTop: string;  // The Wireframe/Normal Pass (Top Layer)
+  labelBase?: string;
+  labelTop?: string;
+}
+
+const { 
+  imageBase, 
+  imageTop, 
+  labelBase = "Beauty", 
+  labelTop = "Wireframe" 
+} = Astro.props;
+---
+
+<div class="relative w-full aspect-video rounded-md overflow-hidden bg-cabilo-obsidian select-none group border border-cabilo-card" data-aov-container>
+  
+  <!-- Base Image (Beauty) -->
+  <img src={imageBase} alt={labelBase} class="absolute inset-0 w-full h-full object-cover" />
+  
+  <!-- Top Image (Wireframe/Pass) wrapped in a clipping container -->
+  <div class="absolute inset-0 w-full h-full object-cover border-r-2 border-brand-amber overflow-hidden" data-aov-clipper style="width: 50%;">
+    <img src={imageTop} alt={labelTop} class="absolute inset-0 w-full h-full object-cover max-w-none" data-aov-top-image />
+  </div>
+
+  <!-- The Draggable Slider Handle -->
+  <div class="absolute top-0 bottom-0 w-1 bg-transparent cursor-ew-resize flex items-center justify-center z-10" data-aov-slider style="left: 50%; transform: translateX(-50%);">
+    <div class="w-8 h-8 bg-brand-amber rounded-full shadow-[0_0_15px_rgba(230,115,0,0.8)] flex items-center justify-center pointer-events-none">
+      <svg class="w-5 h-5 text-cabilo-obsidian" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 9l4-4 4 4m0 6l-4 4-4-4"></path></svg>
+    </div>
+  </div>
+
+  <!-- Labels -->
+  <div class="absolute bottom-4 left-4 bg-cabilo-obsidian/80 backdrop-blur-sm px-3 py-1 rounded text-xs tracking-widest text-text-white uppercase">{labelBase}</div>
+  <div class="absolute bottom-4 right-4 bg-cabilo-obsidian/80 backdrop-blur-sm px-3 py-1 rounded text-xs tracking-widest text-text-white uppercase">{labelTop}</div>
+</div>
+
+<!-- This script makes the slider draggable! -->
+<script>
+  const containers = document.querySelectorAll('[data-aov-container]');
+  
+  containers.forEach(container => {
+    const clipper = container.querySelector('[data-aov-clipper]') as HTMLElement;
+    const slider = container.querySelector('[data-aov-slider]') as HTMLElement;
+    const topImage = container.querySelector('[data-aov-top-image]') as HTMLImageElement;
+    let isDragging = false;
+
+    // Keep the inner image from squishing when we resize the clipper
+    const fixImageWidth = () => { if(topImage) topImage.style.width = `${container.clientWidth}px`; };
+    window.addEventListener('resize', fixImageWidth);
+    fixImageWidth();
+
+    const moveSlider = (e: MouseEvent | TouchEvent) => {
+      if (!isDragging) return;
+      const rect = container.getBoundingClientRect();
+      const x = ('touches' in e) ? e.touches[0].clientX : (e as MouseEvent).clientX;
+      let position = ((x - rect.left) / rect.width) * 100;
+      position = Math.max(0, Math.min(100, position)); // Keep between 0 and 100%
+      
+      clipper.style.width = `${position}%`;
+      slider.style.left = `${position}%`;
+    };
+
+    slider.addEventListener('mousedown', () => isDragging = true);
+    slider.addEventListener('touchstart', () => isDragging = true);
+    window.addEventListener('mouseup', () => isDragging = false);
+    window.addEventListener('touchend', () => isDragging = false);
+    window.addEventListener('mousemove', moveSlider);
+    window.addEventListener('touchmove', moveSlider);
+  });
+</script>

@@ -1,0 +1,15 @@
+/* This imports the Tailwind styling engine */
+@import "tailwindcss";
+
+/* This teaches Tailwind the CABILO brand colors */
+@theme {
+  --color-cabilo-obsidian: #09090b; /* Deepest background */
+  --color-cabilo-dark: #121215;     /* Slightly lighter for sections */
+  --color-cabilo-card: #1c1c21;     /* For project cards and UI elements */
+  
+  --color-text-white: #FFFFFF;      /* Headers */
+  --color-text-silver: #A1A1AA;     /* Body text */
+  
+  --color-brand-gold: #FAC018;      /* Gradient start */
+  --color-brand-amber: #E67300;     /* Gradient end */
+}
