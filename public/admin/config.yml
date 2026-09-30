@@ -1,61 +1,50 @@
 backend:
   name: github
-  repo: Cabilo/cabilo-portfolio # <--- MAKE SURE THIS MATCHES YOUR GITHUB URL EXACTLY
+  repo: Cabilo/cabilo-portfolio
   branch: main
-  # This tells it to use the new, serverless GitHub login method!
   use_pkce: true
-  app_id: Ov23liaGvVjZ0EECKYA8 # <--- We will get this in Step 3!
+  app_id: Ov23liaGvVjZ0EECKYA8
 
-# This tells the CMS where to save uploaded images
 media_folder: "public/uploads"
 public_folder: "/uploads"
 
-# ----------------------------------------------------
-# DATABASE MAPPING (Matches our content.config.ts!)
-# ----------------------------------------------------
 collections:
-  # 1. THE PROJECTS COLLECTION
   - name: "projects"
     label: "Projects"
     folder: "src/content/projects"
     create: true
     slug: "{{slug}}"
     fields:
-      - {label: "Title", name: "title", widget: "string"}
-      - {label: "Category", name: "category", widget: "string"}
-      - {label: "Thumbnail Image", name: "thumbnail", widget: "image"}
-      - {label: "Showreel URL (YouTube ID)", name: "showreelUrl", widget: "string", required: false}
-      - {label: "Your Role", name: "role", widget: "string", default: "Lead 3D Artist"}
-      - {label: "Client", name: "client", widget: "string", default: "Personal Project"}
-      - {label: "Software Used", name: "softwareUsed", widget: "list"}
-      
+      - { label: "Title", name: "title", widget: "string" }
+      - { label: "Category", name: "category", widget: "string" }
+      - { label: "Thumbnail Image", name: "thumbnail", widget: "image" }
+      - { label: "Showreel URL (YouTube ID)", name: "showreelUrl", widget: "string", required: false }
+      - { label: "Your Role", name: "role", widget: "string", default: "Lead 3D Artist" }
+      - { label: "Client", name: "client", widget: "string", default: "Personal Project" }
+      - { label: "Software Used", name: "softwareUsed", widget: "list" }
+      - { label: "Turntable Sequence Folder", name: "turntable", widget: "string", required: false, hint: "e.g., /turntables/test" }
+      - { label: "Project Breakdown (Markdown)", name: "body", widget: "markdown" }
       - label: "AOV Passes"
         name: "aovPasses"
         widget: "list"
         required: false
         fields:
-          - {label: "Pass Name (e.g., Viewport)", name: "name", widget: "string"}
-          - {label: "Image", name: "image", widget: "image"}
-      
-      - {label: "Turntable Sequence Folder", name: "turntable", widget: "string", required: false, hint: "e.g., /turntables/test"}
-      
-      - {label: "Project Breakdown (Markdown)", name: "body", widget: "markdown"}
+          - { label: "Pass Name (e.g., Viewport)", name: "name", widget: "string" }
+          - { label: "Image", name: "image", widget: "image" }
 
-  # 2. THE LEARNING COLLECTION (Tutorials & Breakdowns)
   - name: "learning"
     label: "Learning (Tutorials & Breakdowns)"
     folder: "src/content/learning"
     create: true
     slug: "{{slug}}"
     fields:
-      - {label: "Title", name: "title", widget: "string"}
-      - {label: "Description", name: "description", widget: "string"}
-      - {label: "Publish Date", name: "publishDate", widget: "datetime", format: "YYYY-MM-DD", date_format: "YYYY-MM-DD", time_format: false}
-      - {label: "Post Type", name: "type", widget: "select", options: ["Tutorial", "Breakdown"]}
-      - {label: "Format", name: "format", widget: "select", options: ["Video", "Article"]}
-      - {label: "Tags (Software/Technique)", name: "tags", widget: "list"}
-      - {label: "Thumbnail Image", name: "thumbnail", widget: "image"}
-      - {label: "YouTube ID", name: "youtubeId", widget: "string", required: false}
-      - {label: "Feature this post?", name: "featured", widget: "boolean", default: false}
-      
-      - {label: "Article / Breakdown Content (Markdown)", name: "body", widget: "markdown"}
+      - { label: "Title", name: "title", widget: "string" }
+      - { label: "Description", name: "description", widget: "string" }
+      - { label: "Publish Date", name: "publishDate", widget: "datetime", format: "YYYY-MM-DD", date_format: "YYYY-MM-DD", time_format: false }
+      - { label: "Post Type", name: "type", widget: "select", options: ["Tutorial", "Breakdown"] }
+      - { label: "Format", name: "format", widget: "select", options: ["Video", "Article"] }
+      - { label: "Tags (Software/Technique)", name: "tags", widget: "list" }
+      - { label: "Thumbnail Image", name: "thumbnail", widget: "image" }
+      - { label: "YouTube ID", name: "youtubeId", widget: "string", required: false }
+      - { label: "Feature this post?", name: "featured", widget: "boolean", default: false }
+      - { label: "Article Content (Markdown)", name: "body", widget: "markdown" }

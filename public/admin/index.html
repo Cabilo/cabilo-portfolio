@@ -4,10 +4,21 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>CABILO Content Manager</title>
-    <!-- We bring in the Decap CMS script via CDN -->
-    <script src="https://unpkg.com/decap-cms@^3.1.2/dist/decap-cms.js"></script>
+    <link href="config.yml" type="text/yaml" rel="cms-config-url">
+    
+    <style>
+      /* 1. Base dark background */
+      body { margin: 0; background-color: #09090b; }
+      
+      /* 2. Invert the blinding white Decap CMS UI into a sleek dark mode */
+      html { filter: invert(95%) hue-rotate(180deg); }
+      
+      /* 3. Double-invert all images and videos so your artwork looks normal! */
+      img, video, iframe, picture { filter: invert(100%) hue-rotate(180deg); }
+    </style>
   </head>
   <body>
-    <!-- The CMS renders exactly here! -->
+    <div id="nc-root"></div>
+    <script src="https://unpkg.com/decap-cms@^3.1.2/dist/decap-cms.js"></script>
   </body>
 </html>
