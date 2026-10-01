@@ -12,7 +12,12 @@ const projectCollection = defineCollection({
     role: z.string().default('Lead 3D Artist'),
     client: z.string().default('Personal Project'),
     softwareUsed: z.array(z.string()).default([]),
-    aovPasses: z.array(z.object({ name: z.string(), image: z.string() })).optional(),
+    aovTitle: z.string().optional(),
+    aovAspectRatio: z.string().optional(),
+    aovPasses: z.array(z.object({
+      name: z.string(),
+      image: z.string(),
+    })).optional(),
     turntable: z.string().optional(),
   }),
 });

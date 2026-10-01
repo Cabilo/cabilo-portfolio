@@ -62,11 +62,17 @@ if (project.data.turntable) {
     </div>
 
     {project.data.aovPasses && project.data.aovPasses.length > 0 && (
-      <div class="mb-20">
-        <h3 class="text-xl text-text-white mb-6 uppercase tracking-wider">AOV Pass Inspector</h3>
-        <DynamicAov passes={project.data.aovPasses} />
-      </div>
-    )}
+  <>
+    <h2 class="text-3xl font-bold mb-8">
+      {project.data.aovTitle || "AOV Pass Inspector"}
+    </h2>
+
+    <DynamicAov
+      passes={project.data.aovPasses}
+      aspectRatio={project.data.aovAspectRatio || "16/9"}
+    />
+  </>
+)}
 
     {generatedFrames.length > 0 && (
       <div class="mb-20">
