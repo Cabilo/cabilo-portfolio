@@ -70,22 +70,24 @@ collections:
           - label: "Image"
             name: "image"
             widget: "object"
-            summary: "Image"
             fields:
-
               - {
-                  label: "Image",
-                  name: "image",
-                  widget: "image"
-                }
-
-              - {
-                  label: "Comment",
-                  name: "comment",
-                  widget: "text",
-                  required: false,
-                  hint: "Optional text displayed below the image."
-                }
+                  label: "Title",
+                   name: "title",
+                   widget: "string",
+                   required: false
+                 }
+               - {
+                   label: "Image",
+                   name: "image",
+                   widget: "image"
+                 }
+               - {
+                   label: "Comment",
+                   name: "comment",
+                   widget: "text",
+                   required: false
+                 }
 
           # --------------------------------------------------------
           # VIDEO
@@ -94,23 +96,24 @@ collections:
           - label: "Video"
             name: "video"
             widget: "object"
-            summary: "Video"
             fields:
-
               - {
-                  label: "Video URL",
-                  name: "videoUrl",
-                  widget: "string",
-                  hint: "Paste the full YouTube, Vimeo, MP4, or WebM URL."
-                }
-
-              - {
-                  label: "Comment",
-                  name: "comment",
-                  widget: "text",
-                  required: false,
-                  hint: "Optional text displayed below the video."
-                }
+                   label: "Title",
+                   name: "title",
+                   widget: "string",
+                   required: false
+                 }
+               - {
+                   label: "Video URL",
+                   name: "videoUrl",
+                   widget: "string"
+                 }
+               - {
+                   label: "Comment",
+                   name: "comment",
+                   widget: "text",
+                   required: false
+                 }
 
           # --------------------------------------------------------
           # TURNTABLE
@@ -119,70 +122,59 @@ collections:
           - label: "Turntable"
             name: "turntable"
             widget: "object"
-            summary: "360° Turntable"
             fields:
-
               - {
-                  label: "Image Sequence Folder",
-                  name: "folder",
+                  label: "Title",
+                  name: "title",
                   widget: "string",
-                  hint: "Path inside public/, for example: turntables/character"
+                  required: false
                 }
-
+              - {
+                  label: "Folder",
+                  name: "folder",
+                  widget: "string"
+                }
               - {
                   label: "Comment",
                   name: "comment",
                   widget: "text",
-                  required: false,
-                  hint: "Optional text displayed below the turntable."
+                  required: false
                 }
 
           # --------------------------------------------------------
           # AOV
           # --------------------------------------------------------
 
-          - label: "AOV Inspector"
+          - label: "AOV"
             name: "aov"
             widget: "object"
-            summary: "AOV Inspector"
             fields:
-
               - {
-                  label: "AOV Section Title",
-                  name: "aovTitle",
+                  label: "Title",
+                  name: "title",
                   widget: "string",
                   required: false
                 }
-
               - label: "AOV Passes"
                 name: "aovPasses"
                 widget: "list"
-                required: false
-                label_singular: "AOV Pass"
-                collapsed: true
-                summary: "{{fields.name}}"
                 fields:
-
                   - {
-                      label: "Pass Name",
+                      label: "Name",
                       name: "name",
                       widget: "string"
                     }
-
                   - {
                       label: "Image",
                       name: "image",
                       widget: "image"
                     }
-
               - {
                   label: "Comment",
                   name: "comment",
                   widget: "text",
-                  required: false,
-                  hint: "Optional text displayed below the AOV inspector."
+                  required: false
                 }
-
       # ============================================================
       # LEGACY FIELDS
       # ============================================================

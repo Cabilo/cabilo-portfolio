@@ -22,22 +22,25 @@ const { Content } = await render(project);
 type MediaBlock =
   | {
       type: 'image';
+      title?: string;
       image: string;
       comment?: string;
     }
   | {
       type: 'video';
+      title?: string;
       videoUrl: string;
       comment?: string;
     }
   | {
       type: 'turntable';
+      title?: string;
       folder: string;
       comment?: string;
     }
   | {
       type: 'aov';
-      aovTitle?: string;
+      title?: string;
       aovPasses: {
         name: string;
         image: string;
@@ -231,6 +234,12 @@ const showreel = project.data.showreelUrl
       if (block.type === 'image') {
         return (
           <div class="mb-16">
+            
+            {block.title && (
+              <h3 class="text-xl text-text-white mb-6 uppercase tracking-wider">
+                {block.title}
+              </h3>
+            )}
 
             <div class="rounded-md overflow-hidden shadow-2xl border border-cabilo-card">
               <img
@@ -256,6 +265,12 @@ const showreel = project.data.showreelUrl
 
         return (
           <div class="mb-16">
+
+            {block.title && (
+              <h3 class="text-xl text-text-white mb-6 uppercase tracking-wider">
+                {block.title}
+              </h3>
+            )}
 
             <div class="rounded-md overflow-hidden shadow-2xl border border-cabilo-card relative aspect-video">
 
@@ -330,10 +345,10 @@ const showreel = project.data.showreelUrl
         return (
           <div class="mb-20">
 
-            {block.aovTitle && (
-              <h2 class="text-3xl font-bold mb-8">
-                {block.aovTitle}
-              </h2>
+            {block.title && (
+              <h3 class="text-xl text-text-white mb-6 uppercase tracking-wider">
+                {block.title}
+              </h3>
             )}
 
             <DynamicAov
