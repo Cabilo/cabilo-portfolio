@@ -8,9 +8,9 @@ client: Personal Project
 softwareUsed:
   - Zbrush
 mediaBlocks:
-  - type: video
-    videoUrl: https://youtu.be/PYQ2ekfWoOs
-    comment: Mohawk Turntable video
+  - type: turntable
+    folder: turntables/test
+    comment: Test turntable
   - type: image
     image: https://cdnb.artstation.com/p/assets/images/images/031/216/037/large/lucas-cabilo-highresscreenshot00012.jpg?1602954475
     comment: |
@@ -27,9 +27,25 @@ mediaBlocks:
       - name: Wireframe
         image: https://help.maxon.net/r3d/cinema/en-us/Content/Resources/Images/aov_utility.Wireframe1353.jpg
     comment: New AOV pass, the other one without this comment is the Legacy AOV viewer
+  - type: video
+    videoUrl: https://youtu.be/PYQ2ekfWoOs
+    comment: Mohawk Turntable video
+  - type: image
+    image: https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRZlSfOfEnxtBJ8JC7TbvhS1d2YmB1D8p-LJJRC4Xff7abZWRQVsceNeiE&s=10
+  - type: image
+    image: https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTjQw5RMJE-Lbg_-7cltruF-d3GMOTw9Ovpyn0tapdzrtPqF67l59AtHlc&s=10
+  - type: image
+    image: https://cdna.artstation.com/p/assets/covers/images/058/833/090/large/marco-plouffe-keos-masons-marco-plouffe-keos-masons-thumbartsta.jpg?1675084187
+  - type: aov
+    aovPasses:
+      - image: https://i0.wp.com/jamesprattvfx.wordpress.com/wp-content/uploads/2018/11/pastedimage4.png
+        name: Indirect Specular
+      - image: https://i0.wp.com/jamesprattvfx.wordpress.com/wp-content/uploads/2018/11/pastedimage5.png
+        name: Indirect Diffuse
+  - type: video
+    videoUrl: https://vimeo.com/112422857
   - type: turntable
-    folder: turntables/test
-    comment: Test turntable
+    folder: turntables/testb
 aovTitle: LEGACY
 aovPasses:
   - name: Beauty
