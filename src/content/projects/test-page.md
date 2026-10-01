@@ -2,10 +2,32 @@
 title: Test Page
 category: Lookdev
 thumbnail: https://cdn.80.lv/api/upload/content/43/images/68d189e5acf9b/widen_920x0.jpg
+showreelUrl: https://www.youtube.com/watch?v=vRMMimi6cKM
 role: Lead 3D Artist
 client: Personal Project
 softwareUsed:
   - Zbrush
+mediaBlocks:
+  - type: video
+    videoUrl: https://youtu.be/PYQ2ekfWoOs
+    comment: Mohawk Turntable video
+  - type: image
+    image: https://cdnb.artstation.com/p/assets/images/images/031/216/037/large/lucas-cabilo-highresscreenshot00012.jpg?1602954475
+    comment: |
+      Haunted Pumpkin
+  - type: aov
+    aovTitle: AOV Passes
+    aovPasses:
+      - name: Beauty
+        image: https://help.maxon.net/r3d/cinema/en-us/Content/Resources/Images/aov_scene_beauty17ce.jpg
+      - name: Reflection
+        image: https://help.maxon.net/r3d/cinema/en-us/Content/Resources/Images/aov_scene_test.Reflectionsb184.jpg
+      - name: Depth
+        image: https://help.maxon.net/r3d/cinema/en-us/Content/Resources/Images/aov_utility.Z_Normalized_Inverted4230.jpg
+      - name: Wireframe
+        image: https://help.maxon.net/r3d/cinema/en-us/Content/Resources/Images/aov_utility.Wireframe1353.jpg
+    comment: New AOV pass, the other one without this comment is the Legacy AOV viewer
+aovTitle: LEGACY
 aovPasses:
   - name: Beauty
     image: https://help.maxon.net/r3d/cinema/en-us/Content/Resources/Images/aov_scene_beauty17ce.jpg
