@@ -7,52 +7,302 @@ media_folder: "public/uploads"
 public_folder: "/uploads"
 
 collections:
+
   - name: "projects"
     label: "Projects"
     folder: "src/content/projects"
     create: true
     slug: "{{slug}}"
-    fields:
-      - { label: "Title", name: "title", widget: "string" }
-      - { label: "Category", name: "category", widget: "string" }
-      - { label: "Thumbnail Image", name: "thumbnail", widget: "image" }
-      - { label: "Showreel URL", name: "showreelUrl", widget: "string", required: false }
-      - { label: "Your Role", name: "role", widget: "string", default: "Lead 3D Artist" }
-      - { label: "Client", name: "client", widget: "string", default: "Personal Project" }
-      
-      # SAFE TAGS: A stable list allowing you to type whatever software you want
-      - { label: "Software Used", name: "softwareUsed", widget: "list", default: ["Unreal Engine 5", "Maya", "Nuke"] }
-      
-      - { label: "AOV Section Title", name: "aovTitle", widget: "string", required: false }
-      - label: "AOV Passes"
 
+    fields:
+
+      - { label: "Title", name: "title", widget: "string" }
+
+      - { label: "Category", name: "category", widget: "string" }
+
+      - { label: "Thumbnail Image", name: "thumbnail", widget: "image" }
+
+      - {
+          label: "Showreel URL",
+          name: "showreelUrl",
+          widget: "string",
+          required: false
+        }
+
+      - {
+          label: "Your Role",
+          name: "role",
+          widget: "string",
+          default: "Lead 3D Artist"
+        }
+
+      - {
+          label: "Client",
+          name: "client",
+          widget: "string",
+          default: "Personal Project"
+        }
+
+      - {
+          label: "Software Used",
+          name: "softwareUsed",
+          widget: "list",
+          default: ["Unreal Engine 5", "Maya", "Nuke"]
+        }
+
+      # ============================================================
+      # MEDIA BLOCKS
+      # ============================================================
+
+      - label: "Media Blocks"
+        name: "mediaBlocks"
+        widget: "list"
+        required: false
+        label_singular: "Media Block"
+        collapsed: true
+        summary: "{{fields.type}}"
+        types:
+
+          # --------------------------------------------------------
+          # IMAGE
+          # --------------------------------------------------------
+
+          - label: "Image"
+            name: "image"
+            widget: "object"
+            summary: "Image"
+            fields:
+
+              - {
+                  label: "Image",
+                  name: "image",
+                  widget: "image"
+                }
+
+              - {
+                  label: "Comment",
+                  name: "comment",
+                  widget: "text",
+                  required: false,
+                  hint: "Optional text displayed below the image."
+                }
+
+          # --------------------------------------------------------
+          # VIDEO
+          # --------------------------------------------------------
+
+          - label: "Video"
+            name: "video"
+            widget: "object"
+            summary: "Video"
+            fields:
+
+              - {
+                  label: "Video URL",
+                  name: "videoUrl",
+                  widget: "string",
+                  hint: "Paste the full YouTube, Vimeo, MP4, or WebM URL."
+                }
+
+              - {
+                  label: "Comment",
+                  name: "comment",
+                  widget: "text",
+                  required: false,
+                  hint: "Optional text displayed below the video."
+                }
+
+          # --------------------------------------------------------
+          # TURNTABLE
+          # --------------------------------------------------------
+
+          - label: "Turntable"
+            name: "turntable"
+            widget: "object"
+            summary: "360° Turntable"
+            fields:
+
+              - {
+                  label: "Image Sequence Folder",
+                  name: "folder",
+                  widget: "string",
+                  hint: "Path inside public/, for example: turntables/character"
+                }
+
+              - {
+                  label: "Comment",
+                  name: "comment",
+                  widget: "text",
+                  required: false,
+                  hint: "Optional text displayed below the turntable."
+                }
+
+          # --------------------------------------------------------
+          # AOV
+          # --------------------------------------------------------
+
+          - label: "AOV Inspector"
+            name: "aov"
+            widget: "object"
+            summary: "AOV Inspector"
+            fields:
+
+              - {
+                  label: "AOV Section Title",
+                  name: "aovTitle",
+                  widget: "string",
+                  required: false
+                }
+
+              - label: "AOV Passes"
+                name: "aovPasses"
+                widget: "list"
+                required: false
+                label_singular: "AOV Pass"
+                collapsed: true
+                summary: "{{fields.name}}"
+                fields:
+
+                  - {
+                      label: "Pass Name",
+                      name: "name",
+                      widget: "string"
+                    }
+
+                  - {
+                      label: "Image",
+                      name: "image",
+                      widget: "image"
+                    }
+
+              - {
+                  label: "Comment",
+                  name: "comment",
+                  widget: "text",
+                  required: false,
+                  hint: "Optional text displayed below the AOV inspector."
+                }
+
+      # ============================================================
+      # LEGACY FIELDS
+      # ============================================================
+      #
+      # These remain temporarily while the existing project content
+      # is migrated to Media Blocks. Do not use these for new content.
+      #
+
+      - {
+          label: "Legacy AOV Section Title",
+          name: "aovTitle",
+          widget: "string",
+          required: false
+        }
+
+      - label: "Legacy AOV Passes"
         name: "aovPasses"
         widget: "list"
         required: false
+        collapsed: true
         fields:
-          - { label: "Pass Name", name: "name", widget: "string" }
-          - { label: "Image", name: "image", widget: "image" }
-          
-      - { label: "Turntable Title Override", name: "turntableTitle", widget: "string", required: false }
-      - { label: "Turntable Folder", name: "turntable", widget: "string", required: false }
-      - { label: "Project Breakdown", name: "body", widget: "markdown" }
+
+          - {
+              label: "Pass Name",
+              name: "name",
+              widget: "string"
+            }
+
+          - {
+              label: "Image",
+              name: "image",
+              widget: "image"
+            }
+
+      - {
+          label: "Legacy Turntable Folder",
+          name: "turntable",
+          widget: "string",
+          required: false
+        }
+
+      # ============================================================
+      # PROJECT CONTENT
+      # ============================================================
+
+      - {
+          label: "Project Breakdown",
+          name: "body",
+          widget: "markdown"
+        }
 
   - name: "learning"
     label: "Learning (Tutorials & Breakdowns)"
     folder: "src/content/learning"
     create: true
     slug: "{{slug}}"
+
     fields:
-      - { label: "Title", name: "title", widget: "string" }
-      - { label: "Description", name: "description", widget: "string" }
-      - { label: "Publish Date", name: "publishDate", widget: "datetime" }
-      - { label: "Post Type", name: "type", widget: "select", options: ["Tutorial", "Breakdown"] }
-      - { label: "Format", name: "format", widget: "select", options: ["Video", "Article"] }
-      
-      # SAFE TAGS: A stable list allowing you to type whatever tags you want
-      - { label: "Tags", name: "tags", widget: "list", default: ["Lighting", "Topology"] }
-      
-      - { label: "Thumbnail Image", name: "thumbnail", widget: "image" }
-      - { label: "YouTube ID", name: "youtubeId", widget: "string", required: false }
-      - { label: "Feature this post?", name: "featured", widget: "boolean", default: false }
-      - { label: "Article Content", name: "body", widget: "markdown" }
+
+      - {
+          label: "Title",
+          name: "title",
+          widget: "string"
+        }
+
+      - {
+          label: "Description",
+          name: "description",
+          widget: "string"
+        }
+
+      - {
+          label: "Publish Date",
+          name: "publishDate",
+          widget: "datetime"
+        }
+
+      - {
+          label: "Post Type",
+          name: "type",
+          widget: "select",
+          options: ["Tutorial", "Breakdown"]
+        }
+
+      - {
+          label: "Format",
+          name: "format",
+          widget: "select",
+          options: ["Video", "Article"]
+        }
+
+      - {
+          label: "Tags",
+          name: "tags",
+          widget: "list",
+          default: ["Lighting", "Topology"]
+        }
+
+      - {
+          label: "Thumbnail Image",
+          name: "thumbnail",
+          widget: "image"
+        }
+
+      - {
+          label: "YouTube ID",
+          name: "youtubeId",
+          widget: "string",
+          required: false
+        }
+
+      - {
+          label: "Feature this post?",
+          name: "featured",
+          widget: "boolean",
+          default: false
+        }
+
+      - {
+          label: "Article Content",
+          name: "body",
+          widget: "markdown"
+        }
