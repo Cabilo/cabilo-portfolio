@@ -28,7 +28,7 @@ mediaBlocks:
         image: https://help.maxon.net/r3d/cinema/en-us/Content/Resources/Images/aov_utility.Wireframe1353.jpg
     comment: New AOV pass, the other one without this comment is the Legacy AOV viewer
   - type: turntable
-    folder: public/turntables/test
+    folder: turntables/test
     comment: Test turntable
 aovTitle: LEGACY
 aovPasses:
