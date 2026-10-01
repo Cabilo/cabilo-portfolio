@@ -7,31 +7,33 @@ export async function getStaticPaths() {
   const allProjects = await getCollection('projects');
   const allLearning = await getCollection('learning');
 
-  // 1. Create an empty set to hold every unique tag you've ever used
   const uniqueTags = new Set<string>();
-
-  // 2. Loop through everything and add the tags to the set
   allProjects.forEach(p => p.data.softwareUsed.forEach(tag => uniqueTags.add(tag)));
   allLearning.forEach(l => l.data.tags.forEach(tag => uniqueTags.add(tag)));
 
-  // 3. Generate a page for each tag
-  return Array.from(uniqueTags).map((tag) => {
-    // This converts "Unreal Engine 5" into a web-safe URL like "unreal-engine-5"
+  // We create a safety array to prevent duplicate URL collisions
+  const processedSlugs = new Set<string>();
+  const paths: any[] = [];
+
+  Array.from(uniqueTags).forEach((tag) => {
     const slug = tag.toString().toLowerCase().replace(/\s+/g, '-').replace(/[^\w-]+/g, '');
     
-    // 4. Find all projects and learning posts that contain this specific tag
-    const filteredProjects = allProjects.filter(p => p.data.softwareUsed.includes(tag));
-    const filteredLearning = allLearning.filter(l => l.data.tags.includes(tag));
+    // Only build the page if we haven't already built this exact slug!
+    if (!processedSlugs.has(slug)) {
+      processedSlugs.add(slug);
+      
+      // Case-insensitive filtering so "ZBrush" and "zbrush" both match
+      const filteredProjects = allProjects.filter(p => p.data.softwareUsed.some(t => t.toLowerCase() === tag.toLowerCase()));
+      const filteredLearning = allLearning.filter(l => l.data.tags.some(t => t.toLowerCase() === tag.toLowerCase()));
 
-    return {
-      params: { tag: slug },
-      props: { 
-        tagName: tag, 
-        projects: filteredProjects, 
-        learning: filteredLearning 
-      },
-    };
+      paths.push({
+        params: { tag: slug },
+        props: { tagName: tag, projects: filteredProjects, learning: filteredLearning },
+      });
+    }
   });
+
+  return paths;
 }
 
 const { tagName, projects, learning } = Astro.props;
@@ -50,7 +52,6 @@ const { tagName, projects, learning } = Astro.props;
       </p>
     </div>
 
-    <!-- If there are Projects with this tag, show them! -->
     {projects.length > 0 && (
       <div class="mb-20">
         <h2 class="text-2xl font-bold text-text-white uppercase tracking-widest mb-8 border-b border-cabilo-card pb-4">Projects</h2>
@@ -62,7 +63,6 @@ const { tagName, projects, learning } = Astro.props;
       </div>
     )}
 
-    <!-- If there are Learning posts with this tag, show them! -->
     {learning.length > 0 && (
       <div class="mb-20">
         <h2 class="text-2xl font-bold text-text-white uppercase tracking-widest mb-8 border-b border-cabilo-card pb-4">Learning & Breakdowns</h2>
