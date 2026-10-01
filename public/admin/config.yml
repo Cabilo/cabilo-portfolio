@@ -18,19 +18,26 @@ collections:
       - { label: "Title", name: "title", widget: "string" }
       - { label: "Category", name: "category", widget: "string" }
       - { label: "Thumbnail Image", name: "thumbnail", widget: "image" }
-      - { label: "Showreel URL (YouTube ID)", name: "showreelUrl", widget: "string", required: false }
+      - { label: "Showreel URL", name: "showreelUrl", widget: "string", required: false }
       - { label: "Your Role", name: "role", widget: "string", default: "Lead 3D Artist" }
       - { label: "Client", name: "client", widget: "string", default: "Personal Project" }
-      - { label: "Software Used", name: "softwareUsed", widget: "list" }
-      - { label: "Turntable Sequence Folder", name: "turntable", widget: "string", required: false, hint: "e.g., /turntables/test" }
-      - { label: "Project Breakdown (Markdown)", name: "body", widget: "markdown" }
+      - label: "Software Used"
+        name: "softwareUsed"
+        widget: "select"
+        multiple: true
+        create: true
+        options: ["Unreal Engine 5", "Maya", "Nuke", "ZBrush", "Substance Painter", "Houdini"]
+      - { label: "AOV Section Title Override", name: "aovTitle", widget: "string", required: false }
       - label: "AOV Passes"
         name: "aovPasses"
         widget: "list"
         required: false
         fields:
-          - { label: "Pass Name (e.g., Viewport)", name: "name", widget: "string" }
+          - { label: "Pass Name", name: "name", widget: "string" }
           - { label: "Image", name: "image", widget: "image" }
+      - { label: "Turntable Title Override", name: "turntableTitle", widget: "string", required: false }
+      - { label: "Turntable Folder", name: "turntable", widget: "string", required: false }
+      - { label: "Project Breakdown", name: "body", widget: "markdown" }
 
   - name: "learning"
     label: "Learning (Tutorials & Breakdowns)"
@@ -40,11 +47,16 @@ collections:
     fields:
       - { label: "Title", name: "title", widget: "string" }
       - { label: "Description", name: "description", widget: "string" }
-      - { label: "Publish Date", name: "publishDate", widget: "datetime", format: "YYYY-MM-DD", date_format: "YYYY-MM-DD", time_format: false }
+      - { label: "Publish Date", name: "publishDate", widget: "datetime" }
       - { label: "Post Type", name: "type", widget: "select", options: ["Tutorial", "Breakdown"] }
       - { label: "Format", name: "format", widget: "select", options: ["Video", "Article"] }
-      - { label: "Tags (Software/Technique)", name: "tags", widget: "list" }
+      - label: "Tags"
+        name: "tags"
+        widget: "select"
+        multiple: true
+        create: true
+        options: ["Lighting", "Topology", "Lookdev", "Cinematics", "Texturing", "Compositing"]
       - { label: "Thumbnail Image", name: "thumbnail", widget: "image" }
       - { label: "YouTube ID", name: "youtubeId", widget: "string", required: false }
       - { label: "Feature this post?", name: "featured", widget: "boolean", default: false }
-      - { label: "Article Content (Markdown)", name: "body", widget: "markdown" }
+      - { label: "Article Content", name: "body", widget: "markdown" }
