@@ -1,9 +1,7 @@
 backend:
-  name: github
-  repo: Cabilo/cabilo-portfolio
+  name: turbo-github
+  turbo_site_id: 1474ffb3-9850-4801-a13d-418ab9c4a71c
   branch: main
-  use_pkce: true
-  app_id: Ov23liaGvVjZ0EECKYA8
 
 media_folder: "public/uploads"
 public_folder: "/uploads"
