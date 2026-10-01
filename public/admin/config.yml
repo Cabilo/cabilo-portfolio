@@ -21,12 +21,10 @@ collections:
       - { label: "Showreel URL", name: "showreelUrl", widget: "string", required: false }
       - { label: "Your Role", name: "role", widget: "string", default: "Lead 3D Artist" }
       - { label: "Client", name: "client", widget: "string", default: "Personal Project" }
-      - label: "Software Used"
-        name: "softwareUsed"
-        widget: "select"
-        multiple: true
-        create: true
-        options: ["Unreal Engine 5", "Maya", "Nuke", "ZBrush", "Substance Painter", "Houdini"]
+      
+      # SAFE TAGS: A stable list allowing you to type whatever software you want
+      - { label: "Software Used", name: "softwareUsed", widget: "list", default: ["Unreal Engine 5", "Maya", "Nuke"] }
+      
       - { label: "AOV Section Title Override", name: "aovTitle", widget: "string", required: false }
       - label: "AOV Passes"
         name: "aovPasses"
@@ -35,6 +33,7 @@ collections:
         fields:
           - { label: "Pass Name", name: "name", widget: "string" }
           - { label: "Image", name: "image", widget: "image" }
+          
       - { label: "Turntable Title Override", name: "turntableTitle", widget: "string", required: false }
       - { label: "Turntable Folder", name: "turntable", widget: "string", required: false }
       - { label: "Project Breakdown", name: "body", widget: "markdown" }
@@ -50,12 +49,10 @@ collections:
       - { label: "Publish Date", name: "publishDate", widget: "datetime" }
       - { label: "Post Type", name: "type", widget: "select", options: ["Tutorial", "Breakdown"] }
       - { label: "Format", name: "format", widget: "select", options: ["Video", "Article"] }
-      - label: "Tags"
-        name: "tags"
-        widget: "select"
-        multiple: true
-        create: true
-        options: ["Lighting", "Topology", "Lookdev", "Cinematics", "Texturing", "Compositing"]
+      
+      # SAFE TAGS: A stable list allowing you to type whatever tags you want
+      - { label: "Tags", name: "tags", widget: "list", default: ["Lighting", "Topology"] }
+      
       - { label: "Thumbnail Image", name: "thumbnail", widget: "image" }
       - { label: "YouTube ID", name: "youtubeId", widget: "string", required: false }
       - { label: "Feature this post?", name: "featured", widget: "boolean", default: false }
