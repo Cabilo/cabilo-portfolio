@@ -1,18 +1,17 @@
 ---
-// src/components/TurntableScrubber.astro
-export interface Props {
-  frames: string[]; 
+interface Props {
+  frames: string[];
 }
+
 const { frames } = Astro.props;
 const frameDataString = JSON.stringify(frames);
 ---
 
 <turntable-scrubber data-frames={frameDataString} class="flex flex-col gap-3 w-full">
-  
+
   <div id="tt-container" class="relative w-full bg-cabilo-obsidian overflow-hidden ring-1 ring-cabilo-card shadow-lg cursor-ew-resize">
-    
-    <img id="tt-display" src={frames[0]} alt="3D Turntable" class="block w-full h-auto transition-transform duration-150 ease-out" style="transform: scale(1); transform-origin: 50% 50%;" draggable="false" />
-    
+
+    <img id="tt-display" src={frames[0]} alt="3D Turntable" class="block w-full h-auto transition-transform duration-150 ease-out select-none" style="transform: scale(1); transform-origin: 50% 50%;" draggable="false" />
     <div id="tt-overlay" class="absolute inset-0 bg-black/10 flex flex-col items-center justify-center pointer-events-none transition-opacity duration-700 z-20">
       <div class="flex flex-col items-center gap-2 bg-cabilo-dark/20 backdrop-blur-md px-6 py-4 rounded-xl border border-brand-amber/50 text-brand-amber shadow-[0_0_20px_rgba(230,115,0,0.3)]">
         <svg class="w-6 h-6 animate-pulse mb-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 8l-4 4 4 4m4-8l4 4-4 4"></path></svg>
@@ -20,10 +19,8 @@ const frameDataString = JSON.stringify(frames);
         <span class="text-[10px] uppercase tracking-widest text-text-silver">Scroll to Zoom • Hover to Pan</span>
       </div>
     </div>
-
   </div>
 
-  <!-- COUNTER MOVED OUTSIDE THE IMAGE -->
   <div class="flex items-center justify-center gap-6 text-[10px] tracking-widest text-text-silver font-mono bg-cabilo-dark/50 py-2 rounded border border-cabilo-card w-fit mx-auto px-6">
     <span>FRAME <span id="tt-counter" class="text-text-white font-bold">001</span> / {String(frames.length).padStart(3, '0')}</span>
     <span>ZOOM <span id="tt-zoom" class="text-text-white font-bold">1.0</span>x</span>
@@ -39,45 +36,85 @@ const frameDataString = JSON.stringify(frames);
       const counter = this.querySelector('#tt-counter') as HTMLElement;
       const zoomCounter = this.querySelector('#tt-zoom') as HTMLElement;
       const overlay = this.querySelector('#tt-overlay') as HTMLElement;
-      
       const framesData = this.getAttribute('data-frames');
+
       if (!framesData) return;
+
       const frames = JSON.parse(framesData) as string[];
       const totalFrames = frames.length;
-      
-      const preloadedImages: HTMLImageElement[] = [];
-      frames.forEach(src => {
-        const img = new Image();
-        img.src = src;
-        preloadedImages.push(img);
-      });
+
+      if (totalFrames === 0) return;
 
       let currentFrameIndex = 0;
       let isDragging = false;
       let startX = 0;
       let startFrame = 0;
       let hasInteracted = false;
-      
+
       let currentScale = 1;
       const minScale = 1;
-      const maxScale = 5; 
+      const maxScale = 5;
+
+      const imageCache = new Map<number, HTMLImageElement>();
+      const loadingFrames = new Set<number>();
+
+      const loadFrame = (index: number) => {
+        const normalizedIndex = ((index % totalFrames) + totalFrames) % totalFrames;
+
+        if (imageCache.has(normalizedIndex) || loadingFrames.has(normalizedIndex)) {
+          return;
+        }
+
+        loadingFrames.add(normalizedIndex);
+
+        const img = new Image();
+
+        img.onload = () => {
+          imageCache.set(normalizedIndex, img);
+          loadingFrames.delete(normalizedIndex);
+
+          if (normalizedIndex === currentFrameIndex) {
+            display.src = img.src;
+          }
+        };
+
+        img.onerror = () => {
+          loadingFrames.delete(normalizedIndex);
+        };
+
+        img.src = frames[normalizedIndex];
+      };
 
       let sensitivity = container.clientWidth / totalFrames;
+
       window.addEventListener('resize', () => {
         sensitivity = container.clientWidth / totalFrames;
       });
 
       const updateFrame = (newIndex: number) => {
         currentFrameIndex = ((newIndex % totalFrames) + totalFrames) % totalFrames;
-        display.src = preloadedImages[currentFrameIndex].src;
+
+        loadFrame(currentFrameIndex);
+
+        const cachedImage = imageCache.get(currentFrameIndex);
+
+        if (cachedImage) {
+          display.src = cachedImage.src;
+        }
+
         counter.innerText = String(currentFrameIndex + 1).padStart(3, '0');
+
+        for (let offset = 1; offset <= 3; offset++) {
+          loadFrame(currentFrameIndex + offset);
+          loadFrame(currentFrameIndex - offset);
+        }
       };
 
-      // THE FIX: Clamp values between 0 and 100 so it never goes out of bounds!
       const updateTransformOrigin = (clientX: number, clientY: number) => {
         const rect = container.getBoundingClientRect();
         const x = Math.max(0, Math.min(100, ((clientX - rect.left) / rect.width) * 100));
         const y = Math.max(0, Math.min(100, ((clientY - rect.top) / rect.height) * 100));
+
         display.style.transformOrigin = `${x}% ${y}%`;
       };
 
@@ -86,6 +123,7 @@ const frameDataString = JSON.stringify(frames);
         startX = ('touches' in e) ? e.touches[0].clientX : (e as MouseEvent).clientX;
         startFrame = currentFrameIndex;
         this.style.cursor = 'grabbing';
+
         if (!hasInteracted && overlay) {
           overlay.style.opacity = '0';
           hasInteracted = true;
@@ -94,15 +132,18 @@ const frameDataString = JSON.stringify(frames);
 
       const doDrag = (e: MouseEvent | TouchEvent) => {
         if (!isDragging && currentScale > 1 && !('touches' in e)) {
-           updateTransformOrigin((e as MouseEvent).clientX, (e as MouseEvent).clientY);
-           return;
+          updateTransformOrigin((e as MouseEvent).clientX, (e as MouseEvent).clientY);
+          return;
         }
+
         if (!isDragging) return;
+
         e.preventDefault();
-        
+
         const currentX = ('touches' in e) ? e.touches[0].clientX : (e as MouseEvent).clientX;
         const diffX = currentX - startX;
         const frameOffset = Math.round(diffX / sensitivity);
+
         updateFrame(startFrame + frameOffset);
       };
 
@@ -112,28 +153,35 @@ const frameDataString = JSON.stringify(frames);
       };
 
       container.addEventListener('wheel', (e) => {
-        e.preventDefault(); 
+        e.preventDefault();
+
         if (!hasInteracted && overlay) {
           overlay.style.opacity = '0';
           hasInteracted = true;
         }
+
         updateTransformOrigin(e.clientX, e.clientY);
+
         currentScale += e.deltaY * -0.002;
         currentScale = Math.min(Math.max(minScale, currentScale), maxScale);
-        
+
         display.style.transform = `scale(${currentScale})`;
         zoomCounter.innerText = currentScale.toFixed(1);
+
         this.style.cursor = currentScale > 1 ? 'crosshair' : 'ew-resize';
       }, { passive: false });
 
       container.addEventListener('mousedown', startDrag);
       window.addEventListener('mousemove', doDrag);
       window.addEventListener('mouseup', stopDrag);
-      
+
       container.addEventListener('touchstart', startDrag, { passive: false });
       window.addEventListener('touchmove', doDrag, { passive: false });
       window.addEventListener('touchend', stopDrag);
+
+      loadFrame(0);
     }
   }
+
   customElements.define('turntable-scrubber', TurntableScrubber);
 </script>
