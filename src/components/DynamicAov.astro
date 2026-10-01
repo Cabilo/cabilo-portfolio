@@ -5,10 +5,9 @@ export interface Props {
     name: string;
     image: string;
   }[];
-  aspectRatio?: string;
 }
 
-const { passes, aspectRatio = "16/9" } = Astro.props;
+const { passes } = Astro.props;
 const defaultA = passes[0];
 const defaultB = passes.length > 1 ? passes[1] : passes[0];
 ---
@@ -17,10 +16,7 @@ const defaultB = passes.length > 1 ? passes[1] : passes[0];
 <dynamic-aov class="block w-full">
   <div class="flex flex-col gap-6">
     
-    <div
-      class="aov-container relative overflow-hidden"
-      style={`aspect-ratio: ${aspectRatio.replace("/", " / ")}`}
-    >
+    <div class="aov-container relative overflow-hidden">
       
       <img src={defaultA.image} alt="Side A" class="img-a absolute inset-0 w-full h-full object-cover" draggable="false" />
       
@@ -96,9 +92,17 @@ const defaultB = passes.length > 1 ? passes[1] : passes[0];
 
       let isDragging = false;
       
-      const fixImageWidth = () => { if(imgB) imgB.style.width = `${container.clientWidth}px`; };
+      const fixImageWidth = () => {
+        if (imgB) imgB.style.width = `${container.clientWidth}px`;
+
+        if (imgA.naturalWidth && imgA.naturalHeight) {
+          container.style.aspectRatio = `${imgA.naturalWidth} / ${imgA.naturalHeight}`;
+        }
+      };
+
       window.addEventListener('resize', fixImageWidth);
       fixImageWidth();
+      imgA.addEventListener('load', fixImageWidth);
 
       const moveSlider = (e: MouseEvent | TouchEvent) => {
         if (!isDragging) return;

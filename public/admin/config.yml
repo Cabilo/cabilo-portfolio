@@ -24,14 +24,8 @@ collections:
       - { label: "Software Used", name: "softwareUsed", widget: "list", default: ["Unreal Engine 5", "Maya", "Nuke"] }
       
       - { label: "AOV Section Title", name: "aovTitle", widget: "string", required: false }
-      - { label: "AOV Aspect Ratio", name: "aovAspectRatio", widget: "string", required: false, hint: "Example: 16/9, 4/3, 1/1, 3/2" }
       - label: "AOV Passes"
-        name: "aovPasses"
-        widget: "list"
-        required: false
-        fields:
-        - { label: "Pass Name", name: "name", widget: "string" }
-        - { label: "Image", name: "image", widget: "image" }
+
         name: "aovPasses"
         widget: "list"
         required: false

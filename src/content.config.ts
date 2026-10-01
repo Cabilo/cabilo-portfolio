@@ -13,7 +13,6 @@ const projectCollection = defineCollection({
     client: z.string().default('Personal Project'),
     softwareUsed: z.array(z.string()).default([]),
     aovTitle: z.string().optional(),
-    aovAspectRatio: z.string().optional(),
     aovPasses: z.array(z.object({
       name: z.string(),
       image: z.string(),
