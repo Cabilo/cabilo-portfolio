@@ -10,7 +10,7 @@ softwareUsed:
   - Unreal Engine 5
 mediaBlocks:
   - type: turntable
-    folder: /turntables/test
+    folder: turntables/test/
     title: Turntable Body and Close-up
 turntable: ""
 ---
