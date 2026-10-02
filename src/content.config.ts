@@ -57,10 +57,11 @@ const projectCollection = defineCollection({
     client: z.string().default('Personal Project'),
     softwareUsed: z.array(z.string()).default([]),
 
+    // New CMS-driven project media system.
     // The order of these blocks determines their order on the project page.
     mediaBlocks: z.array(mediaBlockSchema).optional(),
     
-    // Legacy fields have been completely removed!
+    // Legacy fields have been successfully removed!
   }),
 });
 

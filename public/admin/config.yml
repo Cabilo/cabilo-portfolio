@@ -26,7 +26,8 @@ collections:
           label: "Showreel URL",
           name: "showreelUrl",
           widget: "string",
-          required: false
+          required: false,
+          hint: "Optional. Paste a YouTube, Vimeo, or direct .mp4 link to replace the top thumbnail with a video."
         }
 
       - {
@@ -64,12 +65,13 @@ collections:
         types:
 
           # --------------------------------------------------------
-          # TEXT / MARKDOWN BLOCK (NEW)
+          # TEXT / MARKDOWN BLOCK
           # --------------------------------------------------------
 
           - label: "Text Block"
             name: "text_block"
             widget: "object"
+            hint: "Use this for explanatory text or paragraphs between media blocks."
             fields:
 
               - {
@@ -121,6 +123,7 @@ collections:
           - label: "Video"
             name: "video"
             widget: "object"
+            hint: "Paste a YouTube, Vimeo, or direct .mp4 URL."
             fields:
 
               - {
@@ -162,7 +165,8 @@ collections:
               - {
                   label: "Folder: turntables/...",
                   name: "folder",
-                  widget: "string"
+                  widget: "string",
+                  hint: "Use the folder path relative to public/. Example: turntables/test. Do NOT start with / and do NOT include public/."
                 }
 
               - {
@@ -179,6 +183,7 @@ collections:
           - label: "AOV"
             name: "aov"
             widget: "object"
+            hint: "Upload a minimum of two passes (e.g. Viewport and Wireframe) to create an interactive slider."
             fields:
 
               - {
