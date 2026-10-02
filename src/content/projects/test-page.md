@@ -11,10 +11,12 @@ mediaBlocks:
   - type: turntable
     folder: turntables/test
     comment: Test turntable
+    title: "Test "
   - type: image
     image: https://cdnb.artstation.com/p/assets/images/images/031/216/037/large/lucas-cabilo-highresscreenshot00012.jpg?1602954475
     comment: |
       Haunted Pumpkin
+    title: Test
   - type: aov
     aovTitle: AOV Passes
     aovPasses:
@@ -27,11 +29,14 @@ mediaBlocks:
       - name: Wireframe
         image: https://help.maxon.net/r3d/cinema/en-us/Content/Resources/Images/aov_utility.Wireframe1353.jpg
     comment: New AOV pass, the other one without this comment is the Legacy AOV viewer
+    title: Test
   - type: video
     videoUrl: https://youtu.be/PYQ2ekfWoOs
     comment: Mohawk Turntable video
+    title: Test
   - type: image
     image: https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRZlSfOfEnxtBJ8JC7TbvhS1d2YmB1D8p-LJJRC4Xff7abZWRQVsceNeiE&s=10
+    comment: Test
   - type: image
     image: https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTjQw5RMJE-Lbg_-7cltruF-d3GMOTw9Ovpyn0tapdzrtPqF67l59AtHlc&s=10
   - type: image
