@@ -3,7 +3,6 @@
 /**
  * src/components/Navbar.astro
  */
-const pathname = new URL(Astro.request.url).pathname;
 ---
 
 <nav class="fixed top-0 left-0 w-full z-50 bg-cabilo-obsidian/90 backdrop-blur-md border-b border-cabilo-card">
@@ -21,11 +20,7 @@ const pathname = new URL(Astro.request.url).pathname;
       <a
         id="nav-work"
         href="/"
-        class={`transition-colors duration-300 ${
-          pathname === '/'
-            ? 'text-text-white'
-            : 'text-text-silver hover:text-brand-gold'
-        }`}
+        class="nav-link transition-colors duration-300 text-text-silver hover:text-brand-gold"
       >
         Work
       </a>
@@ -34,11 +29,8 @@ const pathname = new URL(Astro.request.url).pathname;
 
         <button
           id="nav-learning"
-          class={`flex items-center gap-1 uppercase font-medium transition-colors duration-300 cursor-default ${
-            pathname.startsWith('/tutorials') || pathname.startsWith('/breakdowns')
-              ? 'text-text-white'
-              : 'text-text-silver group-hover:text-brand-gold'
-          }`}
+          type="button"
+          class="nav-link flex items-center gap-1 uppercase font-medium transition-colors duration-300 cursor-default text-text-silver group-hover:text-brand-gold"
         >
           LEARNING
 
@@ -62,11 +54,7 @@ const pathname = new URL(Astro.request.url).pathname;
           <a
             id="nav-tutorials"
             href="/tutorials"
-            class={`px-5 py-4 text-xs tracking-widest hover:bg-cabilo-card hover:text-brand-amber transition-colors border-b border-cabilo-card ${
-              pathname.startsWith('/tutorials')
-                ? 'text-brand-gold'
-                : 'text-text-silver'
-            }`}
+            class="nav-sub-link px-5 py-4 text-xs tracking-widest hover:bg-cabilo-card hover:text-brand-amber transition-colors border-b border-cabilo-card text-text-silver"
           >
             Tutorials
           </a>
@@ -74,11 +62,7 @@ const pathname = new URL(Astro.request.url).pathname;
           <a
             id="nav-breakdowns"
             href="/breakdowns"
-            class={`px-5 py-4 text-xs tracking-widest hover:bg-cabilo-card hover:text-brand-amber transition-colors ${
-              pathname.startsWith('/breakdowns')
-                ? 'text-brand-gold'
-                : 'text-text-silver'
-            }`}
+            class="nav-sub-link px-5 py-4 text-xs tracking-widest hover:bg-cabilo-card hover:text-brand-amber transition-colors text-text-silver"
           >
             Breakdowns
           </a>
@@ -89,11 +73,7 @@ const pathname = new URL(Astro.request.url).pathname;
       <a
         id="nav-about"
         href="/about"
-        class={`transition-colors duration-300 ${
-          pathname === '/about'
-            ? 'text-text-white'
-            : 'text-text-silver hover:text-brand-gold'
-        }`}
+        class="nav-link transition-colors duration-300 text-text-silver hover:text-brand-gold"
       >
         About
       </a>
@@ -101,11 +81,7 @@ const pathname = new URL(Astro.request.url).pathname;
       <a
         id="nav-contact"
         href="/contact"
-        class={`transition-colors duration-300 ${
-          pathname === '/contact'
-            ? 'text-text-white'
-            : 'text-text-silver hover:text-brand-gold'
-        }`}
+        class="nav-link transition-colors duration-300 text-text-silver hover:text-brand-gold"
       >
         Contact
       </a>
@@ -279,11 +255,15 @@ const pathname = new URL(Astro.request.url).pathname;
         if (isMenuOpen) toggleMenu();
       });
     });
-
-    updateActiveNav();
   };
 
-  document.addEventListener('astro:page-load', setupMobileMenu);
+  // Initialize the navigation state on the first page load.
   document.addEventListener('astro:page-load', updateActiveNav);
+
+  // Re-run the navigation state after Astro client-side navigation.
+  document.addEventListener('astro:after-swap', updateActiveNav);
+
+  // Initialize the mobile menu.
+  document.addEventListener('astro:page-load', setupMobileMenu);
 </script>
 ```
