@@ -17,21 +17,99 @@ const pathname = new URL(Astro.request.url).pathname;
 
     <!-- DESKTOP NAVIGATION -->
     <div class="hidden md:flex items-center gap-10 text-sm font-medium tracking-widest uppercase h-full">
-      <a href="/" class={`transition-colors duration-300 ${pathname === '/' ? 'text-text-white' : 'text-text-silver hover:text-brand-gold'}`}>Work</a>
+
+      <a
+        id="nav-work"
+        href="/"
+        class={`transition-colors duration-300 ${
+          pathname === '/'
+            ? 'text-text-white'
+            : 'text-text-silver hover:text-brand-gold'
+        }`}
+      >
+        Work
+      </a>
 
       <div class="relative group h-full flex items-center">
-        <button class={`flex items-center gap-1 uppercase font-medium transition-colors duration-300 cursor-default ${(pathname.startsWith('/tutorials') || pathname.startsWith('/breakdowns')) ? 'text-text-white' : 'text-text-silver group-hover:text-brand-gold'}`}>
+
+        <button
+          id="nav-learning"
+          class={`flex items-center gap-1 uppercase font-medium transition-colors duration-300 cursor-default ${
+            pathname.startsWith('/tutorials') || pathname.startsWith('/breakdowns')
+              ? 'text-text-white'
+              : 'text-text-silver group-hover:text-brand-gold'
+          }`}
+        >
           LEARNING
-          <svg class="w-4 h-4 transition-transform duration-300 group-hover:rotate-180" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
+
+          <svg
+            class="w-4 h-4 transition-transform duration-300 group-hover:rotate-180"
+            fill="none"
+            stroke="currentColor"
+            viewBox="0 0 24 24"
+          >
+            <path
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              stroke-width="2"
+              d="M19 9l-7 7-7-7"
+            ></path>
+          </svg>
         </button>
+
         <div class="absolute top-[80px] left-0 w-48 bg-cabilo-obsidian/95 backdrop-blur-md border border-cabilo-card rounded-md shadow-2xl opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-300 flex flex-col overflow-hidden z-50">
-          <a href="/tutorials" class={`px-5 py-4 text-xs tracking-widest hover:bg-cabilo-card hover:text-brand-amber transition-colors border-b border-cabilo-card ${pathname.startsWith('/tutorials') ? 'text-brand-gold' : 'text-text-silver'}`}>Tutorials</a>
-          <a href="/breakdowns" class={`px-5 py-4 text-xs tracking-widest hover:bg-cabilo-card hover:text-brand-amber transition-colors ${pathname.startsWith('/breakdowns') ? 'text-brand-gold' : 'text-text-silver'}`}>Breakdowns</a>
+
+          <a
+            id="nav-tutorials"
+            href="/tutorials"
+            class={`px-5 py-4 text-xs tracking-widest hover:bg-cabilo-card hover:text-brand-amber transition-colors border-b border-cabilo-card ${
+              pathname.startsWith('/tutorials')
+                ? 'text-brand-gold'
+                : 'text-text-silver'
+            }`}
+          >
+            Tutorials
+          </a>
+
+          <a
+            id="nav-breakdowns"
+            href="/breakdowns"
+            class={`px-5 py-4 text-xs tracking-widest hover:bg-cabilo-card hover:text-brand-amber transition-colors ${
+              pathname.startsWith('/breakdowns')
+                ? 'text-brand-gold'
+                : 'text-text-silver'
+            }`}
+          >
+            Breakdowns
+          </a>
+
         </div>
       </div>
 
-      <a href="/about" class={`transition-colors duration-300 ${pathname === '/about' ? 'text-text-white' : 'text-text-silver hover:text-brand-gold'}`}>About</a>
-      <a href="/contact" class={`transition-colors duration-300 ${pathname === '/contact' ? 'text-text-white' : 'text-text-silver hover:text-brand-gold'}`}>Contact</a>
+      <a
+        id="nav-about"
+        href="/about"
+        class={`transition-colors duration-300 ${
+          pathname === '/about'
+            ? 'text-text-white'
+            : 'text-text-silver hover:text-brand-gold'
+        }`}
+      >
+        About
+      </a>
+
+      <a
+        id="nav-contact"
+        href="/contact"
+        class={`transition-colors duration-300 ${
+          pathname === '/contact'
+            ? 'text-text-white'
+            : 'text-text-silver hover:text-brand-gold'
+        }`}
+      >
+        Contact
+      </a>
+
     </div>
 
     <!-- MOBILE HAMBURGER BUTTON -->
@@ -42,7 +120,19 @@ const pathname = new URL(Astro.request.url).pathname;
       aria-expanded="false"
       aria-controls="mobile-menu"
     >
-      <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path></svg>
+      <svg
+        class="w-8 h-8"
+        fill="none"
+        stroke="currentColor"
+        viewBox="0 0 24 24"
+      >
+        <path
+          stroke-linecap="round"
+          stroke-linejoin="round"
+          stroke-width="2"
+          d="M4 6h16M4 12h16M4 18h16"
+        ></path>
+      </svg>
     </button>
 
   </div>
@@ -63,6 +153,62 @@ const pathname = new URL(Astro.request.url).pathname;
 </div>
 
 <script>
+  const updateActiveNav = () => {
+    const currentPath = window.location.pathname;
+
+    const navWork = document.getElementById('nav-work');
+    const navLearning = document.getElementById('nav-learning');
+    const navTutorials = document.getElementById('nav-tutorials');
+    const navBreakdowns = document.getElementById('nav-breakdowns');
+    const navAbout = document.getElementById('nav-about');
+    const navContact = document.getElementById('nav-contact');
+
+    // Reset main navigation states.
+    navWork?.classList.remove('text-text-white');
+    navWork?.classList.add('text-text-silver');
+
+    navAbout?.classList.remove('text-text-white');
+    navAbout?.classList.add('text-text-silver');
+
+    navContact?.classList.remove('text-text-white');
+    navContact?.classList.add('text-text-silver');
+
+    // Reset Learning navigation state.
+    navLearning?.classList.remove('text-text-white');
+    navLearning?.classList.add('text-text-silver');
+
+    // Reset Learning submenu states.
+    navTutorials?.classList.remove('text-brand-gold');
+    navTutorials?.classList.add('text-text-silver');
+
+    navBreakdowns?.classList.remove('text-brand-gold');
+    navBreakdowns?.classList.add('text-text-silver');
+
+    // Set the active navigation item.
+    if (currentPath === '/') {
+      navWork?.classList.remove('text-text-silver');
+      navWork?.classList.add('text-text-white');
+    } else if (currentPath === '/about') {
+      navAbout?.classList.remove('text-text-silver');
+      navAbout?.classList.add('text-text-white');
+    } else if (currentPath === '/contact') {
+      navContact?.classList.remove('text-text-silver');
+      navContact?.classList.add('text-text-white');
+    } else if (currentPath.startsWith('/tutorials')) {
+      navLearning?.classList.remove('text-text-silver');
+      navLearning?.classList.add('text-text-white');
+
+      navTutorials?.classList.remove('text-text-silver');
+      navTutorials?.classList.add('text-brand-gold');
+    } else if (currentPath.startsWith('/breakdowns')) {
+      navLearning?.classList.remove('text-text-silver');
+      navLearning?.classList.add('text-text-white');
+
+      navBreakdowns?.classList.remove('text-text-silver');
+      navBreakdowns?.classList.add('text-brand-gold');
+    }
+  };
+
   const setupMobileMenu = () => {
     const btn = document.getElementById('mobile-menu-btn');
     const menu = document.getElementById('mobile-menu');
@@ -76,18 +222,42 @@ const pathname = new URL(Astro.request.url).pathname;
       isMenuOpen = !isMenuOpen;
 
       if (isMenuOpen) {
-        menu.classList.remove('opacity-0', 'invisible', 'pointer-events-none', 'translate-y-2');
-        menu.classList.add('opacity-100', 'visible', 'pointer-events-auto', 'translate-y-0');
+        menu.classList.remove(
+          'opacity-0',
+          'invisible',
+          'pointer-events-none',
+          'translate-y-2'
+        );
+
+        menu.classList.add(
+          'opacity-100',
+          'visible',
+          'pointer-events-auto',
+          'translate-y-0'
+        );
 
         btn.setAttribute('aria-expanded', 'true');
+        btn.setAttribute('aria-label', 'Close mobile menu');
         menu.setAttribute('aria-hidden', 'false');
 
         document.body.style.overflow = 'hidden';
       } else {
-        menu.classList.remove('opacity-100', 'visible', 'pointer-events-auto', 'translate-y-0');
-        menu.classList.add('opacity-0', 'invisible', 'pointer-events-none', 'translate-y-2');
+        menu.classList.remove(
+          'opacity-100',
+          'visible',
+          'pointer-events-auto',
+          'translate-y-0'
+        );
+
+        menu.classList.add(
+          'opacity-0',
+          'invisible',
+          'pointer-events-none',
+          'translate-y-2'
+        );
 
         btn.setAttribute('aria-expanded', 'false');
+        btn.setAttribute('aria-label', 'Open mobile menu');
         menu.setAttribute('aria-hidden', 'true');
 
         document.body.style.overflow = '';
@@ -95,7 +265,12 @@ const pathname = new URL(Astro.request.url).pathname;
     };
 
     // Keep the menu closed whenever the component is initialized.
-    menu.classList.add('opacity-0', 'invisible', 'pointer-events-none', 'translate-y-2');
+    menu.classList.add(
+      'opacity-0',
+      'invisible',
+      'pointer-events-none',
+      'translate-y-2'
+    );
 
     btn.addEventListener('click', toggleMenu);
 
@@ -104,8 +279,11 @@ const pathname = new URL(Astro.request.url).pathname;
         if (isMenuOpen) toggleMenu();
       });
     });
+
+    updateActiveNav();
   };
 
   document.addEventListener('astro:page-load', setupMobileMenu);
+  document.addEventListener('astro:page-load', updateActiveNav);
 </script>
 ```
