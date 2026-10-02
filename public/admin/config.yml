@@ -1,3 +1,4 @@
+```yaml
 backend:
   name: turbo-github
   turbo_site_id: 1474ffb3-9850-4801-a13d-418ab9c4a71c
@@ -60,7 +61,7 @@ collections:
         required: false
         label_singular: "Media Block"
         collapsed: true
-        summary: "{{fields.type}}"
+
         types:
 
           # --------------------------------------------------------
@@ -71,23 +72,26 @@ collections:
             name: "image"
             widget: "object"
             fields:
+
               - {
                   label: "Title",
-                   name: "title",
-                   widget: "string",
-                   required: false
-                 }
-               - {
-                   label: "Image",
-                   name: "image",
-                   widget: "image"
-                 }
-               - {
-                   label: "Comment",
-                   name: "comment",
-                   widget: "text",
-                   required: false
-                 }
+                  name: "title",
+                  widget: "string",
+                  required: false
+                }
+
+              - {
+                  label: "Image",
+                  name: "image",
+                  widget: "image"
+                }
+
+              - {
+                  label: "Comment",
+                  name: "comment",
+                  widget: "text",
+                  required: false
+                }
 
           # --------------------------------------------------------
           # VIDEO
@@ -97,23 +101,26 @@ collections:
             name: "video"
             widget: "object"
             fields:
+
               - {
-                   label: "Title",
-                   name: "title",
-                   widget: "string",
-                   required: false
-                 }
-               - {
-                   label: "Video URL",
-                   name: "videoUrl",
-                   widget: "string"
-                 }
-               - {
-                   label: "Comment",
-                   name: "comment",
-                   widget: "text",
-                   required: false
-                 }
+                  label: "Title",
+                  name: "title",
+                  widget: "string",
+                  required: false
+                }
+
+              - {
+                  label: "Video URL",
+                  name: "videoUrl",
+                  widget: "string"
+                }
+
+              - {
+                  label: "Comment",
+                  name: "comment",
+                  widget: "text",
+                  required: false
+                }
 
           # --------------------------------------------------------
           # TURNTABLE
@@ -123,17 +130,20 @@ collections:
             name: "turntable"
             widget: "object"
             fields:
+
               - {
                   label: "Title",
                   name: "title",
                   widget: "string",
                   required: false
                 }
+
               - {
                   label: "Folder",
                   name: "folder",
                   widget: "string"
                 }
+
               - {
                   label: "Comment",
                   name: "comment",
@@ -149,32 +159,38 @@ collections:
             name: "aov"
             widget: "object"
             fields:
+
               - {
                   label: "Title",
                   name: "title",
                   widget: "string",
                   required: false
                 }
+
               - label: "AOV Passes"
                 name: "aovPasses"
                 widget: "list"
                 fields:
+
                   - {
                       label: "Name",
                       name: "name",
                       widget: "string"
                     }
+
                   - {
                       label: "Image",
                       name: "image",
                       widget: "image"
                     }
+
               - {
                   label: "Comment",
                   name: "comment",
                   widget: "text",
                   required: false
                 }
+
       # ============================================================
       # LEGACY FIELDS
       # ============================================================
@@ -298,3 +314,4 @@ collections:
           name: "body",
           widget: "markdown"
         }
+```

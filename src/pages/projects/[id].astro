@@ -61,7 +61,7 @@ if (mediaBlocks.length === 0) {
   if (project.data.aovPasses && project.data.aovPasses.length > 0) {
     mediaBlocks.push({
       type: 'aov',
-      aovTitle: project.data.aovTitle,
+      title: project.data.aovTitle,
       aovPasses: project.data.aovPasses,
     });
   }
@@ -321,9 +321,11 @@ const showreel = project.data.showreelUrl
         return (
           <div class="mb-20">
 
-            <h3 class="text-xl text-text-white mb-6 uppercase tracking-wider">
-              360° Turntable
-            </h3>
+            {block.title && (
+              <h3 class="text-xl text-text-white mb-6 uppercase tracking-wider">
+                {block.title}
+              </h3>
+            )}
 
             <TurntableScrubber frames={frames} />
 
