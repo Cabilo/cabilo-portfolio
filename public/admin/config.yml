@@ -64,6 +64,28 @@ collections:
         types:
 
           # --------------------------------------------------------
+          # TEXT / MARKDOWN BLOCK (NEW)
+          # --------------------------------------------------------
+
+          - label: "Text Block"
+            name: "text_block"
+            widget: "object"
+            fields:
+
+              - {
+                  label: "Title",
+                  name: "title",
+                  widget: "string",
+                  required: false
+                }
+
+              - {
+                  label: "Content (Markdown)",
+                  name: "content",
+                  widget: "markdown"
+                }
+
+          # --------------------------------------------------------
           # IMAGE
           # --------------------------------------------------------
 
@@ -189,47 +211,6 @@ collections:
                   widget: "text",
                   required: false
                 }
-
-      # ============================================================
-      # LEGACY FIELDS
-      # ============================================================
-      #
-      # These remain temporarily while the existing project content
-      # is migrated to Media Blocks. Do not use these for new content.
-      #
-
-      - {
-          label: "Legacy AOV Section Title",
-          name: "aovTitle",
-          widget: "string",
-          required: false
-        }
-
-      - label: "Legacy AOV Passes"
-        name: "aovPasses"
-        widget: "list"
-        required: false
-        collapsed: true
-        fields:
-
-          - {
-              label: "Pass Name",
-              name: "name",
-              widget: "string"
-            }
-
-          - {
-              label: "Image",
-              name: "image",
-              widget: "image"
-            }
-
-      - {
-          label: "Legacy Turntable Folder",
-          name: "turntable",
-          widget: "string",
-          required: false
-        }
 
       # ============================================================
       # PROJECT CONTENT

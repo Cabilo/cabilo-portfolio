@@ -7,6 +7,9 @@ import TurntableScrubber from '../../components/TurntableScrubber.astro';
 import fs from 'node:fs';
 import path from 'node:path';
 
+// IMPORT FOR THE NEW TEXT BLOCK
+import { marked } from 'marked';
+
 export async function getStaticPaths() {
   const projects = await getCollection('projects');
 
@@ -46,33 +49,15 @@ type MediaBlock =
         image: string;
       }[];
       comment?: string;
+    }
+  | {
+      type: 'text_block'; // NEW MEDIA BLOCK ADDED TO TYPE DEFINITION
+      title?: string;
+      content: string;
     };
 
 const mediaBlocks: MediaBlock[] = project.data.mediaBlocks ?? [];
 
-// ------------------------------------------------------------
-// LEGACY SUPPORT
-// ------------------------------------------------------------
-// Existing projects may still use the old AOV and Turntable
-// fields. We temporarily convert those into media blocks so
-// existing projects continue to work while being migrated.
-
-if (mediaBlocks.length === 0) {
-  if (project.data.aovPasses && project.data.aovPasses.length > 0) {
-    mediaBlocks.push({
-      type: 'aov',
-      title: project.data.aovTitle,
-      aovPasses: project.data.aovPasses,
-    });
-  }
-
-  if (project.data.turntable) {
-    mediaBlocks.push({
-      type: 'turntable',
-      folder: project.data.turntable,
-    });
-  }
-}
 
 // ------------------------------------------------------------
 // TURNTABLE FRAME DETECTION
@@ -231,6 +216,34 @@ const showreel = project.data.showreelUrl
 
     {mediaBlocks.map((block) => {
 
+      // ------------------------------------------------------
+      // RENDER TEXT BLOCK
+      // ------------------------------------------------------
+      if (block.type === 'text_block') {
+        
+        const parsedHTML = marked.parse(block.content);
+        
+        return (
+          <div class="mb-16">
+            
+            {block.title && (
+              <h3 class="text-xl text-text-white mb-6 uppercase tracking-wider">
+                {block.title}
+              </h3>
+            )}
+
+            <div 
+              class="prose prose-invert prose-p:text-text-silver prose-headings:text-text-white prose-a:text-brand-amber max-w-none"
+              set:html={parsedHTML}
+            />
+
+          </div>
+        );
+      }
+
+      // ------------------------------------------------------
+      // RENDER IMAGE
+      // ------------------------------------------------------
       if (block.type === 'image') {
         return (
           <div class="mb-16">
@@ -260,6 +273,9 @@ const showreel = project.data.showreelUrl
         );
       }
 
+      // ------------------------------------------------------
+      // RENDER VIDEO
+      // ------------------------------------------------------
       if (block.type === 'video') {
         const video = getVideoEmbed(block.videoUrl);
 
@@ -311,6 +327,9 @@ const showreel = project.data.showreelUrl
         );
       }
 
+      // ------------------------------------------------------
+      // RENDER TURNTABLE
+      // ------------------------------------------------------
       if (block.type === 'turntable') {
         const frames = getTurntableFrames(block.folder);
 
@@ -339,6 +358,9 @@ const showreel = project.data.showreelUrl
         );
       }
 
+      // ------------------------------------------------------
+      // RENDER AOV
+      // ------------------------------------------------------
       if (block.type === 'aov') {
         if (!block.aovPasses || block.aovPasses.length === 0) {
           return null;

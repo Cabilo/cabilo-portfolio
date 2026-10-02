@@ -1,7 +1,6 @@
 // src/content.config.ts
 
 import { z, defineCollection } from 'astro:content';
-
 import { glob } from 'astro/loaders';
 
 const aovPassSchema = z.object({
@@ -37,6 +36,13 @@ const mediaBlockSchema = z.discriminatedUnion('type', [
     aovPasses: z.array(aovPassSchema).default([]),
     comment: z.string().optional(),
   }),
+
+  // NEW: The Text/Markdown Media Block!
+  z.object({
+    type: z.literal('text_block'),
+    title: z.string().optional(),
+    content: z.string(),
+  }),
 ]);
 
 const projectCollection = defineCollection({
@@ -51,16 +57,10 @@ const projectCollection = defineCollection({
     client: z.string().default('Personal Project'),
     softwareUsed: z.array(z.string()).default([]),
 
-    // New CMS-driven project media system.
     // The order of these blocks determines their order on the project page.
     mediaBlocks: z.array(mediaBlockSchema).optional(),
-
-    // Legacy fields.
-    // These remain temporarily so existing projects continue to validate
-    // while we migrate the project page to mediaBlocks.
-    aovTitle: z.string().optional(),
-    aovPasses: z.array(aovPassSchema).optional(),
-    turntable: z.string().optional(),
+    
+    // Legacy fields have been completely removed!
   }),
 });
 
