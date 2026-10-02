@@ -39,7 +39,7 @@ const pathname = new URL(Astro.request.url).pathname;
   </div>
 
   <!-- MOBILE SLIDE-DOWN MENU -->
-  <div id="mobile-menu" class="fixed inset-0 bg-cabilo-obsidian/98 backdrop-blur-xl z-40 transform -translate-y-full transition-transform duration-500 ease-in-out flex flex-col items-center justify-center gap-8 md:hidden">
+  <div id="mobile-menu" class="fixed inset-0 bg-cabilo-obsidian/98 backdrop-blur-xl z-40 transform -translate-y-full opacity-0 invisible transition-all duration-500 ease-in-out flex flex-col items-center justify-center gap-8 md:hidden">
     <a href="/" class="mobile-link text-2xl uppercase tracking-widest font-bold text-text-white hover:text-brand-amber transition-colors">Work</a>
     <a href="/tutorials" class="mobile-link text-2xl uppercase tracking-widest font-bold text-text-silver hover:text-brand-amber transition-colors">Tutorials</a>
     <a href="/breakdowns" class="mobile-link text-2xl uppercase tracking-widest font-bold text-text-silver hover:text-brand-amber transition-colors">Breakdowns</a>
@@ -59,10 +59,10 @@ const pathname = new URL(Astro.request.url).pathname;
   const toggleMenu = () => {
     isMenuOpen = !isMenuOpen;
     if (isMenuOpen) {
-      menu?.classList.remove('-translate-y-full');
-      document.body.style.overflow = 'hidden'; // Stop scrolling when menu is open
+      menu?.classList.remove('-translate-y-full', 'opacity-0', 'invisible');
+      document.body.style.overflow = 'hidden'; 
     } else {
-      menu?.classList.add('-translate-y-full');
+      menu?.classList.add('-translate-y-full', 'opacity-0', 'invisible');
       document.body.style.overflow = 'auto';
     }
   };
