@@ -1,4 +1,3 @@
-```astro
 ---
 /**
  * src/components/Navbar.astro
@@ -121,11 +120,45 @@
   aria-hidden="true"
   class="fixed inset-x-0 top-24 bottom-0 bg-cabilo-obsidian z-40 opacity-0 invisible pointer-events-none translate-y-2 transition-all duration-300 ease-in-out flex flex-col items-center justify-start pt-16 gap-8 md:hidden overflow-y-auto"
 >
-  <a href="/" class="mobile-link text-2xl uppercase tracking-widest font-bold text-text-white hover:text-brand-amber transition-colors">Work</a>
-  <a href="/tutorials" class="mobile-link text-2xl uppercase tracking-widest font-bold text-text-silver hover:text-brand-amber transition-colors">Tutorials</a>
-  <a href="/breakdowns" class="mobile-link text-2xl uppercase tracking-widest font-bold text-text-silver hover:text-brand-amber transition-colors">Breakdowns</a>
-  <a href="/about" class="mobile-link text-2xl uppercase tracking-widest font-bold text-text-silver hover:text-brand-amber transition-colors">About</a>
-  <a href="/contact" class="mobile-link text-2xl uppercase tracking-widest font-bold text-text-silver hover:text-brand-amber transition-colors">Contact</a>
+  <a
+    id="mobile-nav-work"
+    href="/"
+    class="mobile-link text-2xl uppercase tracking-widest font-bold text-text-silver hover:text-brand-amber transition-colors"
+  >
+    Work
+  </a>
+
+  <a
+    id="mobile-nav-tutorials"
+    href="/tutorials"
+    class="mobile-link text-2xl uppercase tracking-widest font-bold text-text-silver hover:text-brand-amber transition-colors"
+  >
+    Tutorials
+  </a>
+
+  <a
+    id="mobile-nav-breakdowns"
+    href="/breakdowns"
+    class="mobile-link text-2xl uppercase tracking-widest font-bold text-text-silver hover:text-brand-amber transition-colors"
+  >
+    Breakdowns
+  </a>
+
+  <a
+    id="mobile-nav-about"
+    href="/about"
+    class="mobile-link text-2xl uppercase tracking-widest font-bold text-text-silver hover:text-brand-amber transition-colors"
+  >
+    About
+  </a>
+
+  <a
+    id="mobile-nav-contact"
+    href="/contact"
+    class="mobile-link text-2xl uppercase tracking-widest font-bold text-text-silver hover:text-brand-amber transition-colors"
+  >
+    Contact
+  </a>
 </div>
 
 <script>
@@ -139,7 +172,13 @@
     const navAbout = document.getElementById('nav-about');
     const navContact = document.getElementById('nav-contact');
 
-    // Reset main navigation states.
+    const mobileNavWork = document.getElementById('mobile-nav-work');
+    const mobileNavTutorials = document.getElementById('mobile-nav-tutorials');
+    const mobileNavBreakdowns = document.getElementById('mobile-nav-breakdowns');
+    const mobileNavAbout = document.getElementById('mobile-nav-about');
+    const mobileNavContact = document.getElementById('mobile-nav-contact');
+
+    // Reset desktop main navigation states.
     navWork?.classList.remove('text-text-white');
     navWork?.classList.add('text-text-silver');
 
@@ -149,39 +188,74 @@
     navContact?.classList.remove('text-text-white');
     navContact?.classList.add('text-text-silver');
 
-    // Reset Learning navigation state.
+    // Reset desktop Learning navigation state.
     navLearning?.classList.remove('text-text-white');
     navLearning?.classList.add('text-text-silver');
 
-    // Reset Learning submenu states.
+    // Reset desktop Learning submenu states.
     navTutorials?.classList.remove('text-brand-gold');
     navTutorials?.classList.add('text-text-silver');
 
     navBreakdowns?.classList.remove('text-brand-gold');
     navBreakdowns?.classList.add('text-text-silver');
 
+    // Reset mobile navigation states.
+    mobileNavWork?.classList.remove('text-text-white');
+    mobileNavWork?.classList.add('text-text-silver');
+
+    mobileNavTutorials?.classList.remove('text-brand-amber');
+    mobileNavTutorials?.classList.add('text-text-silver');
+
+    mobileNavBreakdowns?.classList.remove('text-brand-amber');
+    mobileNavBreakdowns?.classList.add('text-text-silver');
+
+    mobileNavAbout?.classList.remove('text-text-white');
+    mobileNavAbout?.classList.add('text-text-silver');
+
+    mobileNavContact?.classList.remove('text-text-white');
+    mobileNavContact?.classList.add('text-text-silver');
+
     // Set the active navigation item.
     if (currentPath === '/') {
       navWork?.classList.remove('text-text-silver');
       navWork?.classList.add('text-text-white');
+
+      mobileNavWork?.classList.remove('text-text-silver');
+      mobileNavWork?.classList.add('text-text-white');
+
     } else if (currentPath === '/about') {
       navAbout?.classList.remove('text-text-silver');
       navAbout?.classList.add('text-text-white');
+
+      mobileNavAbout?.classList.remove('text-text-silver');
+      mobileNavAbout?.classList.add('text-text-white');
+
     } else if (currentPath === '/contact') {
       navContact?.classList.remove('text-text-silver');
       navContact?.classList.add('text-text-white');
+
+      mobileNavContact?.classList.remove('text-text-silver');
+      mobileNavContact?.classList.add('text-text-white');
+
     } else if (currentPath.startsWith('/tutorials')) {
       navLearning?.classList.remove('text-text-silver');
       navLearning?.classList.add('text-text-white');
 
       navTutorials?.classList.remove('text-text-silver');
       navTutorials?.classList.add('text-brand-gold');
+
+      mobileNavTutorials?.classList.remove('text-text-silver');
+      mobileNavTutorials?.classList.add('text-brand-amber');
+
     } else if (currentPath.startsWith('/breakdowns')) {
       navLearning?.classList.remove('text-text-silver');
       navLearning?.classList.add('text-text-white');
 
       navBreakdowns?.classList.remove('text-text-silver');
       navBreakdowns?.classList.add('text-brand-gold');
+
+      mobileNavBreakdowns?.classList.remove('text-text-silver');
+      mobileNavBreakdowns?.classList.add('text-brand-amber');
     }
   };
 
@@ -266,4 +340,3 @@
   // Initialize the mobile menu.
   document.addEventListener('astro:page-load', setupMobileMenu);
 </script>
-```
