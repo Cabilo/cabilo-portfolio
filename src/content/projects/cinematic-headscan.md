@@ -10,6 +10,8 @@ softwareUsed:
   - ZBrush
   - Nuke
 mediaBlocks:
+  - type: image
+    image: https://cdna.artstation.com/p/assets/images/images/046/504/170/large/lucas-cabilo-ls-portraitheadscans-square-v001-0001.jpg?1645275374
   - type: aov
     aovPasses:
       - name: Viewport
