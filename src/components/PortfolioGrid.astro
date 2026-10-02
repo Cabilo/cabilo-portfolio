@@ -1,38 +1,93 @@
 ---
 // src/components/PortfolioGrid.astro
 import ProjectCard from './ProjectCard.astro';
-// We import Astro's collection fetching tool!
 import { getCollection } from 'astro:content';
 
-// Fetch all markdown files from the 'projects' folder
 const allProjects = await getCollection('projects');
+
+// 1. Extract all unique categories from your projects
+const uniqueCategories = ["All", ...new Set(allProjects.map(project => project.data.category))];
 ---
 
 <section id="work" class="max-w-7xl mx-auto px-6 py-12 md:py-24">
   
-  <div class="flex items-center justify-between mb-12">
+  <div class="flex flex-col md:flex-row md:items-center justify-between gap-6 mb-12">
     <h2 class="text-3xl md:text-4xl font-bold text-text-white uppercase tracking-wider">
       Selected <span class="text-text-silver font-light">Works</span>
     </h2>
     
-    <div class="hidden md:flex gap-6 text-sm uppercase tracking-widest font-medium">
-      <button class="text-brand-gold">All</button>
-      <button class="text-text-silver hover:text-text-white transition-colors">Cinematics</button>
-      <button class="text-text-silver hover:text-text-white transition-colors">Lookdev</button>
+    <!-- 2. Dynamically generate the filter buttons! -->
+    <div id="filter-buttons" class="flex flex-wrap gap-4 md:gap-6 text-sm uppercase tracking-widest font-medium">
+      {uniqueCategories.map((category, index) => (
+        <button 
+          class={`filter-btn transition-colors duration-300 ${index === 0 ? 'text-brand-gold' : 'text-text-silver hover:text-text-white'}`}
+          data-category={category}
+        >
+          {category}
+        </button>
+      ))}
     </div>
   </div>
 
-  <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+  <div id="portfolio-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
     
-    <!-- We dynamically loop through the Markdown files to create the grid! -->
+    <!-- We add data-category to each card so the JavaScript knows how to filter them! -->
     {allProjects.map((project) => (
-      <ProjectCard 
-        title={project.data.title} 
-        category={project.data.category} 
-        image={project.data.thumbnail} 
-        link={`/projects/${project.id}`} 
-      />
+      <div class="project-item transition-all duration-500 ease-in-out" data-category={project.data.category}>
+        <ProjectCard 
+          title={project.data.title} 
+          category={project.data.category} 
+          image={project.data.thumbnail} 
+          link={`/projects/${project.id}`} 
+        />
+      </div>
     ))}
 
   </div>
 </section>
+
+<!-- 3. The JavaScript that makes the filtering actually work! -->
+<script>
+  // Wait for Astro to finish loading the page
+  document.addEventListener('astro:page-load', () => {
+    const buttons = document.querySelectorAll('.filter-btn');
+    const items = document.querySelectorAll('.project-item');
+
+    buttons.forEach(button => {
+      button.addEventListener('click', () => {
+        // Find out what category was clicked
+        const selectedCategory = button.getAttribute('data-category');
+
+        // Update Button Colors
+        buttons.forEach(btn => {
+          btn.classList.remove('text-brand-gold');
+          btn.classList.add('text-text-silver', 'hover:text-text-white');
+        });
+        button.classList.add('text-brand-gold');
+        button.classList.remove('text-text-silver', 'hover:text-text-white');
+
+        // Filter the Items
+        items.forEach(item => {
+          const itemCategory = item.getAttribute('data-category');
+          
+          if (selectedCategory === 'All' || itemCategory === selectedCategory) {
+            // Show the item
+            (item as HTMLElement).style.display = 'block';
+            // Slight delay for a smooth fade-in effect
+            setTimeout(() => {
+              (item as HTMLElement).style.opacity = '1';
+              (item as HTMLElement).style.transform = 'scale(1)';
+            }, 50);
+          } else {
+            // Hide the item smoothly
+            (item as HTMLElement).style.opacity = '0';
+            (item as HTMLElement).style.transform = 'scale(0.95)';
+            setTimeout(() => {
+              (item as HTMLElement).style.display = 'none';
+            }, 300); // Matches the CSS transition duration
+          }
+        });
+      });
+    });
+  });
+</script>
