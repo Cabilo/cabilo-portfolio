@@ -8,7 +8,7 @@ import fs from 'node:fs';
 import path from 'node:path';
 
 // IMPORT FOR THE NEW TEXT BLOCK
-import { marked } from 'marked';
+import { parse } from 'marked';
 
 export async function getStaticPaths() {
   const projects = await getCollection('projects');
@@ -221,7 +221,7 @@ const showreel = project.data.showreelUrl
       // ------------------------------------------------------
       if (block.type === 'text_block') {
         
-        const parsedHTML = marked.parse(block.content);
+        const parsedHTML = parse(block.content) as string;
         
         return (
           <div class="mb-16">

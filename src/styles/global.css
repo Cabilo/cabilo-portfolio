@@ -1,5 +1,6 @@
 /* This imports the Tailwind styling engine */
 @import "tailwindcss";
+@plugin "@tailwindcss/typography"; /* <--- THIS MAGICAL LINE FIXES YOUR HEADINGS! */
 
 /* This teaches Tailwind the CABILO brand colors */
 @theme {

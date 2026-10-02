@@ -1,6 +1,9 @@
 ---
+// src/layouts/Layout.astro
+import { ClientRouter } from 'astro:transitions';
 import '../styles/global.css';
 import Navbar from '../components/Navbar.astro'; 
+import Footer from '../components/Footer.astro'; // <--- Import the Footer!
 ---
 
 <!DOCTYPE html>
@@ -9,28 +12,32 @@ import Navbar from '../components/Navbar.astro';
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     
-    <!-- Core SEO Meta Tags -->
-    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
     <title>CABILO | Senior 3D Artist & Cinematics</title>
     <meta name="description" content="Portfolio of CABILO, a Senior 3D Artist specializing in high-end cinematics, Lookdev, and game animation." />
     <meta name="author" content="CABILO" />
     
-    <!-- Open Graph (For beautiful Discord / LinkedIn previews) -->
     <meta property="og:title" content="CABILO | Senior 3D Artist" />
     <meta property="og:description" content="Specializing in high-end cinematics, Lookdev, and game animation." />
     <meta property="og:type" content="website" />
     <meta property="og:url" content="https://cabilo.vercel.app/" />
-    <!-- We will use your headscan as the default thumbnail when sharing the link! -->
     <meta property="og:image" content="https://cdna.artstation.com/p/assets/images/images/046/504/170/large/lucas-cabilo-ls-portraitheadscans-square-v001-0001.jpg" />
     
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+
+    <!-- THIS ENABLES BUTTERY SMOOTH FADE ANIMATIONS BETWEEN PAGES! -->
+    <ClientRouter />
   </head>
-  <body class="bg-cabilo-obsidian text-text-silver min-h-screen font-sans antialiased">
+  <body class="bg-cabilo-obsidian text-text-silver min-h-screen font-sans antialiased flex flex-col">
     
     <Navbar />
     
-    <div class="pt-24">
+    <!-- flex-grow pushes the footer to the absolute bottom of the screen! -->
+    <div class="pt-24 flex-grow">
       <slot />
     </div>
+
+    <!-- Drop the Footer at the bottom of every page -->
+    <Footer />
 
   </body>
 </html>
