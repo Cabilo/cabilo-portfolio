@@ -10,7 +10,10 @@
  * - The B image is translated underneath the clipper instead of being resized
  *   when the comparison slider moves.
  * - Horizontal touch gestures control the slider.
- * - Vertical touch gestures are ignored so the page can scroll naturally.
+ * - Once the slider handle is grabbed, pointer capture keeps the gesture active
+ *   while the finger moves anywhere inside the AOV frame.
+ * - While dragging, browser text/image selection is temporarily disabled.
+ * - Vertical page scrolling remains available when the user starts a fresh gesture.
  */
 
 export interface Props {
@@ -66,16 +69,38 @@ const defaultB = passes.length > 1 ? passes[1] : passes[0];
       <!-- SLIDER -->
       <div
         class="aov-slider absolute top-0 bottom-0 w-12 cursor-ew-resize flex items-center justify-center z-20 group"
-        style="left: 50%; transform: translateX(-50%); touch-action: pan-y;"
+        style="left: 50%; transform: translateX(-50%); touch-action: none;"
       >
         <div class="absolute inset-y-0 left-1/2 -translate-x-1/2 w-0.5 bg-brand-amber"></div>
+
         <div class="relative w-10 h-10 bg-brand-amber rounded-full shadow-[0_0_15px_rgba(230,115,0,0.8)] flex items-center justify-center pointer-events-none">
           <div class="flex items-center gap-1 text-cabilo-obsidian">
-            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M15 19l-7-7 7-7"></path>
+            <svg
+              class="w-4 h-4"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+            >
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="3"
+                d="M15 19l-7-7 7-7"
+              ></path>
             </svg>
-            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M9 5l7 7-7 7"></path>
+
+            <svg
+              class="w-4 h-4"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+            >
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="3"
+                d="M9 5l7 7-7 7"
+              ></path>
             </svg>
           </div>
         </div>
@@ -85,6 +110,7 @@ const defaultB = passes.length > 1 ? passes[1] : passes[0];
       <div class="label-a absolute bottom-4 left-4 bg-cabilo-obsidian/80 backdrop-blur-sm px-3 py-1 rounded text-xs tracking-widest text-text-white uppercase pointer-events-none z-10">
         {defaultA.name}
       </div>
+
       <div class="label-b absolute bottom-4 right-4 bg-cabilo-obsidian/80 backdrop-blur-sm px-3 py-1 rounded text-xs tracking-widest text-text-white uppercase pointer-events-none z-10">
         {defaultB.name}
       </div>
@@ -92,10 +118,12 @@ const defaultB = passes.length > 1 ? passes[1] : passes[0];
 
     <!-- AOV PASS SELECTORS -->
     <div class="grid grid-cols-1 md:grid-cols-2 gap-8 bg-cabilo-dark p-6 rounded-md border border-cabilo-card">
+
       <div>
         <h4 class="text-text-silver text-xs tracking-widest uppercase mb-3">
           Left Side (A)
         </h4>
+
         <div class="flex flex-wrap gap-2">
           {passes.map((pass, index) => (
             <button
@@ -114,10 +142,12 @@ const defaultB = passes.length > 1 ? passes[1] : passes[0];
           ))}
         </div>
       </div>
+
       <div>
         <h4 class="text-text-silver text-xs tracking-widest uppercase mb-3">
           Right Side (B)
         </h4>
+
         <div class="flex flex-wrap gap-2">
           {passes.map((pass, index) => (
             <button
@@ -136,6 +166,7 @@ const defaultB = passes.length > 1 ? passes[1] : passes[0];
           ))}
         </div>
       </div>
+
     </div>
   </div>
 </dynamic-aov>
@@ -162,14 +193,24 @@ const defaultB = passes.length > 1 ? passes[1] : passes[0];
       const fitViewport = this.dataset.fitViewport === 'true';
 
       let isDragging = false;
-      let touchStartX = 0;
-      let touchStartY = 0;
+      let activePointerId: number | null = null;
       let sliderPosition = 50;
 
-      const touchThreshold = 8;
+      const originalUserSelect = document.body.style.userSelect;
+
+      const disableSelection = () => {
+        document.body.style.userSelect = 'none';
+        document.body.style.webkitUserSelect = 'none';
+      };
+
+      const restoreSelection = () => {
+        document.body.style.userSelect = originalUserSelect;
+        document.body.style.webkitUserSelect = originalUserSelect;
+      };
 
       const applySliderPosition = () => {
         const rect = container.getBoundingClientRect();
+
         if (!rect.width) return;
 
         const position = Math.max(0, Math.min(100, sliderPosition));
@@ -183,9 +224,6 @@ const defaultB = passes.length > 1 ? passes[1] : passes[0];
         /*
          * The B image is inside the clipper, so its left edge must be
          * offset by the slider position relative to the FULL viewport.
-         *
-         * At 50%, the B image therefore starts exactly one half-viewport
-         * to the left, making its right half visible inside the clipper.
          */
         imgB.style.left = `-${offset}px`;
       };
@@ -249,69 +287,77 @@ const defaultB = passes.length > 1 ? passes[1] : passes[0];
         applySliderPosition();
       };
 
-      const moveSlider = (e: MouseEvent | TouchEvent) => {
-        if (!isDragging) return;
+      /*
+       * Pointer events are used instead of separate mouse/touch events.
+       *
+       * Once the user grabs the slider, pointer capture keeps sending
+       * pointer movements to the slider even if the pointer moves away
+       * from the small circle.
+       */
+      slider.addEventListener('pointerdown', (e) => {
+        if (e.pointerType === 'mouse' && e.button !== 0) return;
 
-        if ('touches' in e) {
-          if (e.touches.length === 0) return;
+        isDragging = true;
+        activePointerId = e.pointerId;
 
-          const currentX = e.touches[0].clientX;
-          const currentY = e.touches[0].clientY;
+        /*
+         * Prevent accidental browser text/image selection while the
+         * handle is actively being dragged.
+         */
+        disableSelection();
 
-          const diffX = currentX - touchStartX;
-          const diffY = currentY - touchStartY;
+        /*
+         * Keep ownership of this pointer even when the mouse/finger
+         * moves outside the handle.
+         */
+        slider.setPointerCapture(e.pointerId);
 
-          if (
-            Math.abs(diffX) < touchThreshold &&
-            Math.abs(diffY) < touchThreshold
-          ) {
-            return;
-          }
-
-          if (Math.abs(diffY) > Math.abs(diffX)) {
-            isDragging = false;
-            return;
-          }
-
-          e.preventDefault();
-          updateSlider(currentX);
-          return;
-        }
+        updateSlider(e.clientX);
 
         e.preventDefault();
+      });
+
+      slider.addEventListener('pointermove', (e) => {
+        if (!isDragging) return;
+        if (activePointerId !== e.pointerId) return;
+
         updateSlider(e.clientX);
+
+        /*
+         * Prevent the browser from interpreting the drag as a
+         * selection gesture.
+         */
+        e.preventDefault();
+      });
+
+      const endPointerDrag = (e: PointerEvent) => {
+        if (activePointerId !== e.pointerId) return;
+
+        isDragging = false;
+
+        /*
+         * Selection is enabled again as soon as the handle is released.
+         */
+        restoreSelection();
+
+        if (slider.hasPointerCapture(e.pointerId)) {
+          slider.releasePointerCapture(e.pointerId);
+        }
+
+        activePointerId = null;
       };
 
-      slider.addEventListener('mousedown', () => {
-        isDragging = true;
+      slider.addEventListener('pointerup', endPointerDrag);
+      slider.addEventListener('pointercancel', endPointerDrag);
+
+      slider.addEventListener('lostpointercapture', () => {
+        if (isDragging) {
+          isDragging = false;
+          restoreSelection();
+        }
+
+        activePointerId = null;
       });
-
-      slider.addEventListener(
-        'touchstart',
-        (e) => {
-          if (e.touches.length === 0) return;
-
-          touchStartX = e.touches[0].clientX;
-          touchStartY = e.touches[0].clientY;
-          isDragging = true;
-        },
-        { passive: true }
-      );
-
-      window.addEventListener('mouseup', () => {
-        isDragging = false;
-      });
-
-      window.addEventListener('touchend', () => {
-        isDragging = false;
-      });
-
-      window.addEventListener('touchcancel', () => {
-        isDragging = false;
-      });
-
-      window.addEventListener('mousemove', moveSlider);
-      window.addEventListener('touchmove', moveSlider, { passive: false });
 
       buttonsA.forEach((btn) => {
         btn.addEventListener('click', (e) => {
