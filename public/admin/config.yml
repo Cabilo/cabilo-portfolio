@@ -94,9 +94,21 @@ collections:
             widget: "object"
             fields:
               - { label: "Title", name: "title", widget: "string", required: false }
+              - { label: "Title Alignment", name: "titleAlign", widget: "select", default: "media-left", options: [
+                  { label: "Media Left", value: "media-left" },
+                  { label: "Center", value: "center" },
+                  { label: "Page Left", value: "page-left" },
+                  { label: "Page Right", value: "page-right" }
+                ] }
               - { label: "Image", name: "image", widget: "image" }
               - { label: "Fit to viewport", name: "fitToViewport", widget: "boolean", default: true, hint: "Default ON. Constrains the image to fit within 75% of the monitor height. Disable for large detail or close-up images." }
               - { label: "Comment", name: "comment", widget: "text", required: false }
+              - { label: "Comment Alignment", name: "commentAlign", widget: "select", default: "media-left", options: [
+                  { label: "Media Left", value: "media-left" },
+                  { label: "Center", value: "center" },
+                  { label: "Page Left", value: "page-left" },
+                  { label: "Page Right", value: "page-right" }
+                ] }
 
           - label: "Video"
             name: "video"
@@ -104,17 +116,41 @@ collections:
             hint: "Paste a YouTube, Vimeo, or direct .mp4 URL."
             fields:
               - { label: "Title", name: "title", widget: "string", required: false }
+              - { label: "Title Alignment", name: "titleAlign", widget: "select", default: "media-left", options: [
+                  { label: "Media Left", value: "media-left" },
+                  { label: "Center", value: "center" },
+                  { label: "Page Left", value: "page-left" },
+                  { label: "Page Right", value: "page-right" }
+                ] }
               - { label: "Video URL", name: "videoUrl", widget: "string" }
               - { label: "Comment", name: "comment", widget: "text", required: false }
+              - { label: "Comment Alignment", name: "commentAlign", widget: "select", default: "media-left", options: [
+                  { label: "Media Left", value: "media-left" },
+                  { label: "Center", value: "center" },
+                  { label: "Page Left", value: "page-left" },
+                  { label: "Page Right", value: "page-right" }
+                ] }
 
           - label: "Turntable"
             name: "turntable"
             widget: "object"
             fields:
               - { label: "Title", name: "title", widget: "string", required: false }
+              - { label: "Title Alignment", name: "titleAlign", widget: "select", default: "media-left", options: [
+                  { label: "Media Left", value: "media-left" },
+                  { label: "Center", value: "center" },
+                  { label: "Page Left", value: "page-left" },
+                  { label: "Page Right", value: "page-right" }
+                ] }
               - { label: "Folder: turntables/...", name: "folder", widget: "string", hint: "Use the folder path relative to public/. Example: turntables/test. Do NOT start with / and do NOT include public/." }
               - { label: "Fit to viewport", name: "fitToViewport", widget: "boolean", default: true, hint: "Default ON. Constrains the turntable to fit within 75% of the monitor height. Disable for large detail or close-up views." }
               - { label: "Comment", name: "comment", widget: "text", required: false }
+              - { label: "Comment Alignment", name: "commentAlign", widget: "select", default: "media-left", options: [
+                  { label: "Media Left", value: "media-left" },
+                  { label: "Center", value: "center" },
+                  { label: "Page Left", value: "page-left" },
+                  { label: "Page Right", value: "page-right" }
+                ] }
 
           - label: "AOV"
             name: "aov"
@@ -122,6 +158,12 @@ collections:
             hint: "Upload a minimum of two passes (e.g. Viewport and Wireframe) to create an interactive slider."
             fields:
               - { label: "Title", name: "title", widget: "string", required: false }
+              - { label: "Title Alignment", name: "titleAlign", widget: "select", default: "media-left", options: [
+                  { label: "Media Left", value: "media-left" },
+                  { label: "Center", value: "center" },
+                  { label: "Page Left", value: "page-left" },
+                  { label: "Page Right", value: "page-right" }
+                ] }
               - label: "AOV Passes"
                 name: "aovPasses"
                 widget: "list"
@@ -130,6 +172,12 @@ collections:
                   - { label: "Image", name: "image", widget: "image" }
               - { label: "Fit to viewport", name: "fitToViewport", widget: "boolean", default: true, hint: "Default ON. Constrains the AOV comparison to fit within 75% of the monitor height. Disable for large detail or close-up views." }
               - { label: "Comment", name: "comment", widget: "text", required: false }
+              - { label: "Comment Alignment", name: "commentAlign", widget: "select", default: "media-left", options: [
+                  { label: "Media Left", value: "media-left" },
+                  { label: "Center", value: "center" },
+                  { label: "Page Left", value: "page-left" },
+                  { label: "Page Right", value: "page-right" }
+                ] }
 
       - { label: "Project Breakdown", name: "body", widget: "markdown" }
 
@@ -181,9 +229,21 @@ collections:
             widget: "object"
             fields:
               - { label: "Title", name: "title", widget: "string", required: false }
+              - { label: "Title Alignment", name: "titleAlign", widget: "select", default: "media-left", options: [
+                  { label: "Media Left", value: "media-left" },
+                  { label: "Center", value: "center" },
+                  { label: "Page Left", value: "page-left" },
+                  { label: "Page Right", value: "page-right" }
+                ] }
               - { label: "Image", name: "image", widget: "image" }
               - { label: "Fit to viewport", name: "fitToViewport", widget: "boolean", default: true, hint: "Default ON. Constrains the image to fit within 75% of the monitor height. Disable for large detail or close-up images." }
               - { label: "Comment", name: "comment", widget: "text", required: false }
+              - { label: "Comment Alignment", name: "commentAlign", widget: "select", default: "media-left", options: [
+                  { label: "Media Left", value: "media-left" },
+                  { label: "Center", value: "center" },
+                  { label: "Page Left", value: "page-left" },
+                  { label: "Page Right", value: "page-right" }
+                ] }
 
           - label: "Video"
             name: "video"
@@ -191,17 +251,41 @@ collections:
             hint: "Paste a YouTube, Vimeo, or direct .mp4 URL."
             fields:
               - { label: "Title", name: "title", widget: "string", required: false }
+              - { label: "Title Alignment", name: "titleAlign", widget: "select", default: "media-left", options: [
+                  { label: "Media Left", value: "media-left" },
+                  { label: "Center", value: "center" },
+                  { label: "Page Left", value: "page-left" },
+                  { label: "Page Right", value: "page-right" }
+                ] }
               - { label: "Video URL", name: "videoUrl", widget: "string" }
               - { label: "Comment", name: "comment", widget: "text", required: false }
+              - { label: "Comment Alignment", name: "commentAlign", widget: "select", default: "media-left", options: [
+                  { label: "Media Left", value: "media-left" },
+                  { label: "Center", value: "center" },
+                  { label: "Page Left", value: "page-left" },
+                  { label: "Page Right", value: "page-right" }
+                ] }
 
           - label: "Turntable"
             name: "turntable"
             widget: "object"
             fields:
               - { label: "Title", name: "title", widget: "string", required: false }
+              - { label: "Title Alignment", name: "titleAlign", widget: "select", default: "media-left", options: [
+                  { label: "Media Left", value: "media-left" },
+                  { label: "Center", value: "center" },
+                  { label: "Page Left", value: "page-left" },
+                  { label: "Page Right", value: "page-right" }
+                ] }
               - { label: "Folder: turntables/...", name: "folder", widget: "string", hint: "Use the folder path relative to public/. Example: turntables/test. Do NOT start with / and do NOT include public/." }
               - { label: "Fit to viewport", name: "fitToViewport", widget: "boolean", default: true, hint: "Default ON. Constrains the turntable to fit within 75% of the monitor height. Disable for large detail or close-up views." }
               - { label: "Comment", name: "comment", widget: "text", required: false }
+              - { label: "Comment Alignment", name: "commentAlign", widget: "select", default: "media-left", options: [
+                  { label: "Media Left", value: "media-left" },
+                  { label: "Center", value: "center" },
+                  { label: "Page Left", value: "page-left" },
+                  { label: "Page Right", value: "page-right" }
+                ] }
 
           - label: "AOV"
             name: "aov"
@@ -209,6 +293,12 @@ collections:
             hint: "Upload a minimum of two passes (e.g. Viewport and Wireframe) to create an interactive slider."
             fields:
               - { label: "Title", name: "title", widget: "string", required: false }
+              - { label: "Title Alignment", name: "titleAlign", widget: "select", default: "media-left", options: [
+                  { label: "Media Left", value: "media-left" },
+                  { label: "Center", value: "center" },
+                  { label: "Page Left", value: "page-left" },
+                  { label: "Page Right", value: "page-right" }
+                ] }
               - label: "AOV Passes"
                 name: "aovPasses"
                 widget: "list"
@@ -217,5 +307,11 @@ collections:
                   - { label: "Image", name: "image", widget: "image" }
               - { label: "Fit to viewport", name: "fitToViewport", widget: "boolean", default: true, hint: "Default ON. Constrains the AOV comparison to fit within 75% of the monitor height. Disable for large detail or close-up views." }
               - { label: "Comment", name: "comment", widget: "text", required: false }
+              - { label: "Comment Alignment", name: "commentAlign", widget: "select", default: "media-left", options: [
+                  { label: "Media Left", value: "media-left" },
+                  { label: "Center", value: "center" },
+                  { label: "Page Left", value: "page-left" },
+                  { label: "Page Right", value: "page-right" }
+                ] }
 
       - { label: "Article Content", name: "body", widget: "markdown" }

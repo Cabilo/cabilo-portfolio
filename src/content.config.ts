@@ -8,36 +8,51 @@ const aovPassSchema = z.object({
   image: z.string(),
 });
 
+const alignmentSchema = z.enum([
+  'media-left',
+  'center',
+  'page-left',
+  'page-right',
+]);
+
 export const mediaBlockSchema = z.discriminatedUnion('type', [
   z.object({
     type: z.literal('image'),
     title: z.string().optional(),
+    titleAlign: alignmentSchema.default('media-left'),
     image: z.string(),
     fitToViewport: z.boolean().default(true),
     comment: z.string().optional(),
+    commentAlign: alignmentSchema.default('media-left'),
   }),
 
   z.object({
     type: z.literal('video'),
     title: z.string().optional(),
+    titleAlign: alignmentSchema.default('media-left'),
     videoUrl: z.string(),
     comment: z.string().optional(),
+    commentAlign: alignmentSchema.default('media-left'),
   }),
 
   z.object({
     type: z.literal('turntable'),
     title: z.string().optional(),
+    titleAlign: alignmentSchema.default('media-left'),
     folder: z.string(),
     fitToViewport: z.boolean().default(true),
     comment: z.string().optional(),
+    commentAlign: alignmentSchema.default('media-left'),
   }),
 
   z.object({
     type: z.literal('aov'),
     title: z.string().optional(),
+    titleAlign: alignmentSchema.default('media-left'),
     aovPasses: z.array(aovPassSchema).default([]),
     fitToViewport: z.boolean().default(true),
     comment: z.string().optional(),
+    commentAlign: alignmentSchema.default('media-left'),
   }),
 
   z.object({

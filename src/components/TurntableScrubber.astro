@@ -15,12 +15,12 @@ const frameDataString = JSON.stringify(frames);
 <turntable-scrubber
   data-frames={frameDataString}
   data-fit-viewport={fitToViewport ? 'true' : 'false'}
-  class="flex flex-col gap-3 w-full"
+  class="flex flex-col items-center gap-3 w-full"
 >
 
   <div
     id="tt-container"
-    class="relative bg-cabilo-obsidian overflow-hidden ring-1 ring-cabilo-card shadow-lg cursor-ew-resize flex items-center justify-center"
+    class="relative mx-auto max-w-full bg-cabilo-obsidian overflow-hidden ring-1 ring-cabilo-card shadow-lg cursor-ew-resize flex items-center justify-center"
     style="touch-action: pan-y;"
   >
 
@@ -30,7 +30,7 @@ const frameDataString = JSON.stringify(frames);
       alt="3D Turntable"
       class={fitToViewport
         ? "block max-w-full max-h-[75vh] object-contain transition-transform duration-150 ease-out select-none"
-        : "block w-full h-auto transition-transform duration-150 ease-out select-none"
+        : "block max-w-full w-auto h-auto object-contain transition-transform duration-150 ease-out select-none"
       }
       style="transform: scale(1); transform-origin: 50% 50%;"
       draggable="false"
@@ -160,8 +160,18 @@ const frameDataString = JSON.stringify(frames);
 
       const fitTurntableToViewport = () => {
         if (!fitViewport) {
+          /*
+           * Do not force a full-width frame when viewport fitting
+           * is disabled. Let the frame follow the image's
+           * intrinsic dimensions instead.
+           */
           container.style.width = '';
           container.style.height = '';
+          container.style.maxWidth = '100%';
+
+          display.style.width = '';
+          display.style.height = '';
+
           return;
         }
 
@@ -196,10 +206,22 @@ const frameDataString = JSON.stringify(frames);
         const height =
           width / aspectRatio;
 
+        /*
+         * The frame follows the actual rendered image size.
+         */
         container.style.width =
           `${width}px`;
 
         container.style.height =
+          `${height}px`;
+
+        container.style.maxWidth =
+          '100%';
+
+        display.style.width =
+          `${width}px`;
+
+        display.style.height =
           `${height}px`;
       };
 

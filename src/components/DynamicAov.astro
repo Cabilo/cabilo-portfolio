@@ -1,375 +1,322 @@
 ---
-/**
- * DynamicAov.astro
- *
- * A reusable AOV comparison viewer.
- *
- * UX rules:
- * - The comparison viewport is capped at 75vh when enabled.
- * - Both images always occupy the same fixed viewport dimensions.
- * - The B image is translated underneath the clipper instead of being resized
- *   when the comparison slider moves.
- * - Horizontal touch gestures control the slider.
- * - Vertical touch gestures are ignored so the page can scroll naturally.
- * - Native image dragging/selection is disabled.
- */
+interface AovPass {
+  name: string;
+  image: string;
+}
 
-export interface Props {
-  passes: {
-    name: string;
-    image: string;
-  }[];
+interface Props {
+  passes: AovPass[];
   fitToViewport?: boolean;
 }
 
-const { passes, fitToViewport = true } = Astro.props;
+const {
+  passes,
+  fitToViewport = true,
+} = Astro.props;
 
-const defaultA = passes[0];
-const defaultB = passes.length > 1 ? passes[1] : passes[0];
+const imageA = passes[0]?.image;
+const imageB = passes[1]?.image;
 ---
 
-<dynamic-aov class="block w-full">
-  <div class="flex flex-col gap-6">
-
+{imageA && imageB && (
+  <dynamic-aov
+    data-image-a={imageA}
+    data-image-b={imageB}
+    data-fit-viewport={String(fitToViewport)}
+    class="flex justify-center w-full"
+  >
     <div
-      class="aov-container relative overflow-hidden max-w-full mx-auto bg-cabilo-obsidian select-none"
-      style="touch-action: pan-y; -webkit-user-select: none; user-select: none;"
+      id="aov-container"
+      class="relative mx-auto bg-cabilo-obsidian overflow-hidden ring-1 ring-cabilo-card shadow-lg select-none"
+      style="touch-action: pan-y;"
     >
-
       <img
-        src={defaultA.image}
-        alt="Side A"
-        class="img-a absolute inset-0 w-full h-full object-contain pointer-events-none select-none"
+        id="aov-image-a"
+        src={imageA}
+        alt={passes[0]?.name || 'AOV pass A'}
+        class="absolute inset-0 block pointer-events-none select-none object-contain object-center"
         draggable="false"
       />
 
       <div
-        class="clipper-b absolute inset-0 border-l-2 border-brand-amber overflow-hidden pointer-events-none"
-        style="width: 50%; left: 50%;"
+        id="aov-clip"
+        class="absolute inset-y-0 left-0 overflow-hidden pointer-events-none"
+        style="width: 50%;"
       >
         <img
-          src={defaultB.image}
-          alt="Side B"
-          class="img-b absolute top-0 left-0 h-full object-contain max-w-none pointer-events-none select-none"
-          style="-webkit-user-drag: none;"
+          id="aov-image-b"
+          src={imageB}
+          alt={passes[1]?.name || 'AOV pass B'}
+          class="absolute top-0 left-0 block pointer-events-none select-none object-contain object-center"
           draggable="false"
         />
       </div>
 
       <div
-        class="aov-slider absolute top-0 bottom-0 w-12 cursor-ew-resize flex items-center justify-center z-10 group"
-        style="left: 50%; transform: translateX(-50%); touch-action: pan-y;"
-      >
-        <div class="absolute inset-y-0 w-0.5 bg-brand-amber/50 group-hover:bg-brand-amber transition-colors"></div>
+        id="aov-divider"
+        class="absolute top-0 bottom-0 left-1/2 -translate-x-1/2 w-px bg-white/80 pointer-events-none"
+      ></div>
 
-        <div class="relative w-10 h-10 bg-brand-amber rounded-full shadow-[0_0_15px_rgba(230,115,0,0.8)] flex items-center justify-center pointer-events-none">
-          <div class="flex items-center gap-1.5 text-cabilo-obsidian">
-            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path
-                stroke-linecap="round"
-                stroke-linejoin="round"
-                stroke-width="3"
-                d="M15 19l-7-7 7-7"
-              ></path>
-            </svg>
-
-            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path
-                stroke-linecap="round"
-                stroke-linejoin="round"
-                stroke-width="3"
-                d="M9 5l7 7-7 7"
-              ></path>
-            </svg>
-          </div>
-        </div>
-      </div>
-
-      <div class="label-a absolute bottom-4 left-4 bg-cabilo-obsidian/80 backdrop-blur-sm px-3 py-1 rounded text-xs tracking-widest text-text-white uppercase pointer-events-none">
-        {defaultA.name}
-      </div>
-
-      <div class="label-b absolute bottom-4 right-4 bg-cabilo-obsidian/80 backdrop-blur-sm px-3 py-1 rounded text-xs tracking-widest text-text-white uppercase pointer-events-none">
-        {defaultB.name}
-      </div>
-
+      <input
+        id="aov-slider"
+        type="range"
+        min="0"
+        max="100"
+        value="50"
+        class="absolute inset-0 w-full h-full opacity-0 cursor-ew-resize"
+        aria-label="AOV comparison slider"
+      />
     </div>
-
-    <div class="grid grid-cols-1 md:grid-cols-2 gap-8 bg-cabilo-dark p-6 rounded-md border border-cabilo-card">
-
-      <div>
-        <h4 class="text-text-silver text-xs tracking-widest uppercase mb-3">
-          Left Side (A)
-        </h4>
-
-        <div class="flex flex-wrap gap-2">
-          {passes.map((pass, index) => (
-            <button
-              class={`btn-a px-3 py-1.5 rounded-md text-xs font-bold tracking-wider uppercase transition-colors ${
-                index === 0
-                  ? 'bg-brand-amber text-text-white'
-                  : 'bg-cabilo-card text-text-silver hover:text-text-white'
-              }`}
-              data-name={pass.name}
-              data-image={pass.image}
-            >
-              {pass.name}
-            </button>
-          ))}
-        </div>
-      </div>
-
-      <div>
-        <h4 class="text-text-silver text-xs tracking-widest uppercase mb-3">
-          Right Side (B)
-        </h4>
-
-        <div class="flex flex-wrap gap-2">
-          {passes.map((pass, index) => (
-            <button
-              class={`btn-b px-3 py-1.5 rounded-md text-xs font-bold tracking-wider uppercase ${
-                index === 1
-                  ? 'bg-brand-amber text-text-white'
-                  : 'bg-cabilo-card text-text-silver hover:text-text-white'
-              }`}
-              data-name={pass.name}
-              data-image={pass.image}
-            >
-              {pass.name}
-            </button>
-          ))}
-        </div>
-      </div>
-
-    </div>
-
-  </div>
-</dynamic-aov>
+  </dynamic-aov>
+)}
 
 <script>
   class DynamicAov extends HTMLElement {
+    private container!: HTMLElement;
+    private imageA!: HTMLImageElement;
+    private imageB!: HTMLImageElement;
+    private clip!: HTMLElement;
+    private divider!: HTMLElement;
+    private slider!: HTMLInputElement;
+
+    private fitToViewport = true;
+
+    private dragging = false;
+    private touchStartedInside = false;
+    private touchDirectionLocked = false;
+    private touchCancelled = false;
+    private touchStartX = 0;
+    private touchStartY = 0;
+
     connectedCallback() {
-      if (this.dataset.initialized === 'true') return;
+      this.container = this.querySelector('#aov-container') as HTMLElement;
+      this.imageA = this.querySelector('#aov-image-a') as HTMLImageElement;
+      this.imageB = this.querySelector('#aov-image-b') as HTMLImageElement;
+      this.clip = this.querySelector('#aov-clip') as HTMLElement;
+      this.divider = this.querySelector('#aov-divider') as HTMLElement;
+      this.slider = this.querySelector('#aov-slider') as HTMLInputElement;
 
-      this.dataset.initialized = 'true';
+      this.fitToViewport =
+        this.dataset.fitViewport !== 'false';
 
-      const container = this.querySelector('.aov-container') as HTMLElement;
-      const clipperB = this.querySelector('.clipper-b') as HTMLElement;
-      const slider = this.querySelector('.aov-slider') as HTMLElement;
-      const imgA = this.querySelector('.img-a') as HTMLImageElement;
-      const imgB = this.querySelector('.img-b') as HTMLImageElement;
-      const labelA = this.querySelector('.label-a') as HTMLElement;
-      const labelB = this.querySelector('.label-b') as HTMLElement;
-      const buttonsA = this.querySelectorAll('.btn-a');
-      const buttonsB = this.querySelectorAll('.btn-b');
+      if (!this.container || !this.imageA || !this.imageB) {
+        return;
+      }
 
-      if (!container || !clipperB || !slider || !imgA || !imgB) return;
+      this.bindEvents();
 
-      let isDragging = false;
+      if (this.imageA.complete) {
+        this.fixImageSize();
+      } else {
+        this.imageA.addEventListener(
+          'load',
+          this.fixImageSize,
+          { once: true },
+        );
+      }
 
-      let touchStartX = 0;
-      let touchStartY = 0;
+      window.addEventListener('resize', this.fixImageSize);
+    }
 
-      const touchThreshold = 8;
+    disconnectedCallback() {
+      window.removeEventListener('resize', this.fixImageSize);
+    }
 
-      const fixImageSize = () => {
-        if (!imgA.naturalWidth || !imgA.naturalHeight) return;
-
-        const aspectRatio = imgA.naturalWidth / imgA.naturalHeight;
-        const availableWidth = this.clientWidth;
-
-        if (!availableWidth) return;
-
-        let width: number;
-        let height: number;
-
-        if (fitToViewport) {
-          const availableHeight = window.innerHeight * 0.75;
-          const widthFromHeight = availableHeight * aspectRatio;
-
-          width = Math.min(availableWidth, widthFromHeight);
-          height = width / aspectRatio;
-        } else {
-          width = availableWidth;
-          height = width / aspectRatio;
-        }
-
-        container.style.width = `${width}px`;
-        container.style.height = `${height}px`;
-
-        // B must always match the full viewport.
-        // The clipper reveals it instead of resizing it.
-        imgB.style.width = `${width}px`;
-        imgB.style.height = `${height}px`;
-      };
-
-      window.addEventListener('resize', fixImageSize);
-
-      fixImageSize();
-
-      imgA.addEventListener('load', fixImageSize);
-      imgB.addEventListener('load', fixImageSize);
-
-      const updateSlider = (clientX: number) => {
-        const rect = container.getBoundingClientRect();
-
-        let position = ((clientX - rect.left) / rect.width) * 100;
-
-        position = Math.max(0, Math.min(100, position));
-
-        slider.style.left = `${position}%`;
-
-        clipperB.style.width = `${100 - position}%`;
-        clipperB.style.left = `${position}%`;
-
-        // Translate the fixed-size B image.
-        imgB.style.transform = `translateX(-${position}%)`;
-      };
-
-      const moveSlider = (e: MouseEvent | TouchEvent) => {
-        if (!isDragging) return;
-
-        if ('touches' in e) {
-          if (e.touches.length === 0) return;
-
-          const currentX = e.touches[0].clientX;
-          const currentY = e.touches[0].clientY;
-
-          const diffX = currentX - touchStartX;
-          const diffY = currentY - touchStartY;
-
-          if (
-            Math.abs(diffX) < touchThreshold &&
-            Math.abs(diffY) < touchThreshold
-          ) {
-            return;
-          }
-
-          // Vertical gesture:
-          // cancel AOV interaction and let the page scroll.
-          if (Math.abs(diffY) > Math.abs(diffX)) {
-            isDragging = false;
-            return;
-          }
-
-          e.preventDefault();
-
-          updateSlider(currentX);
-
-          return;
-        }
-
-        e.preventDefault();
-
-        updateSlider(e.clientX);
-      };
-
-      slider.addEventListener('mousedown', (e) => {
-        e.preventDefault();
-        isDragging = true;
+    private bindEvents() {
+      this.slider.addEventListener('input', () => {
+        this.updatePosition(Number(this.slider.value));
       });
 
-      slider.addEventListener(
-        'touchstart',
-        (e) => {
-          if (e.touches.length === 0) return;
-
-          touchStartX = e.touches[0].clientX;
-          touchStartY = e.touches[0].clientY;
-
-          isDragging = true;
-        },
-        { passive: true }
+      this.container.addEventListener(
+        'mousedown',
+        this.onMouseDown,
       );
 
-      // Completely disable native image dragging/selection.
-      container.addEventListener('dragstart', (e) => {
-        e.preventDefault();
-      });
+      window.addEventListener(
+        'mousemove',
+        this.onMouseMove,
+      );
 
-      window.addEventListener('mouseup', () => {
-        isDragging = false;
-      });
+      window.addEventListener(
+        'mouseup',
+        this.onMouseUp,
+      );
 
-      window.addEventListener('touchend', () => {
-        isDragging = false;
-      });
-
-      window.addEventListener('touchcancel', () => {
-        isDragging = false;
-      });
-
-      window.addEventListener('mousemove', moveSlider);
+      this.container.addEventListener(
+        'touchstart',
+        this.onTouchStart,
+        { passive: true },
+      );
 
       window.addEventListener(
         'touchmove',
-        moveSlider,
-        { passive: false }
+        this.onTouchMove,
+        { passive: false },
       );
 
-      buttonsA.forEach((btn) => {
-        btn.addEventListener('click', (e) => {
-          const target = e.currentTarget as HTMLButtonElement;
-
-          imgA.src = target.getAttribute('data-image') || '';
-          labelA.innerText = target.getAttribute('data-name') || '';
-
-          buttonsA.forEach((button) => {
-            button.classList.remove(
-              'bg-brand-amber',
-              'text-text-white'
-            );
-
-            button.classList.add(
-              'bg-cabilo-card',
-              'text-text-silver'
-            );
-          });
-
-          target.classList.remove(
-            'bg-cabilo-card',
-            'text-text-silver'
-          );
-
-          target.classList.add(
-            'bg-brand-amber',
-            'text-text-white'
-          );
-        });
-      });
-
-      buttonsB.forEach((btn) => {
-        btn.addEventListener('click', (e) => {
-          const target = e.currentTarget as HTMLButtonElement;
-
-          imgB.src = target.getAttribute('data-image') || '';
-          labelB.innerText = target.getAttribute('data-name') || '';
-
-          buttonsB.forEach((button) => {
-            button.classList.remove(
-              'bg-brand-amber',
-              'text-text-white'
-            );
-
-            button.classList.add(
-              'bg-cabilo-card',
-              'text-text-silver'
-            );
-          });
-
-          target.classList.remove(
-            'bg-cabilo-card',
-            'text-text-silver'
-          );
-
-          target.classList.add(
-            'bg-brand-amber',
-            'text-text-white'
-          );
-        });
-      });
+      window.addEventListener(
+        'touchend',
+        this.onTouchEnd,
+        { passive: true },
+      );
     }
+
+    private fixImageSize = () => {
+      if (
+        !this.imageA.naturalWidth ||
+        !this.imageA.naturalHeight
+      ) {
+        return;
+      }
+
+      const naturalWidth = this.imageA.naturalWidth;
+      const naturalHeight = this.imageA.naturalHeight;
+
+      const parentWidth =
+        this.parentElement?.clientWidth ||
+        window.innerWidth;
+
+      const availableWidth = Math.min(
+        parentWidth,
+        window.innerWidth,
+      );
+
+      const maxHeight = this.fitToViewport
+        ? window.innerHeight * 0.75
+        : Infinity;
+
+      const scale = Math.min(
+        1,
+        availableWidth / naturalWidth,
+        maxHeight / naturalHeight,
+      );
+
+      const width = Math.round(naturalWidth * scale);
+      const height = Math.round(naturalHeight * scale);
+
+      /*
+       * Frame = content.
+       * No extra full-width wrapper.
+       */
+      this.container.style.width = `${width}px`;
+      this.container.style.height = `${height}px`;
+
+      this.imageA.style.width = `${width}px`;
+      this.imageA.style.height = `${height}px`;
+
+      this.imageB.style.width = `${width}px`;
+      this.imageB.style.height = `${height}px`;
+
+      this.updatePosition(Number(this.slider.value));
+    };
+
+    private updatePosition(value: number) {
+      const clamped = Math.max(
+        0,
+        Math.min(100, value),
+      );
+
+      this.clip.style.width = `${clamped}%`;
+      this.divider.style.left = `${clamped}%`;
+    }
+
+    private onMouseDown = (event: MouseEvent) => {
+      this.dragging = true;
+      this.updateFromPointer(event.clientX);
+    };
+
+    private onMouseMove = (event: MouseEvent) => {
+      if (!this.dragging) return;
+
+      this.updateFromPointer(event.clientX);
+    };
+
+    private onMouseUp = () => {
+      this.dragging = false;
+    };
+
+    private onTouchStart = (event: TouchEvent) => {
+      if (!event.touches.length) return;
+
+      const touch = event.touches[0];
+      const rect =
+        this.container.getBoundingClientRect();
+
+      this.touchStartedInside =
+        touch.clientX >= rect.left &&
+        touch.clientX <= rect.right &&
+        touch.clientY >= rect.top &&
+        touch.clientY <= rect.bottom;
+
+      this.touchDirectionLocked = false;
+      this.touchCancelled = false;
+
+      if (!this.touchStartedInside) return;
+
+      this.touchStartX = touch.clientX;
+      this.touchStartY = touch.clientY;
+    };
+
+    private onTouchMove = (event: TouchEvent) => {
+      if (!this.touchStartedInside) return;
+      if (this.touchCancelled) return;
+      if (!event.touches.length) return;
+
+      const touch = event.touches[0];
+
+      const deltaX =
+        touch.clientX - this.touchStartX;
+
+      const deltaY =
+        touch.clientY - this.touchStartY;
+
+      if (!this.touchDirectionLocked) {
+        if (
+          Math.abs(deltaX) < 8 &&
+          Math.abs(deltaY) < 8
+        ) {
+          return;
+        }
+
+        this.touchDirectionLocked = true;
+
+        if (Math.abs(deltaY) > Math.abs(deltaX)) {
+          this.touchCancelled = true;
+          return;
+        }
+      }
+
+      event.preventDefault();
+
+      this.updateFromPointer(touch.clientX);
+    };
+
+    private onTouchEnd = () => {
+      this.touchStartedInside = false;
+      this.touchDirectionLocked = false;
+      this.touchCancelled = false;
+    };
+
+    private updateFromPointer(clientX: number) {
+      const rect =
+        this.container.getBoundingClientRect();
+
+      if (!rect.width) return;
+
+      const position =
+        ((clientX - rect.left) / rect.width) * 100;
+
+      const clamped = Math.max(
+        0,
+        Math.min(100, position),
+      );
+
+      this.slider.value = String(clamped);
+      this.updatePosition(clamped);
+    };
   }
 
-  customElements.define('dynamic-aov', DynamicAov);
+  if (!customElements.get('dynamic-aov')) {
+    customElements.define('dynamic-aov', DynamicAov);
+  }
 </script>

@@ -93,6 +93,43 @@ const getVideoEmbed = (url: string) => {
     };
   }
 };
+
+// ------------------------------------------------------------
+// ALIGNMENT HELPERS
+// ------------------------------------------------------------
+
+const getAlignmentClasses = (
+  alignment: MediaBlock['titleAlign'],
+  mediaType: MediaBlock['type'],
+) => {
+  switch (alignment) {
+    case 'center':
+      return 'w-full text-center';
+
+    case 'page-left':
+      return 'w-full text-left';
+
+    case 'page-right':
+      return 'w-full text-right';
+
+    case 'media-left':
+    default:
+      /*
+       * Images have a real intrinsic width, so this makes the
+       * title/comment follow the actual media width instead of
+       * the full page width.
+       *
+       * Video, turntable, and AOV blocks remain full-width here
+       * because their interactive/rendering components manage
+       * their own viewport sizing.
+       */
+      if (mediaType === 'image') {
+        return 'w-fit max-w-full mx-auto text-left';
+      }
+
+      return 'w-full text-left';
+  }
+};
 ---
 
 <!-- ====================================================== -->
@@ -124,33 +161,51 @@ const getVideoEmbed = (url: string) => {
     return (
       <div class="mb-16">
         {block.title && (
-          <h3 class="text-xl text-text-white mb-6 uppercase tracking-wider">
+          <h3
+            class:list={[
+              'text-xl text-text-white mb-6 uppercase tracking-wider',
+              getAlignmentClasses(block.titleAlign, block.type),
+            ]}
+          >
             {block.title}
           </h3>
         )}
 
-        <div
-          class:list={[
-            'rounded-md overflow-hidden shadow-2xl border border-cabilo-card',
-            block.fitToViewport && 'flex items-center justify-center max-h-[75vh]',
-          ]}
-        >
-          <img
-            src={block.image}
-            alt="Project Media"
+        <!--
+          The frame is sized by the image itself.
+          This prevents portrait images from creating a
+          full-width frame while still keeping everything centered.
+        -->
+        <div class="flex justify-center w-full">
+          <div
             class:list={[
-              'block',
-              block.fitToViewport
-                ? 'max-w-full max-h-[75vh] w-auto h-auto object-contain'
-                : 'w-full h-auto',
+              'inline-flex items-center justify-center rounded-md overflow-hidden shadow-2xl border border-cabilo-card',
+              'max-w-full',
+              block.fitToViewport && 'max-h-[75vh]',
             ]}
-            loading="lazy"
-            draggable="false"
-          />
+          >
+            <img
+              src={block.image}
+              alt="Project Media"
+              class:list={[
+                'block object-contain object-center select-none',
+                block.fitToViewport
+                  ? 'max-w-full max-h-[75vh] w-auto h-auto'
+                  : 'max-w-full w-auto h-auto',
+              ]}
+              loading="lazy"
+              draggable="false"
+            />
+          </div>
         </div>
 
         {block.comment && (
-          <p class="mt-4 text-sm leading-relaxed text-text-silver">
+          <p
+            class:list={[
+              'mt-4 text-sm leading-relaxed text-text-silver',
+              getAlignmentClasses(block.commentAlign, block.type),
+            ]}
+          >
             {block.comment}
           </p>
         )}
@@ -166,12 +221,17 @@ const getVideoEmbed = (url: string) => {
     return (
       <div class="mb-16">
         {block.title && (
-          <h3 class="text-xl text-text-white mb-6 uppercase tracking-wider">
+          <h3
+            class:list={[
+              'text-xl text-text-white mb-6 uppercase tracking-wider',
+              getAlignmentClasses(block.titleAlign, block.type),
+            ]}
+          >
             {block.title}
           </h3>
         )}
 
-        <div class="rounded-md overflow-hidden shadow-2xl border border-cabilo-card relative aspect-video">
+        <div class="rounded-md overflow-hidden shadow-2xl border border-cabilo-card relative aspect-video w-full">
           {video.type === 'youtube' || video.type === 'vimeo' ? (
             <iframe
               class="absolute inset-0 w-full h-full"
@@ -199,7 +259,12 @@ const getVideoEmbed = (url: string) => {
         </div>
 
         {block.comment && (
-          <p class="mt-4 text-sm leading-relaxed text-text-silver">
+          <p
+            class:list={[
+              'mt-4 text-sm leading-relaxed text-text-silver',
+              getAlignmentClasses(block.commentAlign, block.type),
+            ]}
+          >
             {block.comment}
           </p>
         )}
@@ -215,7 +280,12 @@ const getVideoEmbed = (url: string) => {
     return (
       <div class="mb-20">
         {block.title && (
-          <h3 class="text-xl text-text-white mb-6 uppercase tracking-wider">
+          <h3
+            class:list={[
+              'text-xl text-text-white mb-6 uppercase tracking-wider',
+              getAlignmentClasses(block.titleAlign, block.type),
+            ]}
+          >
             {block.title}
           </h3>
         )}
@@ -226,7 +296,12 @@ const getVideoEmbed = (url: string) => {
         />
 
         {block.comment && (
-          <p class="mt-4 text-sm leading-relaxed text-text-silver">
+          <p
+            class:list={[
+              'mt-4 text-sm leading-relaxed text-text-silver',
+              getAlignmentClasses(block.commentAlign, block.type),
+            ]}
+          >
             {block.comment}
           </p>
         )}
@@ -240,7 +315,12 @@ const getVideoEmbed = (url: string) => {
     return (
       <div class="mb-20">
         {block.title && (
-          <h3 class="text-xl text-text-white mb-6 uppercase tracking-wider">
+          <h3
+            class:list={[
+              'text-xl text-text-white mb-6 uppercase tracking-wider',
+              getAlignmentClasses(block.titleAlign, block.type),
+            ]}
+          >
             {block.title}
           </h3>
         )}
@@ -251,7 +331,12 @@ const getVideoEmbed = (url: string) => {
         />
 
         {block.comment && (
-          <p class="mt-4 text-sm leading-relaxed text-text-silver">
+          <p
+            class:list={[
+              'mt-4 text-sm leading-relaxed text-text-silver',
+              getAlignmentClasses(block.commentAlign, block.type),
+            ]}
+          >
             {block.comment}
           </p>
         )}
