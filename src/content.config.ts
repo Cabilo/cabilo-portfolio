@@ -40,7 +40,7 @@ export const mediaBlockSchema = z.discriminatedUnion('type', [
   z.object({
     type: z.literal('text_block'),
     title: z.string().optional(),
-    content: z.string(),
+    content: z.string().default(''),
   }),
 ]);
 
