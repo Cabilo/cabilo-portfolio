@@ -4,6 +4,8 @@ description: testing for tutorial media blocks
 publishDate: 2026-10-03T14:56:00.000-03:00
 type: Breakdown
 format: Video
+tags:
+  - Zbrush
 thumbnail: https://www.notebookcheck.info/fileadmin/Notebooks/News/_nc5/Bloodborne-The-Old-Hunters-DLC-Cover-Art-Image-Source-PlayStation-Store.jpg.jpeg
 featured: false
 mediaBlocks:
