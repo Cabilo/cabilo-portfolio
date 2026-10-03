@@ -1,12 +1,16 @@
 ---
-title: "Cinematic Lighting in Unreal Engine 5"
-description: "A deep dive into Lumen, physically based light values, and cinematic post-processing volumes for realistic character lighting."
+title: Cinematic Lighting in Unreal Engine 5
+description: A deep dive into Lumen, physically based light values, and
+  cinematic post-processing volumes for realistic character lighting.
 publishDate: 2024-10-15
-type: "Tutorial"
-format: "Video"
-tags: ["Unreal Engine 5", "Lighting", "Cinematics"]
-thumbnail: "https://images.unsplash.com/photo-1605379399642-870262d3d051?w=800"
-youtubeId: "ABCDEFG1234"
+type: Tutorial
+format: Video
+tags:
+  - Unreal Engine 5
+  - Lighting
+  - Cinematics
+thumbnail: https://images.unsplash.com/photo-1605379399642-870262d3d051?w=800
+youtubeId: doUDJFKLyZs
 featured: true
 ---
 
