@@ -2,7 +2,7 @@
 import { getEntry } from 'astro:content';
 import Layout from '../layouts/Layout.astro';
 
-// Fetch the text from src/content/pages/contact.md
+// Fetch the data from src/content/pages/contact.md
 const contactPage = await getEntry('pages', 'contact');
 ---
 
@@ -10,10 +10,10 @@ const contactPage = await getEntry('pages', 'contact');
   <main class="max-w-7xl mx-auto px-6 py-20">
     <div class="max-w-3xl mx-auto">
       
-      <!-- Dynamic Headers -->
+      <!-- CMS Headlines -->
       <div class="text-center mb-16">
         <h1 class="text-4xl md:text-5xl font-bold text-text-white uppercase tracking-wide mb-4">
-          {contactPage.data.headline}
+          {contactPage.data.headline || "Let's Connect"}
         </h1>
         <p class="text-lg text-text-silver">
           {contactPage.data.subheadline}
@@ -23,7 +23,6 @@ const contactPage = await getEntry('pages', 'contact');
       <div class="bg-cabilo-dark p-10 md:p-16 rounded-md border border-cabilo-card shadow-2xl">
         <form action="https://api.web3forms.com/submit" method="POST" class="flex flex-col gap-8">
           
-          <!-- Ensure your real Web3Forms key is here! -->
           <input type="hidden" name="access_key" value="d110d489-6486-4def-b65a-cf6946a3371b">
           <input type="checkbox" name="botcheck" class="hidden" style="display: none;">
 

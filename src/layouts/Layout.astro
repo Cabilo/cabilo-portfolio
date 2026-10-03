@@ -1,9 +1,13 @@
 ---
 // src/layouts/Layout.astro
+import { getEntry } from 'astro:content';
 import { ClientRouter } from 'astro:transitions';
 import '../styles/global.css';
 import Navbar from '../components/Navbar.astro'; 
 import Footer from '../components/Footer.astro'; 
+
+// Fetch the Global SEO defaults from the CMS
+const seoPage = await getEntry('pages', 'seo');
 
 export interface Props {
   title?: string;
@@ -11,14 +15,13 @@ export interface Props {
   image?: string;
 }
 
-// 1. We set up global defaults, but allow individual pages to override them!
+// If a specific project passes SEO data, use it. Otherwise, use the CMS defaults!
 const { 
-  title = "CABILO | Senior 3D Artist & Cinematics",
-  description = "Portfolio of CABILO, a Senior 3D Artist specializing in high-end cinematics, Lookdev, and game animation.",
-  image = "https://cdna.artstation.com/p/assets/images/images/046/504/170/large/lucas-cabilo-ls-portraitheadscans-square-v001-0001.jpg"
+  title = seoPage?.data.globalSeoTitle || "CABILO | Senior 3D Artist & Cinematics",
+  description = seoPage?.data.globalSeoDescription || "Portfolio of CABILO, a Senior 3D Artist.",
+  image = seoPage?.data.globalSeoImage || "/favicon.svg"
 } = Astro.props;
 
-// 2. We grab the exact, current URL to pass to OpenGraph
 const currentUrl = new URL(Astro.url.pathname, Astro.site || 'https://cabilo.vercel.app').href;
 ---
 
@@ -32,7 +35,6 @@ const currentUrl = new URL(Astro.url.pathname, Astro.site || 'https://cabilo.ver
     <meta name="description" content={description} />
     <meta name="author" content="CABILO" />
     
-    <!-- Open Graph (For beautiful Discord / LinkedIn previews) -->
     <meta property="og:title" content={title} />
     <meta property="og:description" content={description} />
     <meta property="og:type" content="website" />
