@@ -1,74 +1,40 @@
 ---
+import { getEntry, render } from 'astro:content';
 import Layout from '../layouts/Layout.astro';
+
+// Fetch the text and markdown from src/content/pages/about.md
+const aboutPage = await getEntry('pages', 'about');
+const { Content } = await render(aboutPage);
 ---
 
 <Layout>
   <main class="max-w-7xl mx-auto px-6 py-20">
-    
     <div class="grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-24 items-start">
       
-      <!-- Left Column: Image -->
-       <div class="lg:col-span-5 aspect-[4/5] bg-cabilo-dark border border-cabilo-card rounded-md overflow-hidden shadow-2xl relative lg:sticky lg:top-32">
-        <img 
-          src="https://images.unsplash.com/photo-1535295972055-1c762f4483e5?q=80&w=800&auto=format&fit=crop" 
-          alt="CABILO Profile" 
-          class="absolute inset-0 w-full h-full object-cover opacity-80"
-        />
+      <div class="lg:col-span-5 aspect-[4/5] bg-cabilo-dark border border-cabilo-card rounded-md overflow-hidden shadow-2xl relative lg:sticky lg:top-32">
+        <img src="https://images.unsplash.com/photo-1535295972055-1c762f4483e5?q=80&w=800&auto=format&fit=crop" alt="CABILO Profile" class="absolute inset-0 w-full h-full object-cover opacity-80" />
         <div class="absolute inset-0 bg-gradient-to-t from-cabilo-obsidian/90 via-transparent to-transparent"></div>
       </div>
 
-      <!-- Right Column: Text & Skills -->
       <div class="lg:col-span-7 flex flex-col gap-10 pt-4">
         
         <div class="flex flex-col gap-2 border-b border-cabilo-card pb-8">
-          <h1 class="text-4xl md:text-6xl font-bold text-text-white uppercase tracking-wide">About CABILO</h1>
-          <h2 class="text-lg md:text-xl text-brand-amber tracking-widest uppercase font-medium">Senior 3D Artist</h2>
+          <h1 class="text-4xl md:text-6xl font-bold text-text-white uppercase tracking-wide">{aboutPage.data.headline}</h1>
+          <h2 class="text-lg md:text-xl text-brand-amber tracking-widest uppercase font-medium">{aboutPage.data.subheadline}</h2>
         </div>
         
+        <!-- Renders your custom Markdown Biography! -->
         <div class="prose prose-invert prose-p:text-text-silver prose-lg max-w-none leading-relaxed">
-          <p>
-            With over a decade of experience, I specialize in crafting high-end cinematic realities, game cinematics, and complex Lookdev for the entertainment industry.
-          </p>
-          <p>
-            My philosophy combines deep technical knowledge with a cinematic eye for lighting, composition, and storytelling. I believe that every asset, from the smallest mechanical joint to a full character groom, must be grounded in physical reality to truly sell the illusion.
-          </p>
-          <p>
-            With over a decade of experience, I specialize in crafting high-end cinematic realities, game cinematics, and complex Lookdev for the entertainment industry.
-          </p>
-          <p>
-            My philosophy combines deep technical knowledge with a cinematic eye for lighting, composition, and storytelling. I believe that every asset, from the smallest mechanical joint to a full character groom, must be grounded in physical reality to truly sell the illusion.
-          </p>
-          <p>
-            With over a decade of experience, I specialize in crafting high-end cinematic realities, game cinematics, and complex Lookdev for the entertainment industry.
-          </p>
-          <p>
-            My philosophy combines deep technical knowledge with a cinematic eye for lighting, composition, and storytelling. I believe that every asset, from the smallest mechanical joint to a full character groom, must be grounded in physical reality to truly sell the illusion.
-          </p>
-          <p>
-            With over a decade of experience, I specialize in crafting high-end cinematic realities, game cinematics, and complex Lookdev for the entertainment industry.
-          </p>
-          <p>
-            My philosophy combines deep technical knowledge with a cinematic eye for lighting, composition, and storytelling. I believe that every asset, from the smallest mechanical joint to a full character groom, must be grounded in physical reality to truly sell the illusion.
-          </p>
-          <p>
-            With over a decade of experience, I specialize in crafting high-end cinematic realities, game cinematics, and complex Lookdev for the entertainment industry.
-          </p>
-          <p>
-            My philosophy combines deep technical knowledge with a cinematic eye for lighting, composition, and storytelling. I believe that every asset, from the smallest mechanical joint to a full character groom, must be grounded in physical reality to truly sell the illusion.
-          </p>
+          <Content />
         </div>
 
-        <!-- NEW: Cinematic Software Grid (Now Clickable Links!) -->
         <div class="bg-cabilo-dark p-8 rounded-md border border-cabilo-card shadow-lg mt-4">
           <h3 class="text-text-white uppercase tracking-widest text-sm mb-6 font-bold flex items-center gap-3">
             <svg class="w-5 h-5 text-brand-amber" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 20l4-16m4 4l4 4-4 4M6 16l-4-4 4-4"></path></svg>
             Software Arsenal
           </h3>
           <div class="flex flex-wrap gap-3">
-            
-            <!-- We define the software list in an array so Astro can generate the links perfectly -->
             {["Unreal Engine 5", "Maya", "Nuke", "ZBrush", "Substance Painter", "Houdini", "Arnold", "Marvelous Designer"].map((software) => {
-              // Convert "Unreal Engine 5" to "unreal-engine-5" for the URL
               const link = software.toLowerCase().replace(/\s+/g, '-').replace(/[^\w-]+/g, '');
               return (
                 <a href={`/tags/${link}`} class="px-5 py-2.5 border border-cabilo-card rounded-md text-sm font-medium text-text-silver bg-cabilo-obsidian hover:border-brand-amber hover:text-text-white transition-all shadow-md">
@@ -76,22 +42,17 @@ import Layout from '../layouts/Layout.astro';
                 </a>
               )
             })}
-            
           </div>
         </div>
 
         <div class="mt-8 flex justify-center lg:justify-start w-full">
           <a href="/CABILO_Resume.pdf" target="_blank" class="w-fit flex items-center justify-center gap-3 px-8 py-4 rounded-md bg-brand-amber text-text-white font-bold uppercase tracking-widest hover:bg-brand-gold transition-colors duration-300 shadow-lg hover:shadow-[0_0_20px_rgba(230,115,0,0.4)]">
-            <svg class="w-5 h-5 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"></path>
-            </svg>
+            <svg class="w-5 h-5 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"></path></svg>
             <span>Download Resume</span>
           </a>
         </div>
 
       </div>
-
     </div>
-
   </main>
 </Layout>

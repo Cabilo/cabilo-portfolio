@@ -8,6 +8,48 @@ public_folder: "/uploads"
 
 collections:
 
+  # ============================================================
+  # GLOBAL PAGES (Home, About, Contact)
+  # ============================================================
+  
+  - name: "pages"
+    label: "Global Pages"
+    files:
+
+      # 1. HOMEPAGE
+      - label: "Home Page"
+        name: "home"
+        file: "src/content/pages/home.md"
+        fields:
+          - { label: "Page Name", name: "title", widget: "hidden", default: "Home" }
+          - { label: "Main Headline", name: "headline", widget: "string" }
+          - { label: "Subheadline / Bio", name: "subheadline", widget: "text" }
+          - { label: "Body Content (Not used on Homepage)", name: "body", widget: "hidden", default: "" }
+
+      # 2. ABOUT PAGE
+      - label: "About Page"
+        name: "about"
+        file: "src/content/pages/about.md"
+        fields:
+          - { label: "Page Name", name: "title", widget: "hidden", default: "About" }
+          - { label: "Main Headline", name: "headline", widget: "string", default: "About CABILO" }
+          - { label: "Job Title", name: "subheadline", widget: "string", default: "Senior 3D Artist" }
+          - { label: "Biography (Markdown)", name: "body", widget: "markdown" }
+
+      # 3. CONTACT PAGE
+      - label: "Contact Page"
+        name: "contact"
+        file: "src/content/pages/contact.md"
+        fields:
+          - { label: "Page Name", name: "title", widget: "hidden", default: "Contact" }
+          - { label: "Main Headline", name: "headline", widget: "string", default: "Let's Connect" }
+          - { label: "Subheadline", name: "subheadline", widget: "string", default: "Available for freelance opportunities..." }
+          - { label: "Body Content (Not used on Contact)", name: "body", widget: "hidden", default: "" }
+
+  # ============================================================
+  # PROJECTS
+  # ============================================================
+
   - name: "projects"
     label: "Projects"
     folder: "src/content/projects"
@@ -226,6 +268,10 @@ collections:
           name: "body",
           widget: "markdown"
         }
+
+  # ============================================================
+  # LEARNING
+  # ============================================================
 
   - name: "learning"
     label: "Learning (Tutorials & Breakdowns)"

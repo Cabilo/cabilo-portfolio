@@ -37,7 +37,6 @@ const mediaBlockSchema = z.discriminatedUnion('type', [
     comment: z.string().optional(),
   }),
 
-  // NEW: The Text/Markdown Media Block!
   z.object({
     type: z.literal('text_block'),
     title: z.string().optional(),
@@ -56,12 +55,7 @@ const projectCollection = defineCollection({
     role: z.string().default('Lead 3D Artist'),
     client: z.string().default('Personal Project'),
     softwareUsed: z.array(z.string()).default([]),
-
-    // New CMS-driven project media system.
-    // The order of these blocks determines their order on the project page.
     mediaBlocks: z.array(mediaBlockSchema).optional(),
-    
-    // Legacy fields have been successfully removed!
   }),
 });
 
@@ -81,7 +75,21 @@ const learningCollection = defineCollection({
   }),
 });
 
+// ============================================================
+// NEW: PAGES COLLECTION (For Home, About, Contact)
+// ============================================================
+const pagesCollection = defineCollection({
+  loader: glob({ pattern: "**/*.md", base: "./src/content/pages" }),
+  
+  schema: z.object({
+    title: z.string(),
+    headline: z.string(),
+    subheadline: z.string().optional(),
+  }),
+});
+
 export const collections = {
   projects: projectCollection,
   learning: learningCollection,
+  pages: pagesCollection, // <-- Registered here!
 };

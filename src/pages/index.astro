@@ -1,10 +1,18 @@
 ---
+import { getEntry } from 'astro:content';
 import Layout from '../layouts/Layout.astro';
 import Hero from '../components/Hero.astro';
 import PortfolioGrid from '../components/PortfolioGrid.astro';
+
+// Fetch the text from src/content/pages/home.md
+const homePage = await getEntry('pages', 'home');
 ---
 
 <Layout>
-  <Hero />
+  <!-- Pass the CMS data into the Hero! -->
+  <Hero 
+    headline={homePage.data.headline} 
+    subheadline={homePage.data.subheadline} 
+  />
   <PortfolioGrid />
 </Layout>

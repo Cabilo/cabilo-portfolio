@@ -1,20 +1,29 @@
 ---
 // src/components/Hero.astro
+export interface Props {
+  headline: string;
+  subheadline?: string;
+}
+
+const { headline, subheadline } = Astro.props;
+
+// This splits the headline so we can color the last word Amber!
+const words = headline.split(' ');
+const lastWord = words.pop();
+const firstPart = words.join(' ');
 ---
 
 <section class="max-w-7xl mx-auto px-6 py-12 md:py-20 flex flex-col gap-10">
-  
-  <!-- INTRODUCTION TEXT -->
   <div class="flex flex-col items-center text-center max-w-3xl mx-auto">
     <h1 class="text-4xl md:text-6xl font-bold text-text-white tracking-wide mb-4 uppercase">
-      Crafting Cinematic <br/>
+      {firstPart} <br/>
       <span class="bg-gradient-to-r from-brand-gold to-brand-amber bg-clip-text text-transparent">
-        Realities
+        {lastWord}
       </span>
     </h1>
     
     <p class="text-lg text-text-silver mb-8">
-      3D Artist specializing in high-end cinematics, lookdev, and animation for games and film.
+      {subheadline}
     </p>
     
     <a href="#work" class="px-8 py-3 rounded-sm bg-brand-amber text-text-white font-bold uppercase tracking-widest hover:bg-brand-gold transition-colors duration-300">
@@ -22,21 +31,8 @@
     </a>
   </div>
 
-  <!-- SHOWREEL VIDEO CONTAINER (16:9 Aspect Ratio) -->
-  <!-- This is the opening div you accidentally deleted! -->
   <div class="w-full relative aspect-video bg-cabilo-dark border border-cabilo-card rounded-md overflow-hidden shadow-[0_0_40px_rgba(230,115,0,0.1)]">
-    
-<!-- YOUTUBE EMBED (Autoplay, Muted, No Controls, Looped) -->
-    <iframe 
-      class="absolute inset-0 w-full h-full pointer-events-none"
-      src="https://www.youtube.com/embed/vRMMimi6cKM?autoplay=1&mute=1&controls=0&modestbranding=1&rel=0&loop=1&playlist=vRMMimi6cKM" 
-      title="CABILO Showreel" 
-      frameborder="0" 
-      allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" 
-      allowfullscreen>
-    </iframe>
-
-  <!-- And this is the closing div! -->
+    <!-- Replace YOUR_REAL_YOUTUBE_ID with your actual video ID below (in both places!) -->
+    <iframe class="absolute inset-0 w-full h-full pointer-events-none" src="https://www.youtube.com/embed/vRMMimi6cKM?autoplay=1&mute=1&controls=0&modestbranding=1&rel=0&loop=1&playlist=vRMMimi6cKM" title="CABILO Showreel" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe>
   </div>
-
 </section>
