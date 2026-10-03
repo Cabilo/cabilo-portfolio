@@ -1,12 +1,13 @@
 ---
 import { getCollection, render } from 'astro:content';
 import Layout from '../../layouts/Layout.astro';
+import MediaBlocksRenderer from '../../components/MediaBlocksRenderer.astro';
 
 export async function getStaticPaths() {
   const learningDocs = await getCollection('learning');
-  // Only build pages for Tutorials here!
-  const tutorials = learningDocs.filter(doc => doc.data.type === 'Breakdown');
-  return tutorials.map(doc => ({
+  // If in breakdowns/[id].astro, change this to 'Breakdown'
+  const breakdown = learningDocs.filter(doc => doc.data.type === 'Breakdown');
+  return breakdown.map(doc => ({
     params: { id: doc.id },
     props: { doc },
   }));
@@ -14,6 +15,32 @@ export async function getStaticPaths() {
 
 const { doc } = Astro.props;
 const { Content } = await render(doc);
+const mediaBlocks = doc.data.mediaBlocks ?? [];
+
+// Helper for the top video
+const getVideoEmbed = (url: string) => {
+  if (!url) return null;
+  try {
+    const parsedUrl = new URL(url);
+    const hostname = parsedUrl.hostname.replace(/^www\./, '');
+    if (hostname === 'youtube.com' || hostname === 'm.youtube.com') {
+      const videoId = parsedUrl.searchParams.get('v');
+      if (videoId) return { type: 'youtube', src: `https://www.youtube.com/embed/${videoId}?autoplay=1&mute=1&controls=1&modestbranding=1&rel=0` };
+    }
+    if (hostname === 'youtu.be') {
+      const videoId = parsedUrl.pathname.replace('/', '');
+      if (videoId) return { type: 'youtube', src: `https://www.youtube.com/embed/${videoId}?autoplay=1&mute=1&controls=1&modestbranding=1&rel=0` };
+    }
+    if (hostname === 'vimeo.com') {
+      const videoId = parsedUrl.pathname.split('/').filter(Boolean)[0];
+      if (videoId) return { type: 'vimeo', src: `https://player.vimeo.com/video/${videoId}?autoplay=1&muted=1` };
+    }
+    if (/\.(mp4|webm|ogg)(\?.*)?$/i.test(parsedUrl.pathname)) return { type: 'direct', src: url };
+    return { type: 'unknown', src: url };
+  } catch { return { type: 'unknown', src: url }; }
+};
+
+const topVideo = doc.data.videoUrl ? getVideoEmbed(doc.data.videoUrl) : null;
 ---
 
 <Layout 
@@ -23,10 +50,9 @@ const { Content } = await render(doc);
 >
   <main class="max-w-4xl mx-auto px-6 py-12 md:py-20">
     
-    <!-- Header -->
     <div class="mb-12 text-center flex flex-col items-center">
       <div class="flex flex-wrap justify-center gap-2 mb-6">
-        {doc.data.tags.map(tag => (
+        {doc.data.tags.map((tag: string) => (
           <span class="text-xs font-bold tracking-widest uppercase text-brand-gold bg-brand-gold/10 px-3 py-1.5 rounded">{tag}</span>
         ))}
       </div>
@@ -34,22 +60,24 @@ const { Content } = await render(doc);
       <p class="text-text-silver text-lg max-w-2xl">{doc.data.description}</p>
     </div>
 
-    <!-- Media (YouTube Player or Thumbnail) -->
     <div class="mb-16 rounded-md overflow-hidden shadow-2xl border border-cabilo-card relative aspect-video bg-cabilo-obsidian">
-      {doc.data.youtubeId ? (
-        <iframe 
-          class="absolute inset-0 w-full h-full"
-          src={`https://www.youtube.com/embed/${doc.data.youtubeId}?rel=0&color=white`}
-          frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen>
-        </iframe>
+      {topVideo ? (
+        topVideo.type === 'youtube' || topVideo.type === 'vimeo' ? (
+          <iframe class="absolute inset-0 w-full h-full" src={topVideo.src} frameborder="0" allow="autoplay; fullscreen; picture-in-picture" allowfullscreen></iframe>
+        ) : topVideo.type === 'direct' ? (
+          <video class="absolute inset-0 w-full h-full object-cover" src={topVideo.src} controls playsinline></video>
+        ) : (
+          <div class="absolute inset-0 flex items-center justify-center p-8"><p class="text-text-silver">Video URL not recognized.</p></div>
+        )
       ) : (
         <img src={doc.data.thumbnail} alt={doc.data.title} class="absolute inset-0 w-full h-full object-cover" />
       )}
     </div>
 
-    <!-- Markdown Content Reader -->
-    <div class="prose prose-invert prose-p:text-text-silver prose-headings:text-text-white prose-a:text-brand-amber max-w-none 
-                prose-img:rounded-md prose-img:border prose-img:border-cabilo-card prose-hr:border-cabilo-card">
+    <!-- PLUG IN THE MASTER MEDIA BLOCKS NODE! -->
+    <MediaBlocksRenderer blocks={mediaBlocks} />
+
+    <div class="prose prose-invert prose-p:text-text-silver prose-headings:text-text-white prose-a:text-brand-amber max-w-none prose-img:rounded-md prose-img:border prose-img:border-cabilo-card prose-hr:border-cabilo-card border-t border-cabilo-card pt-12">
       <Content />
     </div>
 

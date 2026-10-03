@@ -1,18 +1,10 @@
 ---
 import { getCollection, render } from 'astro:content';
 import Layout from '../../layouts/Layout.astro';
-import DynamicAov from '../../components/DynamicAov.astro';
-import TurntableScrubber from '../../components/TurntableScrubber.astro';
-
-import fs from 'node:fs';
-import path from 'node:path';
-
-// IMPORT FOR THE NEW TEXT BLOCK
-import { parse } from 'marked';
+import MediaBlocksRenderer from '../../components/MediaBlocksRenderer.astro';
 
 export async function getStaticPaths() {
   const projects = await getCollection('projects');
-
   return projects.map(project => ({
     params: { id: project.id },
     props: { project },
@@ -21,134 +13,32 @@ export async function getStaticPaths() {
 
 const { project } = Astro.props;
 const { Content } = await render(project);
+const mediaBlocks = project.data.mediaBlocks ?? [];
 
-type MediaBlock =
-  | {
-      type: 'image';
-      title?: string;
-      image: string;
-      comment?: string;
-    }
-  | {
-      type: 'video';
-      title?: string;
-      videoUrl: string;
-      comment?: string;
-    }
-  | {
-      type: 'turntable';
-      title?: string;
-      folder: string;
-      comment?: string;
-    }
-  | {
-      type: 'aov';
-      title?: string;
-      aovPasses: {
-        name: string;
-        image: string;
-      }[];
-      comment?: string;
-    }
-  | {
-      type: 'text_block'; // NEW MEDIA BLOCK ADDED TO TYPE DEFINITION
-      title?: string;
-      content: string;
-    };
-
-const mediaBlocks: MediaBlock[] = project.data.mediaBlocks ?? [];
-
-
-// ------------------------------------------------------------
-// TURNTABLE FRAME DETECTION
-// ------------------------------------------------------------
-
-const getTurntableFrames = (folder: string) => {
-  const folderPath = path.join(process.cwd(), 'public', folder);
-
-  if (!fs.existsSync(folderPath)) {
-    return [];
-  }
-
-  const files = fs.readdirSync(folderPath)
-    .filter(file => /\.(jpg|jpeg|png|webp)$/i.test(file))
-    .sort((a, b) => a.localeCompare(b, undefined, { numeric: true }));
-
-  return files.map(file => `/${folder}/${file}`);
-};
-
-// ------------------------------------------------------------
-// VIDEO URL HANDLING
-// ------------------------------------------------------------
-
+// Helper for the top showreel
 const getVideoEmbed = (url: string) => {
+  if (!url) return null;
   try {
     const parsedUrl = new URL(url);
     const hostname = parsedUrl.hostname.replace(/^www\./, '');
-
-    // YouTube watch URL
     if (hostname === 'youtube.com' || hostname === 'm.youtube.com') {
       const videoId = parsedUrl.searchParams.get('v');
-
-      if (videoId) {
-        return {
-          type: 'youtube',
-          src: `https://www.youtube.com/embed/${videoId}?autoplay=1&mute=1&controls=1&modestbranding=1&rel=0`,
-        };
-      }
+      if (videoId) return { type: 'youtube', src: `https://www.youtube.com/embed/${videoId}?autoplay=1&mute=1&controls=1&modestbranding=1&rel=0` };
     }
-
-    // YouTube short URL
     if (hostname === 'youtu.be') {
       const videoId = parsedUrl.pathname.replace('/', '');
-
-      if (videoId) {
-        return {
-          type: 'youtube',
-          src: `https://www.youtube.com/embed/${videoId}?autoplay=1&mute=1&controls=1&modestbranding=1&rel=0`,
-        };
-      }
+      if (videoId) return { type: 'youtube', src: `https://www.youtube.com/embed/${videoId}?autoplay=1&mute=1&controls=1&modestbranding=1&rel=0` };
     }
-
-    // Vimeo
     if (hostname === 'vimeo.com') {
       const videoId = parsedUrl.pathname.split('/').filter(Boolean)[0];
-
-      if (videoId) {
-        return {
-          type: 'vimeo',
-          src: `https://player.vimeo.com/video/${videoId}?autoplay=1&muted=1`,
-        };
-      }
+      if (videoId) return { type: 'vimeo', src: `https://player.vimeo.com/video/${videoId}?autoplay=1&muted=1` };
     }
-
-    // Direct video file
-    if (/\.(mp4|webm|ogg)(\?.*)?$/i.test(parsedUrl.pathname)) {
-      return {
-        type: 'direct',
-        src: url,
-      };
-    }
-
-    return {
-      type: 'unknown',
-      src: url,
-    };
-  } catch {
-    return {
-      type: 'unknown',
-      src: url,
-    };
-  }
+    if (/\.(mp4|webm|ogg)(\?.*)?$/i.test(parsedUrl.pathname)) return { type: 'direct', src: url };
+    return { type: 'unknown', src: url };
+  } catch { return { type: 'unknown', src: url }; }
 };
 
-// ------------------------------------------------------------
-// SHOWREEL
-// ------------------------------------------------------------
-
-const showreel = project.data.showreelUrl
-  ? getVideoEmbed(project.data.showreelUrl)
-  : null;
+const showreel = project.data.showreelUrl ? getVideoEmbed(project.data.showreelUrl) : null;
 ---
 
 <Layout 
@@ -158,15 +48,8 @@ const showreel = project.data.showreelUrl
 >
   <main class="max-w-5xl mx-auto px-6 py-12 md:py-20">
 
-    <!-- ====================================================== -->
-    <!-- PROJECT HEADER -->
-    <!-- ====================================================== -->
-
     <div class="mb-12">
-      <h1 class="text-4xl md:text-5xl font-bold text-text-white mb-4 uppercase">
-        {project.data.title}
-      </h1>
-
+      <h1 class="text-4xl md:text-5xl font-bold text-text-white mb-4 uppercase">{project.data.title}</h1>
       <div class="flex flex-wrap gap-4 text-sm tracking-widest text-brand-gold uppercase">
         <span>{project.data.category}</span>
         <span>•</span>
@@ -176,266 +59,34 @@ const showreel = project.data.showreelUrl
       </div>
     </div>
 
-
-    <!-- ====================================================== -->
-    <!-- SHOWREEL -->
-    <!-- ====================================================== -->
-
     {showreel && (
       <div class="mb-16 rounded-md overflow-hidden shadow-2xl border border-cabilo-card relative aspect-video">
-
         {showreel.type === 'youtube' || showreel.type === 'vimeo' ? (
-          <iframe
-            class="absolute inset-0 w-full h-full"
-            src={showreel.src}
-            frameborder="0"
-            allow="autoplay; fullscreen; picture-in-picture"
-            allowfullscreen
-          ></iframe>
+          <iframe class="absolute inset-0 w-full h-full" src={showreel.src} frameborder="0" allow="autoplay; fullscreen; picture-in-picture" allowfullscreen></iframe>
         ) : showreel.type === 'direct' ? (
-          <video
-            class="absolute inset-0 w-full h-full object-cover"
-            src={showreel.src}
-            autoplay
-            muted
-            loop
-            playsinline
-            controls
-          ></video>
+          <video class="absolute inset-0 w-full h-full object-cover" src={showreel.src} autoplay muted loop playsinline controls></video>
         ) : (
-          <div class="absolute inset-0 flex items-center justify-center bg-cabilo-dark p-8">
-            <p class="text-text-silver text-center">
-              Video URL could not be recognized.
-            </p>
-          </div>
+          <div class="absolute inset-0 flex items-center justify-center bg-cabilo-dark p-8"><p class="text-text-silver">Video URL could not be recognized.</p></div>
         )}
-
       </div>
     )}
 
-
-    <!-- ====================================================== -->
-    <!-- MEDIA BLOCKS -->
-    <!-- ====================================================== -->
-
-    {mediaBlocks.map((block) => {
-
-      // ------------------------------------------------------
-      // RENDER TEXT BLOCK
-      // ------------------------------------------------------
-      if (block.type === 'text_block') {
-        
-        const parsedHTML = parse(block.content) as string;
-        
-        return (
-          <div class="mb-16">
-            
-            {block.title && (
-              <h3 class="text-xl text-text-white mb-6 uppercase tracking-wider">
-                {block.title}
-              </h3>
-            )}
-
-            <div 
-              class="prose prose-invert prose-p:text-text-silver prose-headings:text-text-white prose-a:text-brand-amber max-w-none"
-              set:html={parsedHTML}
-            />
-
-          </div>
-        );
-      }
-
-      // ------------------------------------------------------
-      // RENDER IMAGE
-      // ------------------------------------------------------
-      if (block.type === 'image') {
-        return (
-          <div class="mb-16">
-            
-            {block.title && (
-              <h3 class="text-xl text-text-white mb-6 uppercase tracking-wider">
-                {block.title}
-              </h3>
-            )}
-
-            <div class="rounded-md overflow-hidden shadow-2xl border border-cabilo-card">
-              <img
-                src={block.image}
-                alt={project.data.title}
-                class="w-full h-auto block"
-                loading="lazy"
-              />
-            </div>
-
-            {block.comment && (
-              <p class="mt-4 text-sm leading-relaxed text-text-silver">
-                {block.comment}
-              </p>
-            )}
-
-          </div>
-        );
-      }
-
-      // ------------------------------------------------------
-      // RENDER VIDEO
-      // ------------------------------------------------------
-      if (block.type === 'video') {
-        const video = getVideoEmbed(block.videoUrl);
-
-        return (
-          <div class="mb-16">
-
-            {block.title && (
-              <h3 class="text-xl text-text-white mb-6 uppercase tracking-wider">
-                {block.title}
-              </h3>
-            )}
-
-            <div class="rounded-md overflow-hidden shadow-2xl border border-cabilo-card relative aspect-video">
-
-              {video.type === 'youtube' || video.type === 'vimeo' ? (
-                <iframe
-                  class="absolute inset-0 w-full h-full"
-                  src={video.src}
-                  frameborder="0"
-                  loading="lazy"
-                  allow="autoplay; fullscreen; picture-in-picture"
-                  allowfullscreen
-                ></iframe>
-              ) : video.type === 'direct' ? (
-                <video
-                  class="absolute inset-0 w-full h-full object-contain bg-black"
-                  src={video.src}
-                  controls
-                  preload="metadata"
-                  playsinline
-                ></video>
-              ) : (
-                <div class="absolute inset-0 flex items-center justify-center bg-cabilo-dark p-8">
-                  <p class="text-text-silver text-center">
-                    Video URL could not be recognized.
-                  </p>
-                </div>
-              )}
-
-            </div>
-
-            {block.comment && (
-              <p class="mt-4 text-sm leading-relaxed text-text-silver">
-                {block.comment}
-              </p>
-            )}
-
-          </div>
-        );
-      }
-
-      // ------------------------------------------------------
-      // RENDER TURNTABLE
-      // ------------------------------------------------------
-      if (block.type === 'turntable') {
-        const frames = getTurntableFrames(block.folder);
-
-        if (frames.length === 0) {
-          return null;
-        }
-
-        return (
-          <div class="mb-20">
-
-            {block.title && (
-              <h3 class="text-xl text-text-white mb-6 uppercase tracking-wider">
-                {block.title}
-              </h3>
-            )}
-
-            <TurntableScrubber frames={frames} />
-
-            {block.comment && (
-              <p class="mt-4 text-sm leading-relaxed text-text-silver">
-                {block.comment}
-              </p>
-            )}
-
-          </div>
-        );
-      }
-
-      // ------------------------------------------------------
-      // RENDER AOV
-      // ------------------------------------------------------
-      if (block.type === 'aov') {
-        if (!block.aovPasses || block.aovPasses.length === 0) {
-          return null;
-        }
-
-        return (
-          <div class="mb-20">
-
-            {block.title && (
-              <h3 class="text-xl text-text-white mb-6 uppercase tracking-wider">
-                {block.title}
-              </h3>
-            )}
-
-            <DynamicAov
-              passes={block.aovPasses}
-            />
-
-            {block.comment && (
-              <p class="mt-4 text-sm leading-relaxed text-text-silver">
-                {block.comment}
-              </p>
-            )}
-
-          </div>
-        );
-      }
-
-      return null;
-    })}
-
-
-    <!-- ====================================================== -->
-    <!-- PROJECT BREAKDOWN -->
-    <!-- ====================================================== -->
+    <!-- PLUG IN THE MASTER MEDIA BLOCKS NODE! -->
+    <MediaBlocksRenderer blocks={mediaBlocks} />
 
     <div class="grid grid-cols-1 md:grid-cols-4 gap-12 border-t border-cabilo-card pt-12">
-
       <div class="md:col-span-3 prose prose-invert prose-p:text-text-silver prose-headings:text-text-white prose-a:text-brand-amber max-w-none">
-
-        <h3 class="text-2xl font-medium mb-6 uppercase tracking-wide">
-          Project Breakdown
-        </h3>
-
+        <h3 class="text-2xl font-medium mb-6 uppercase tracking-wide">Project Breakdown</h3>
         <Content />
-
       </div>
-
-
-      <!-- ==================================================== -->
-      <!-- SOFTWARE -->
-      <!-- ==================================================== -->
-
       <div class="md:col-span-1">
-
-        <h4 class="text-xs uppercase tracking-widest text-text-white font-bold mb-4">
-          Software Used
-        </h4>
-
+        <h4 class="text-xs uppercase tracking-widest text-text-white font-bold mb-4">Software Used</h4>
         <div class="flex flex-col gap-2">
-
           {project.data.softwareUsed.map((software) => (
-            <span class="px-3 py-2 bg-cabilo-dark border border-cabilo-card rounded-md text-sm text-text-silver">
-              {software}
-            </span>
+            <span class="px-3 py-2 bg-cabilo-dark border border-cabilo-card rounded-md text-sm text-text-silver">{software}</span>
           ))}
-
         </div>
-
       </div>
-
     </div>
 
   </main>
