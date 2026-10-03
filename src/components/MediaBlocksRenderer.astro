@@ -1,13 +1,15 @@
 ---
 // src/components/MediaBlocksRenderer.astro
+
 import DynamicAov from './DynamicAov.astro';
 import TurntableScrubber from './TurntableScrubber.astro';
 import fs from 'node:fs';
 import path from 'node:path';
 import { parse } from 'marked';
+import type { MediaBlock } from '../content.config';
 
 export interface Props {
-  blocks: any[]; // Accepts the mediaBlocks array from ANY collection
+  blocks: MediaBlock[]; // Accepts the mediaBlocks array from ANY collection
 }
 
 const { blocks } = Astro.props;
@@ -15,35 +17,45 @@ const { blocks } = Astro.props;
 // ------------------------------------------------------------
 // HELPER FUNCTIONS (Moved here so they aren't repeated!)
 // ------------------------------------------------------------
+
 const getTurntableFrames = (folder: string) => {
   const folderPath = path.join(process.cwd(), 'public', folder);
+
   if (!fs.existsSync(folderPath)) return [];
+
   const files = fs.readdirSync(folderPath)
     .filter(file => /\.(jpg|jpeg|png|webp)$/i.test(file))
     .sort((a, b) => a.localeCompare(b, undefined, { numeric: true }));
+
   return files.map(file => `/${folder}/${file}`);
 };
 
 const getVideoEmbed = (url: string) => {
   if (!url) return null;
+
   try {
     const parsedUrl = new URL(url);
     const hostname = parsedUrl.hostname.replace(/^www\./, '');
+
     if (hostname === 'youtube.com' || hostname === 'm.youtube.com') {
       const videoId = parsedUrl.searchParams.get('v');
       if (videoId) return { type: 'youtube', src: `https://www.youtube.com/embed/${videoId}?autoplay=1&mute=1&controls=1&modestbranding=1&rel=0` };
     }
+
     if (hostname === 'youtu.be') {
       const videoId = parsedUrl.pathname.replace('/', '');
       if (videoId) return { type: 'youtube', src: `https://www.youtube.com/embed/${videoId}?autoplay=1&mute=1&controls=1&modestbranding=1&rel=0` };
     }
+
     if (hostname === 'vimeo.com') {
       const videoId = parsedUrl.pathname.split('/').filter(Boolean)[0];
       if (videoId) return { type: 'vimeo', src: `https://player.vimeo.com/video/${videoId}?autoplay=1&muted=1` };
     }
+
     if (/\.(mp4|webm|ogg)(\?.*)?$/i.test(parsedUrl.pathname)) {
       return { type: 'direct', src: url };
     }
+
     return { type: 'unknown', src: url };
   } catch {
     return { type: 'youtube', src: `https://www.youtube.com/embed/${url}?autoplay=1&mute=1&controls=1&modestbranding=1&rel=0` };
@@ -54,10 +66,11 @@ const getVideoEmbed = (url: string) => {
 <!-- ====================================================== -->
 <!-- THE MEDIA BLOCKS ENGINE -->
 <!-- ====================================================== -->
-{blocks.map((block) => {
 
+{blocks.map((block) => {
   if (block.type === 'text_block') {
     const parsedHTML = parse(block.content) as string;
+
     return (
       <div class="mb-16">
         {block.title && <h3 class="text-xl text-text-white mb-6 uppercase tracking-wider">{block.title}</h3>}
@@ -70,6 +83,7 @@ const getVideoEmbed = (url: string) => {
     return (
       <div class="mb-16">
         {block.title && <h3 class="text-xl text-text-white mb-6 uppercase tracking-wider">{block.title}</h3>}
+
         <div class="rounded-md overflow-hidden shadow-2xl border border-cabilo-card">
           <img src={block.image} alt="Project Media" class="w-full h-auto block" loading="lazy" />
         </div>
@@ -80,9 +94,11 @@ const getVideoEmbed = (url: string) => {
 
   if (block.type === 'video') {
     const video = getVideoEmbed(block.videoUrl);
+
     return (
       <div class="mb-16">
         {block.title && <h3 class="text-xl text-text-white mb-6 uppercase tracking-wider">{block.title}</h3>}
+
         <div class="rounded-md overflow-hidden shadow-2xl border border-cabilo-card relative aspect-video">
           {video.type === 'youtube' || video.type === 'vimeo' ? (
             <iframe class="absolute inset-0 w-full h-full" src={video.src} frameborder="0" loading="lazy" allow="autoplay; fullscreen; picture-in-picture" allowfullscreen></iframe>
@@ -99,10 +115,11 @@ const getVideoEmbed = (url: string) => {
 
   if (block.type === 'turntable') {
     const frames = getTurntableFrames(block.folder);
-    if (frames.length === 0) return null;
+
     return (
       <div class="mb-20">
         {block.title && <h3 class="text-xl text-text-white mb-6 uppercase tracking-wider">{block.title}</h3>}
+
         <TurntableScrubber frames={frames} />
         {block.comment && <p class="mt-4 text-sm leading-relaxed text-text-silver">{block.comment}</p>}
       </div>
@@ -111,14 +128,16 @@ const getVideoEmbed = (url: string) => {
 
   if (block.type === 'aov') {
     if (!block.aovPasses || block.aovPasses.length === 0) return null;
+
     return (
       <div class="mb-20">
         {block.title && <h3 class="text-xl text-text-white mb-6 uppercase tracking-wider">{block.title}</h3>}
+
         <DynamicAov passes={block.aovPasses} />
         {block.comment && <p class="mt-4 text-sm leading-relaxed text-text-silver">{block.comment}</p>}
       </div>
     );
   }
-  
+
   return null;
 })}

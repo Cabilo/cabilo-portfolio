@@ -152,6 +152,64 @@ collections:
       
       # FIXED: Changed from youtubeId to universal videoUrl!
       - { label: "Video URL", name: "videoUrl", widget: "string", required: false, hint: "Paste a YouTube, Vimeo, or direct .mp4 link." }
-      
+
       - { label: "Feature this post?", name: "featured", widget: "boolean", default: false }
+
+      - label: "Media Blocks"
+        name: "mediaBlocks"
+        widget: "list"
+        required: false
+        label_singular: "Media Block"
+        collapsed: true
+
+        types:
+          - label: "Text Block"
+            name: "text_block"
+            widget: "object"
+            hint: "Use this for explanatory text or paragraphs between media blocks."
+            fields:
+              - { label: "Title", name: "title", widget: "string", required: false }
+              - { label: "Content (Markdown)", name: "content", widget: "markdown" }
+
+          - label: "Image"
+            name: "image"
+            widget: "object"
+            fields:
+              - { label: "Title", name: "title", widget: "string", required: false }
+              - { label: "Image", name: "image", widget: "image" }
+              - { label: "Comment", name: "comment", widget: "text", required: false }
+
+          - label: "Video"
+            name: "video"
+            widget: "object"
+            hint: "Paste a YouTube, Vimeo, or direct .mp4 URL."
+            fields:
+              - { label: "Title", name: "title", widget: "string", required: false }
+              - { label: "Video URL", name: "videoUrl", widget: "string" }
+              - { label: "Comment", name: "comment", widget: "text", required: false }
+
+          - label: "Turntable"
+            name: "turntable"
+            widget: "object"
+            fields:
+              - { label: "Title", name: "title", widget: "string", required: false }
+              - { label: "Folder: turntables/...", name: "folder", widget: "string", hint: "Use the folder path relative to public/. Example: turntables/test. Do NOT start with / and do NOT include public/." }
+              - { label: "Comment", name: "comment", widget: "text", required: false }
+
+          - label: "AOV"
+            name: "aov"
+            widget: "object"
+            hint: "Upload a minimum of two passes (e.g. Viewport and Wireframe) to create an interactive slider."
+            fields:
+              - { label: "Title", name: "title", widget: "string", required: false }
+
+              - label: "AOV Passes"
+                name: "aovPasses"
+                widget: "list"
+                fields:
+                  - { label: "Name", name: "name", widget: "string" }
+                  - { label: "Image", name: "image", widget: "image" }
+
+              - { label: "Comment", name: "comment", widget: "text", required: false }
+
       - { label: "Article Content", name: "body", widget: "markdown" }

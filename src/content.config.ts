@@ -8,37 +8,43 @@ const aovPassSchema = z.object({
   image: z.string(),
 });
 
-const mediaBlockSchema = z.discriminatedUnion('type', [
+export const mediaBlockSchema = z.discriminatedUnion('type', [
   z.object({
     type: z.literal('image'),
     title: z.string().optional(),
     image: z.string(),
     comment: z.string().optional(),
   }),
+
   z.object({
     type: z.literal('video'),
     title: z.string().optional(),
     videoUrl: z.string(),
     comment: z.string().optional(),
   }),
+
   z.object({
     type: z.literal('turntable'),
     title: z.string().optional(),
     folder: z.string(),
     comment: z.string().optional(),
   }),
+
   z.object({
     type: z.literal('aov'),
     title: z.string().optional(),
     aovPasses: z.array(aovPassSchema).default([]),
     comment: z.string().optional(),
   }),
+
   z.object({
     type: z.literal('text_block'),
     title: z.string().optional(),
     content: z.string(),
   }),
 ]);
+
+export type MediaBlock = z.infer<typeof mediaBlockSchema>;
 
 const projectCollection = defineCollection({
   loader: glob({ pattern: "**/*.md", base: "./src/content/projects" }),
@@ -64,11 +70,14 @@ const learningCollection = defineCollection({
     format: z.enum(["Video", "Article"]),
     tags: z.array(z.string()),
     thumbnail: z.string(),
-    
-    // FIXED: Changed to videoUrl
+
+    // FIXED: Universal video URL for the optional top video.
     videoUrl: z.string().optional(),
-    
+
     featured: z.boolean().default(false),
+
+    // Shared media-block system used by Projects, Tutorials, and Breakdowns.
+    mediaBlocks: z.array(mediaBlockSchema).optional(),
   }),
 });
 
@@ -80,7 +89,7 @@ const pagesCollection = defineCollection({
     subheadline: z.string().optional(),
     showreelUrl: z.string().optional(),
     softwareArsenal: z.array(z.string()).optional(),
-    
+
     // NEW: Global SEO pulled from Homepage
     globalSeoTitle: z.string().optional(),
     globalSeoDescription: z.string().optional(),
