@@ -1,6 +1,6 @@
 ---
 title: About
-headline: About CABILO
+headline: About Lucas Cabiló
 subheadline: Senior 3D Artist
 softwareArsenal:
   - RizomUV
