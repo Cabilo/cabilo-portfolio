@@ -9,9 +9,9 @@ const frameDataString = JSON.stringify(frames);
 
 <turntable-scrubber data-frames={frameDataString} class="flex flex-col gap-3 w-full">
 
-  <div id="tt-container" class="relative w-full bg-cabilo-obsidian overflow-hidden ring-1 ring-cabilo-card shadow-lg cursor-ew-resize">
+  <div id="tt-container" class="relative w-full max-h-[75vh] bg-cabilo-obsidian overflow-hidden ring-1 ring-cabilo-card shadow-lg cursor-ew-resize flex items-center justify-center" style="touch-action: pan-y;">
+    <img id="tt-display" src={frames[0]} alt="3D Turntable" class="block w-full max-w-full max-h-[75vh] h-auto object-contain transition-transform duration-150 ease-out select-none" style="transform: scale(1); transform-origin: 50% 50%;" draggable="false" />
 
-    <img id="tt-display" src={frames[0]} alt="3D Turntable" class="block w-full h-auto transition-transform duration-150 ease-out select-none" style="transform: scale(1); transform-origin: 50% 50%;" draggable="false" />
     <div id="tt-overlay" class="absolute inset-0 bg-black/10 flex flex-col items-center justify-center pointer-events-none transition-opacity duration-700 z-20">
       <div class="flex flex-col items-center gap-2 bg-cabilo-dark/20 backdrop-blur-md px-6 py-4 rounded-xl border border-brand-amber/50 text-brand-amber shadow-[0_0_20px_rgba(230,115,0,0.3)]">
         <svg class="w-6 h-6 animate-pulse mb-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 8l-4 4 4 4m4-8l4 4-4 4"></path></svg>
@@ -31,6 +31,9 @@ const frameDataString = JSON.stringify(frames);
 <script>
   class TurntableScrubber extends HTMLElement {
     connectedCallback() {
+      if (this.dataset.initialized === 'true') return;
+      this.dataset.initialized = 'true';
+
       const container = this.querySelector('#tt-container') as HTMLElement;
       const display = this.querySelector('#tt-display') as HTMLImageElement;
       const counter = this.querySelector('#tt-counter') as HTMLElement;
@@ -38,7 +41,7 @@ const frameDataString = JSON.stringify(frames);
       const overlay = this.querySelector('#tt-overlay') as HTMLElement;
       const framesData = this.getAttribute('data-frames');
 
-      if (!framesData) return;
+      if (!container || !display || !framesData) return;
 
       const frames = JSON.parse(framesData) as string[];
       const totalFrames = frames.length;
@@ -48,12 +51,14 @@ const frameDataString = JSON.stringify(frames);
       let currentFrameIndex = 0;
       let isDragging = false;
       let startX = 0;
+      let startY = 0;
       let startFrame = 0;
       let hasInteracted = false;
 
       let currentScale = 1;
       const minScale = 1;
       const maxScale = 5;
+      const touchThreshold = 8;
 
       const imageCache = new Map<number, HTMLImageElement>();
       const loadingFrames = new Set<number>();
@@ -87,9 +92,11 @@ const frameDataString = JSON.stringify(frames);
 
       let sensitivity = container.clientWidth / totalFrames;
 
-      window.addEventListener('resize', () => {
-        sensitivity = container.clientWidth / totalFrames;
-      });
+      const updateSensitivity = () => {
+        sensitivity = Math.max(container.clientWidth / totalFrames, 1);
+      };
+
+      window.addEventListener('resize', updateSensitivity);
 
       const updateFrame = (newIndex: number) => {
         currentFrameIndex = ((newIndex % totalFrames) + totalFrames) % totalFrames;
@@ -112,6 +119,7 @@ const frameDataString = JSON.stringify(frames);
 
       const updateTransformOrigin = (clientX: number, clientY: number) => {
         const rect = container.getBoundingClientRect();
+
         const x = Math.max(0, Math.min(100, ((clientX - rect.left) / rect.width) * 100));
         const y = Math.max(0, Math.min(100, ((clientY - rect.top) / rect.height) * 100));
 
@@ -119,29 +127,71 @@ const frameDataString = JSON.stringify(frames);
       };
 
       const startDrag = (e: MouseEvent | TouchEvent) => {
-        isDragging = true;
-        startX = ('touches' in e) ? e.touches[0].clientX : (e as MouseEvent).clientX;
-        startFrame = currentFrameIndex;
-        this.style.cursor = 'grabbing';
+        if ('touches' in e) {
+          if (e.touches.length === 0) return;
+
+          startX = e.touches[0].clientX;
+          startY = e.touches[0].clientY;
+          startFrame = currentFrameIndex;
+          isDragging = false;
+        } else {
+          startX = e.clientX;
+          startY = e.clientY;
+          startFrame = currentFrameIndex;
+          isDragging = true;
+        }
 
         if (!hasInteracted && overlay) {
           overlay.style.opacity = '0';
           hasInteracted = true;
         }
+
+        if (!('touches' in e)) {
+          this.style.cursor = 'grabbing';
+        }
       };
 
       const doDrag = (e: MouseEvent | TouchEvent) => {
-        if (!isDragging && currentScale > 1 && !('touches' in e)) {
-          updateTransformOrigin((e as MouseEvent).clientX, (e as MouseEvent).clientY);
+        if ('touches' in e) {
+          if (e.touches.length === 0) return;
+
+          const currentX = e.touches[0].clientX;
+          const currentY = e.touches[0].clientY;
+
+          const diffX = currentX - startX;
+          const diffY = currentY - startY;
+
+          if (!isDragging) {
+            if (Math.abs(diffX) < touchThreshold && Math.abs(diffY) < touchThreshold) {
+              return;
+            }
+
+            if (Math.abs(diffY) > Math.abs(diffX)) {
+              return;
+            }
+
+            isDragging = true;
+            this.style.cursor = 'grabbing';
+          }
+
+          e.preventDefault();
+
+          const frameOffset = Math.round(diffX / sensitivity);
+          updateFrame(startFrame + frameOffset);
           return;
         }
 
-        if (!isDragging) return;
+        if (!isDragging) {
+          if (currentScale > 1) {
+            updateTransformOrigin(e.clientX, e.clientY);
+          }
+
+          return;
+        }
 
         e.preventDefault();
 
-        const currentX = ('touches' in e) ? e.touches[0].clientX : (e as MouseEvent).clientX;
-        const diffX = currentX - startX;
+        const diffX = e.clientX - startX;
         const frameOffset = Math.round(diffX / sensitivity);
 
         updateFrame(startFrame + frameOffset);
@@ -175,9 +225,10 @@ const frameDataString = JSON.stringify(frames);
       window.addEventListener('mousemove', doDrag);
       window.addEventListener('mouseup', stopDrag);
 
-      container.addEventListener('touchstart', startDrag, { passive: false });
+      container.addEventListener('touchstart', startDrag, { passive: true });
       window.addEventListener('touchmove', doDrag, { passive: false });
       window.addEventListener('touchend', stopDrag);
+      window.addEventListener('touchcancel', stopDrag);
 
       loadFrame(0);
     }
