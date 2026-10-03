@@ -16,15 +16,20 @@ collections:
     label: "Global Pages & SEO"
     files:
 
-      # 1. HOMEPAGE
-      - label: "Home Page"
+      # 1. HOMEPAGE & GLOBAL SEO
+      - label: "Home Page & Global SEO"
         name: "home"
         file: "src/content/pages/home.md"
         fields:
           - { label: "Page Name", name: "title", widget: "hidden", default: "Home" }
           - { label: "Main Headline", name: "headline", widget: "string", hint: "The last word of this sentence will automatically glow Amber!" }
           - { label: "Subheadline / Bio", name: "subheadline", widget: "text" }
-          - { label: "Showreel YouTube ID", name: "showreelUrl", widget: "string", hint: "Paste just the YouTube ID (e.g. dQw4w9WgXcQ) to update the homepage video." }
+          - { label: "Showreel URL", name: "showreelUrl", widget: "string", hint: "Paste a YouTube, Vimeo, or direct .mp4 link to update the homepage video." }
+          
+          # SEO MOVED HERE!
+          - { label: "Global Browser Title", name: "globalSeoTitle", widget: "string", default: "CABILO | Senior 3D Artist & Cinematics" }
+          - { label: "Global Description", name: "globalSeoDescription", widget: "text" }
+          - { label: "Global Social Thumbnail", name: "globalSeoImage", widget: "image", hint: "This image appears when you paste your homepage link in Discord/LinkedIn." }
 
       # 2. ABOUT PAGE
       - label: "About Page"
@@ -46,16 +51,6 @@ collections:
           - { label: "Main Headline", name: "headline", widget: "string", default: "Let's Connect" }
           - { label: "Subheadline", name: "subheadline", widget: "string" }
           - { label: "Body Content (Not used on Contact)", name: "body", widget: "hidden", default: "" }
-
-      # 4. GLOBAL SEO SETTINGS
-      - label: "Global SEO & Social Sharing"
-        name: "seo"
-        file: "src/content/pages/seo.md"
-        fields:
-          - { label: "Internal Config Name", name: "title", widget: "hidden", default: "SEO Settings" }
-          - { label: "Global Browser Title", name: "globalSeoTitle", widget: "string", default: "CABILO | Senior 3D Artist & Cinematics" }
-          - { label: "Global Description", name: "globalSeoDescription", widget: "text" }
-          - { label: "Global Social Thumbnail", name: "globalSeoImage", widget: "image", hint: "This image appears when you paste your homepage link in Discord/LinkedIn." }
 
   # ============================================================
   # PROJECTS
@@ -154,6 +149,9 @@ collections:
       - { label: "Format", name: "format", widget: "select", options: ["Video", "Article"] }
       - { label: "Tags", name: "tags", widget: "list", default: ["Lighting", "Topology"] }
       - { label: "Thumbnail Image", name: "thumbnail", widget: "image" }
-      - { label: "YouTube ID", name: "youtubeId", widget: "string", required: false }
+      
+      # FIXED: Changed from youtubeId to universal videoUrl!
+      - { label: "Video URL", name: "videoUrl", widget: "string", required: false, hint: "Paste a YouTube, Vimeo, or direct .mp4 link." }
+      
       - { label: "Feature this post?", name: "featured", widget: "boolean", default: false }
       - { label: "Article Content", name: "body", widget: "markdown" }

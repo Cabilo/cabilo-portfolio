@@ -15,28 +15,24 @@ const mediaBlockSchema = z.discriminatedUnion('type', [
     image: z.string(),
     comment: z.string().optional(),
   }),
-
   z.object({
     type: z.literal('video'),
     title: z.string().optional(),
     videoUrl: z.string(),
     comment: z.string().optional(),
   }),
-
   z.object({
     type: z.literal('turntable'),
     title: z.string().optional(),
     folder: z.string(),
     comment: z.string().optional(),
   }),
-
   z.object({
     type: z.literal('aov'),
     title: z.string().optional(),
     aovPasses: z.array(aovPassSchema).default([]),
     comment: z.string().optional(),
   }),
-
   z.object({
     type: z.literal('text_block'),
     title: z.string().optional(),
@@ -46,7 +42,6 @@ const mediaBlockSchema = z.discriminatedUnion('type', [
 
 const projectCollection = defineCollection({
   loader: glob({ pattern: "**/*.md", base: "./src/content/projects" }),
-
   schema: z.object({
     title: z.string(),
     category: z.string(),
@@ -61,7 +56,6 @@ const projectCollection = defineCollection({
 
 const learningCollection = defineCollection({
   loader: glob({ pattern: "**/*.md", base: "./src/content/learning" }),
-
   schema: z.object({
     title: z.string(),
     description: z.string(),
@@ -70,29 +64,24 @@ const learningCollection = defineCollection({
     format: z.enum(["Video", "Article"]),
     tags: z.array(z.string()),
     thumbnail: z.string(),
-    youtubeId: z.string().optional(),
+    
+    // FIXED: Changed to videoUrl
+    videoUrl: z.string().optional(),
+    
     featured: z.boolean().default(false),
   }),
 });
 
-// ============================================================
-// NEW: PAGES COLLECTION (For Home, About, Contact)
-// ============================================================
 const pagesCollection = defineCollection({
   loader: glob({ pattern: "**/*.md", base: "./src/content/pages" }),
-  
   schema: z.object({
     title: z.string(),
     headline: z.string().optional(),
     subheadline: z.string().optional(),
-    
-    // NEW: Homepage Showreel Control
     showreelUrl: z.string().optional(),
-    
-    // NEW: About Page Software Tags Control
     softwareArsenal: z.array(z.string()).optional(),
-
-    // NEW: Global SEO Control
+    
+    // NEW: Global SEO pulled from Homepage
     globalSeoTitle: z.string().optional(),
     globalSeoDescription: z.string().optional(),
     globalSeoImage: z.string().optional(),
@@ -102,5 +91,5 @@ const pagesCollection = defineCollection({
 export const collections = {
   projects: projectCollection,
   learning: learningCollection,
-  pages: pagesCollection, // <-- Registered here!
+  pages: pagesCollection,
 };

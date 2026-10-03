@@ -6,8 +6,8 @@ import '../styles/global.css';
 import Navbar from '../components/Navbar.astro'; 
 import Footer from '../components/Footer.astro'; 
 
-// Fetch the Global SEO defaults from the CMS
-const seoPage = await getEntry('pages', 'seo');
+// Fetch the Global SEO defaults from the HOME page now!
+const homePage = await getEntry('pages', 'home');
 
 export interface Props {
   title?: string;
@@ -15,14 +15,18 @@ export interface Props {
   image?: string;
 }
 
-// If a specific project passes SEO data, use it. Otherwise, use the CMS defaults!
+// Fallbacks point to homePage.data
 const { 
-  title = seoPage?.data.globalSeoTitle || "CABILO | Senior 3D Artist & Cinematics",
-  description = seoPage?.data.globalSeoDescription || "Portfolio of CABILO, a Senior 3D Artist.",
-  image = seoPage?.data.globalSeoImage || "/favicon.svg"
+  title = homePage?.data.globalSeoTitle || "CABILO | Senior 3D Artist & Cinematics",
+  description = homePage?.data.globalSeoDescription || "Portfolio of CABILO, a Senior 3D Artist.",
+  image = homePage?.data.globalSeoImage || "/favicon.svg"
 } = Astro.props;
 
-const currentUrl = new URL(Astro.url.pathname, Astro.site || 'https://cabilo.vercel.app').href;
+const siteUrl = Astro.site ? Astro.site.origin : 'https://cabilo.vercel.app';
+const currentUrl = new URL(Astro.url.pathname, siteUrl).href;
+
+// Force absolute image URL for Discord/LinkedIn
+const absoluteImageUrl = image.startsWith('http') ? image : new URL(image, siteUrl).href;
 ---
 
 <!DOCTYPE html>
@@ -39,7 +43,7 @@ const currentUrl = new URL(Astro.url.pathname, Astro.site || 'https://cabilo.ver
     <meta property="og:description" content={description} />
     <meta property="og:type" content="website" />
     <meta property="og:url" content={currentUrl} />
-    <meta property="og:image" content={image} />
+    <meta property="og:image" content={absoluteImageUrl} />
     
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
 

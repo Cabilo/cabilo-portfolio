@@ -3,14 +3,46 @@
 export interface Props {
   headline: string;
   subheadline?: string;
+  showreelUrl?: string;
 }
 
-const { headline, subheadline, showreelUrl } = Astro.props; // Add it here too!
+const { headline, subheadline, showreelUrl } = Astro.props;
 
-// This splits the headline so we can color the last word Amber!
 const words = headline.split(' ');
 const lastWord = words.pop();
 const firstPart = words.join(' ');
+
+// UNIVERSAL VIDEO PARSER
+const getVideoEmbed = (url: string) => {
+  if (!url) return null;
+  try {
+    const parsedUrl = new URL(url);
+    const hostname = parsedUrl.hostname.replace(/^www\./, '');
+
+    if (hostname === 'youtube.com' || hostname === 'm.youtube.com') {
+      const videoId = parsedUrl.searchParams.get('v');
+      if (videoId) return { type: 'youtube', src: `https://www.youtube.com/embed/${videoId}?autoplay=1&mute=1&controls=0&modestbranding=1&rel=0&loop=1&playlist=${videoId}` };
+    }
+    if (hostname === 'youtu.be') {
+      const videoId = parsedUrl.pathname.replace('/', '');
+      if (videoId) return { type: 'youtube', src: `https://www.youtube.com/embed/${videoId}?autoplay=1&mute=1&controls=0&modestbranding=1&rel=0&loop=1&playlist=${videoId}` };
+    }
+    if (hostname === 'vimeo.com') {
+      const videoId = parsedUrl.pathname.split('/').filter(Boolean)[0];
+      // Vimeo requires background=1 to loop silently without UI
+      if (videoId) return { type: 'vimeo', src: `https://player.vimeo.com/video/${videoId}?background=1&autoplay=1&loop=1&muted=1` };
+    }
+    if (/\.(mp4|webm|ogg)(\?.*)?$/i.test(parsedUrl.pathname)) {
+      return { type: 'direct', src: url };
+    }
+    return { type: 'unknown', src: url };
+  } catch {
+    // If it's not a valid URL, assume they just pasted a raw YouTube ID!
+    return { type: 'youtube', src: `https://www.youtube.com/embed/${url}?autoplay=1&mute=1&controls=0&modestbranding=1&rel=0&loop=1&playlist=${url}` };
+  }
+};
+
+const showreel = showreelUrl ? getVideoEmbed(showreelUrl) : null;
 ---
 
 <section class="max-w-7xl mx-auto px-6 py-12 md:py-20 flex flex-col gap-10">
@@ -32,7 +64,16 @@ const firstPart = words.join(' ');
   </div>
 
   <div class="w-full relative aspect-video bg-cabilo-dark border border-cabilo-card rounded-md overflow-hidden shadow-[0_0_40px_rgba(230,115,0,0.1)]">
-    <!-- Replace YOUR_REAL_YOUTUBE_ID with your actual video ID below (in both places!) -->
-    <iframe class="absolute inset-0 w-full h-full pointer-events-none" src={`https://www.youtube.com/embed/${showreelUrl}?autoplay=1&mute=1&controls=0&modestbranding=1&rel=0&loop=1&playlist=${showreelUrl}`} title="CABILO Showreel" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe>
+    {showreel && (
+      showreel.type === 'youtube' || showreel.type === 'vimeo' ? (
+        <iframe class="absolute inset-0 w-full h-full pointer-events-none" src={showreel.src} frameborder="0" allow="autoplay; fullscreen; picture-in-picture" allowfullscreen></iframe>
+      ) : showreel.type === 'direct' ? (
+        <video class="absolute inset-0 w-full h-full object-cover pointer-events-none" src={showreel.src} autoplay muted loop playsinline></video>
+      ) : (
+        <div class="absolute inset-0 flex flex-col items-center justify-center border border-dashed border-cabilo-card m-4">
+          <span class="text-text-silver uppercase tracking-widest text-sm">Video URL not recognized</span>
+        </div>
+      )
+    )}
   </div>
 </section>
