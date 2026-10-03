@@ -9,11 +9,11 @@ public_folder: "/uploads"
 collections:
 
   # ============================================================
-  # GLOBAL PAGES (Home, About, Contact)
+  # GLOBAL PAGES & SEO
   # ============================================================
   
   - name: "pages"
-    label: "Global Pages"
+    label: "Global Pages & SEO"
     files:
 
       # 1. HOMEPAGE
@@ -22,9 +22,9 @@ collections:
         file: "src/content/pages/home.md"
         fields:
           - { label: "Page Name", name: "title", widget: "hidden", default: "Home" }
-          - { label: "Main Headline", name: "headline", widget: "string" }
+          - { label: "Main Headline", name: "headline", widget: "string", hint: "The last word of this sentence will automatically glow Amber!" }
           - { label: "Subheadline / Bio", name: "subheadline", widget: "text" }
-          - { label: "Body Content (Not used on Homepage)", name: "body", widget: "hidden", default: "" }
+          - { label: "Showreel YouTube ID", name: "showreelUrl", widget: "string", hint: "Paste just the YouTube ID (e.g. dQw4w9WgXcQ) to update the homepage video." }
 
       # 2. ABOUT PAGE
       - label: "About Page"
@@ -34,6 +34,7 @@ collections:
           - { label: "Page Name", name: "title", widget: "hidden", default: "About" }
           - { label: "Main Headline", name: "headline", widget: "string", default: "About CABILO" }
           - { label: "Job Title", name: "subheadline", widget: "string", default: "Senior 3D Artist" }
+          - { label: "Software Arsenal Tags", name: "softwareArsenal", widget: "list", default: ["Unreal Engine 5", "Maya", "Nuke", "ZBrush"] }
           - { label: "Biography (Markdown)", name: "body", widget: "markdown" }
 
       # 3. CONTACT PAGE
@@ -43,8 +44,18 @@ collections:
         fields:
           - { label: "Page Name", name: "title", widget: "hidden", default: "Contact" }
           - { label: "Main Headline", name: "headline", widget: "string", default: "Let's Connect" }
-          - { label: "Subheadline", name: "subheadline", widget: "string", default: "Available for freelance opportunities..." }
+          - { label: "Subheadline", name: "subheadline", widget: "string" }
           - { label: "Body Content (Not used on Contact)", name: "body", widget: "hidden", default: "" }
+
+      # 4. GLOBAL SEO SETTINGS
+      - label: "Global SEO & Social Sharing"
+        name: "seo"
+        file: "src/content/pages/seo.md"
+        fields:
+          - { label: "Internal Config Name", name: "title", widget: "hidden", default: "SEO Settings" }
+          - { label: "Global Browser Title", name: "globalSeoTitle", widget: "string", default: "CABILO | Senior 3D Artist & Cinematics" }
+          - { label: "Global Description", name: "globalSeoDescription", widget: "text" }
+          - { label: "Global Social Thumbnail", name: "globalSeoImage", widget: "image", hint: "This image appears when you paste your homepage link in Discord/LinkedIn." }
 
   # ============================================================
   # PROJECTS
@@ -59,43 +70,12 @@ collections:
     fields:
 
       - { label: "Title", name: "title", widget: "string" }
-
       - { label: "Category", name: "category", widget: "string" }
-
       - { label: "Thumbnail Image", name: "thumbnail", widget: "image" }
-
-      - {
-          label: "Showreel URL",
-          name: "showreelUrl",
-          widget: "string",
-          required: false,
-          hint: "Optional. Paste a YouTube, Vimeo, or direct .mp4 link to replace the top thumbnail with a video."
-        }
-
-      - {
-          label: "Your Role",
-          name: "role",
-          widget: "string",
-          default: "Lead 3D Artist"
-        }
-
-      - {
-          label: "Client",
-          name: "client",
-          widget: "string",
-          default: "Personal Project"
-        }
-
-      - {
-          label: "Software Used",
-          name: "softwareUsed",
-          widget: "list",
-          default: ["Unreal Engine 5", "Maya", "Nuke"]
-        }
-
-      # ============================================================
-      # MEDIA BLOCKS
-      # ============================================================
+      - { label: "Showreel URL", name: "showreelUrl", widget: "string", required: false, hint: "Optional. Paste a YouTube, Vimeo, or direct .mp4 link to replace the top thumbnail with a video." }
+      - { label: "Your Role", name: "role", widget: "string", default: "Lead 3D Artist" }
+      - { label: "Client", name: "client", widget: "string", default: "Personal Project" }
+      - { label: "Software Used", name: "softwareUsed", widget: "list", default: ["Unreal Engine 5", "Maya", "Nuke"] }
 
       - label: "Media Blocks"
         name: "mediaBlocks"
@@ -106,168 +86,54 @@ collections:
 
         types:
 
-          # --------------------------------------------------------
-          # TEXT / MARKDOWN BLOCK
-          # --------------------------------------------------------
-
           - label: "Text Block"
             name: "text_block"
             widget: "object"
             hint: "Use this for explanatory text or paragraphs between media blocks."
             fields:
-
-              - {
-                  label: "Title",
-                  name: "title",
-                  widget: "string",
-                  required: false
-                }
-
-              - {
-                  label: "Content (Markdown)",
-                  name: "content",
-                  widget: "markdown"
-                }
-
-          # --------------------------------------------------------
-          # IMAGE
-          # --------------------------------------------------------
+              - { label: "Title", name: "title", widget: "string", required: false }
+              - { label: "Content (Markdown)", name: "content", widget: "markdown" }
 
           - label: "Image"
             name: "image"
             widget: "object"
             fields:
-
-              - {
-                  label: "Title",
-                  name: "title",
-                  widget: "string",
-                  required: false
-                }
-
-              - {
-                  label: "Image",
-                  name: "image",
-                  widget: "image"
-                }
-
-              - {
-                  label: "Comment",
-                  name: "comment",
-                  widget: "text",
-                  required: false
-                }
-
-          # --------------------------------------------------------
-          # VIDEO
-          # --------------------------------------------------------
+              - { label: "Title", name: "title", widget: "string", required: false }
+              - { label: "Image", name: "image", widget: "image" }
+              - { label: "Comment", name: "comment", widget: "text", required: false }
 
           - label: "Video"
             name: "video"
             widget: "object"
             hint: "Paste a YouTube, Vimeo, or direct .mp4 URL."
             fields:
-
-              - {
-                  label: "Title",
-                  name: "title",
-                  widget: "string",
-                  required: false
-                }
-
-              - {
-                  label: "Video URL",
-                  name: "videoUrl",
-                  widget: "string"
-                }
-
-              - {
-                  label: "Comment",
-                  name: "comment",
-                  widget: "text",
-                  required: false
-                }
-
-          # --------------------------------------------------------
-          # TURNTABLE
-          # --------------------------------------------------------
+              - { label: "Title", name: "title", widget: "string", required: false }
+              - { label: "Video URL", name: "videoUrl", widget: "string" }
+              - { label: "Comment", name: "comment", widget: "text", required: false }
 
           - label: "Turntable"
             name: "turntable"
             widget: "object"
             fields:
-
-              - {
-                  label: "Title",
-                  name: "title",
-                  widget: "string",
-                  required: false
-                }
-
-              - {
-                  label: "Folder: turntables/...",
-                  name: "folder",
-                  widget: "string",
-                  hint: "Use the folder path relative to public/. Example: turntables/test. Do NOT start with / and do NOT include public/."
-                }
-
-              - {
-                  label: "Comment",
-                  name: "comment",
-                  widget: "text",
-                  required: false
-                }
-
-          # --------------------------------------------------------
-          # AOV
-          # --------------------------------------------------------
+              - { label: "Title", name: "title", widget: "string", required: false }
+              - { label: "Folder: turntables/...", name: "folder", widget: "string", hint: "Use the folder path relative to public/. Example: turntables/test. Do NOT start with / and do NOT include public/." }
+              - { label: "Comment", name: "comment", widget: "text", required: false }
 
           - label: "AOV"
             name: "aov"
             widget: "object"
             hint: "Upload a minimum of two passes (e.g. Viewport and Wireframe) to create an interactive slider."
             fields:
-
-              - {
-                  label: "Title",
-                  name: "title",
-                  widget: "string",
-                  required: false
-                }
-
+              - { label: "Title", name: "title", widget: "string", required: false }
               - label: "AOV Passes"
                 name: "aovPasses"
                 widget: "list"
                 fields:
+                  - { label: "Name", name: "name", widget: "string" }
+                  - { label: "Image", name: "image", widget: "image" }
+              - { label: "Comment", name: "comment", widget: "text", required: false }
 
-                  - {
-                      label: "Name",
-                      name: "name",
-                      widget: "string"
-                    }
-
-                  - {
-                      label: "Image",
-                      name: "image",
-                      widget: "image"
-                    }
-
-              - {
-                  label: "Comment",
-                  name: "comment",
-                  widget: "text",
-                  required: false
-                }
-
-      # ============================================================
-      # PROJECT CONTENT
-      # ============================================================
-
-      - {
-          label: "Project Breakdown",
-          name: "body",
-          widget: "markdown"
-        }
+      - { label: "Project Breakdown", name: "body", widget: "markdown" }
 
   # ============================================================
   # LEARNING
@@ -281,67 +147,13 @@ collections:
 
     fields:
 
-      - {
-          label: "Title",
-          name: "title",
-          widget: "string"
-        }
-
-      - {
-          label: "Description",
-          name: "description",
-          widget: "string"
-        }
-
-      - {
-          label: "Publish Date",
-          name: "publishDate",
-          widget: "datetime"
-        }
-
-      - {
-          label: "Post Type",
-          name: "type",
-          widget: "select",
-          options: ["Tutorial", "Breakdown"]
-        }
-
-      - {
-          label: "Format",
-          name: "format",
-          widget: "select",
-          options: ["Video", "Article"]
-        }
-
-      - {
-          label: "Tags",
-          name: "tags",
-          widget: "list",
-          default: ["Lighting", "Topology"]
-        }
-
-      - {
-          label: "Thumbnail Image",
-          name: "thumbnail",
-          widget: "image"
-        }
-
-      - {
-          label: "YouTube ID",
-          name: "youtubeId",
-          widget: "string",
-          required: false
-        }
-
-      - {
-          label: "Feature this post?",
-          name: "featured",
-          widget: "boolean",
-          default: false
-        }
-
-      - {
-          label: "Article Content",
-          name: "body",
-          widget: "markdown"
-        }
+      - { label: "Title", name: "title", widget: "string" }
+      - { label: "Description", name: "description", widget: "string" }
+      - { label: "Publish Date", name: "publishDate", widget: "datetime" }
+      - { label: "Post Type", name: "type", widget: "select", options: ["Tutorial", "Breakdown"] }
+      - { label: "Format", name: "format", widget: "select", options: ["Video", "Article"] }
+      - { label: "Tags", name: "tags", widget: "list", default: ["Lighting", "Topology"] }
+      - { label: "Thumbnail Image", name: "thumbnail", widget: "image" }
+      - { label: "YouTube ID", name: "youtubeId", widget: "string", required: false }
+      - { label: "Feature this post?", name: "featured", widget: "boolean", default: false }
+      - { label: "Article Content", name: "body", widget: "markdown" }

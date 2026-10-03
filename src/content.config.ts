@@ -83,8 +83,19 @@ const pagesCollection = defineCollection({
   
   schema: z.object({
     title: z.string(),
-    headline: z.string(),
+    headline: z.string().optional(),
     subheadline: z.string().optional(),
+    
+    // NEW: Homepage Showreel Control
+    showreelUrl: z.string().optional(),
+    
+    // NEW: About Page Software Tags Control
+    softwareArsenal: z.array(z.string()).optional(),
+
+    // NEW: Global SEO Control
+    globalSeoTitle: z.string().optional(),
+    globalSeoDescription: z.string().optional(),
+    globalSeoImage: z.string().optional(),
   }),
 });
 

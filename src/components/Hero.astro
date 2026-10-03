@@ -5,7 +5,7 @@ export interface Props {
   subheadline?: string;
 }
 
-const { headline, subheadline } = Astro.props;
+const { headline, subheadline, showreelUrl } = Astro.props; // Add it here too!
 
 // This splits the headline so we can color the last word Amber!
 const words = headline.split(' ');
@@ -33,6 +33,6 @@ const firstPart = words.join(' ');
 
   <div class="w-full relative aspect-video bg-cabilo-dark border border-cabilo-card rounded-md overflow-hidden shadow-[0_0_40px_rgba(230,115,0,0.1)]">
     <!-- Replace YOUR_REAL_YOUTUBE_ID with your actual video ID below (in both places!) -->
-    <iframe class="absolute inset-0 w-full h-full pointer-events-none" src="https://www.youtube.com/embed/vRMMimi6cKM?autoplay=1&mute=1&controls=0&modestbranding=1&rel=0&loop=1&playlist=vRMMimi6cKM" title="CABILO Showreel" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe>
+    <iframe class="absolute inset-0 w-full h-full pointer-events-none" src={`https://www.youtube.com/embed/${showreelUrl}?autoplay=1&mute=1&controls=0&modestbranding=1&rel=0&loop=1&playlist=${showreelUrl}`} title="CABILO Showreel" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe>
   </div>
 </section>
