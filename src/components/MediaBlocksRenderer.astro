@@ -1,5 +1,10 @@
 ---
-// src/components/MediaBlocksRenderer.astro
+/**
+ * src/components/MediaBlocksRenderer.astro
+ *
+ * Shared media-block rendering engine used by Projects,
+ * Tutorials, and Breakdowns.
+ */
 
 import DynamicAov from './DynamicAov.astro';
 import TurntableScrubber from './TurntableScrubber.astro';
@@ -9,13 +14,13 @@ import { parse } from 'marked';
 import type { MediaBlock } from '../content.config';
 
 export interface Props {
-  blocks: MediaBlock[]; // Accepts the mediaBlocks array from ANY collection
+  blocks: MediaBlock[];
 }
 
 const { blocks } = Astro.props;
 
 // ------------------------------------------------------------
-// HELPER FUNCTIONS (Moved here so they aren't repeated!)
+// HELPER FUNCTIONS
 // ------------------------------------------------------------
 
 const getTurntableFrames = (folder: string) => {
@@ -39,26 +44,53 @@ const getVideoEmbed = (url: string) => {
 
     if (hostname === 'youtube.com' || hostname === 'm.youtube.com') {
       const videoId = parsedUrl.searchParams.get('v');
-      if (videoId) return { type: 'youtube', src: `https://www.youtube.com/embed/${videoId}?autoplay=1&mute=1&controls=1&modestbranding=1&rel=0` };
+
+      if (videoId) {
+        return {
+          type: 'youtube',
+          src: `https://www.youtube.com/embed/${videoId}?autoplay=1&mute=1&controls=1&modestbranding=1&rel=0`,
+        };
+      }
     }
 
     if (hostname === 'youtu.be') {
       const videoId = parsedUrl.pathname.replace('/', '');
-      if (videoId) return { type: 'youtube', src: `https://www.youtube.com/embed/${videoId}?autoplay=1&mute=1&controls=1&modestbranding=1&rel=0` };
+
+      if (videoId) {
+        return {
+          type: 'youtube',
+          src: `https://www.youtube.com/embed/${videoId}?autoplay=1&mute=1&controls=1&modestbranding=1&rel=0`,
+        };
+      }
     }
 
     if (hostname === 'vimeo.com') {
       const videoId = parsedUrl.pathname.split('/').filter(Boolean)[0];
-      if (videoId) return { type: 'vimeo', src: `https://player.vimeo.com/video/${videoId}?autoplay=1&muted=1` };
+
+      if (videoId) {
+        return {
+          type: 'vimeo',
+          src: `https://player.vimeo.com/video/${videoId}?autoplay=1&muted=1`,
+        };
+      }
     }
 
     if (/\.(mp4|webm|ogg)(\?.*)?$/i.test(parsedUrl.pathname)) {
-      return { type: 'direct', src: url };
+      return {
+        type: 'direct',
+        src: url,
+      };
     }
 
-    return { type: 'unknown', src: url };
+    return {
+      type: 'unknown',
+      src: url,
+    };
   } catch {
-    return { type: 'youtube', src: `https://www.youtube.com/embed/${url}?autoplay=1&mute=1&controls=1&modestbranding=1&rel=0` };
+    return {
+      type: 'youtube',
+      src: `https://www.youtube.com/embed/${url}?autoplay=1&mute=1&controls=1&modestbranding=1&rel=0`,
+    };
   }
 };
 ---
@@ -68,13 +100,22 @@ const getVideoEmbed = (url: string) => {
 <!-- ====================================================== -->
 
 {blocks.map((block) => {
+
   if (block.type === 'text_block') {
     const parsedHTML = parse(block.content) as string;
 
     return (
       <div class="mb-16">
-        {block.title && <h3 class="text-xl text-text-white mb-6 uppercase tracking-wider">{block.title}</h3>}
-        <div class="prose prose-invert prose-p:text-text-silver prose-headings:text-text-white prose-a:text-brand-amber max-w-none" set:html={parsedHTML} />
+        {block.title && (
+          <h3 class="text-xl text-text-white mb-6 uppercase tracking-wider">
+            {block.title}
+          </h3>
+        )}
+
+        <div
+          class="prose prose-invert prose-p:text-text-silver prose-headings:text-text-white prose-a:text-brand-amber max-w-none"
+          set:html={parsedHTML}
+        />
       </div>
     );
   }
@@ -82,12 +123,37 @@ const getVideoEmbed = (url: string) => {
   if (block.type === 'image') {
     return (
       <div class="mb-16">
-        {block.title && <h3 class="text-xl text-text-white mb-6 uppercase tracking-wider">{block.title}</h3>}
+        {block.title && (
+          <h3 class="text-xl text-text-white mb-6 uppercase tracking-wider">
+            {block.title}
+          </h3>
+        )}
 
-        <div class="rounded-md overflow-hidden shadow-2xl border border-cabilo-card">
-          <img src={block.image} alt="Project Media" class="w-full h-auto block" loading="lazy" />
+        <div
+          class:list={[
+            'rounded-md overflow-hidden shadow-2xl border border-cabilo-card',
+            block.fitToViewport && 'flex items-center justify-center max-h-[75vh]',
+          ]}
+        >
+          <img
+            src={block.image}
+            alt="Project Media"
+            class:list={[
+              'block',
+              block.fitToViewport
+                ? 'max-w-full max-h-[75vh] w-auto h-auto object-contain'
+                : 'w-full h-auto',
+            ]}
+            loading="lazy"
+            draggable="false"
+          />
         </div>
-        {block.comment && <p class="mt-4 text-sm leading-relaxed text-text-silver">{block.comment}</p>}
+
+        {block.comment && (
+          <p class="mt-4 text-sm leading-relaxed text-text-silver">
+            {block.comment}
+          </p>
+        )}
       </div>
     );
   }
@@ -95,20 +161,48 @@ const getVideoEmbed = (url: string) => {
   if (block.type === 'video') {
     const video = getVideoEmbed(block.videoUrl);
 
+    if (!video) return null;
+
     return (
       <div class="mb-16">
-        {block.title && <h3 class="text-xl text-text-white mb-6 uppercase tracking-wider">{block.title}</h3>}
+        {block.title && (
+          <h3 class="text-xl text-text-white mb-6 uppercase tracking-wider">
+            {block.title}
+          </h3>
+        )}
 
         <div class="rounded-md overflow-hidden shadow-2xl border border-cabilo-card relative aspect-video">
           {video.type === 'youtube' || video.type === 'vimeo' ? (
-            <iframe class="absolute inset-0 w-full h-full" src={video.src} frameborder="0" loading="lazy" allow="autoplay; fullscreen; picture-in-picture" allowfullscreen></iframe>
+            <iframe
+              class="absolute inset-0 w-full h-full"
+              src={video.src}
+              frameborder="0"
+              loading="lazy"
+              allow="autoplay; fullscreen; picture-in-picture"
+              allowfullscreen
+            ></iframe>
           ) : video.type === 'direct' ? (
-            <video class="absolute inset-0 w-full h-full object-contain bg-black" src={video.src} controls preload="metadata" playsinline></video>
+            <video
+              class="absolute inset-0 w-full h-full object-contain bg-black"
+              src={video.src}
+              controls
+              preload="metadata"
+              playsinline
+            ></video>
           ) : (
-            <div class="absolute inset-0 flex items-center justify-center bg-cabilo-dark p-8"><p class="text-text-silver">Video URL not recognized.</p></div>
+            <div class="absolute inset-0 flex items-center justify-center bg-cabilo-dark p-8">
+              <p class="text-text-silver">
+                Video URL not recognized.
+              </p>
+            </div>
           )}
         </div>
-        {block.comment && <p class="mt-4 text-sm leading-relaxed text-text-silver">{block.comment}</p>}
+
+        {block.comment && (
+          <p class="mt-4 text-sm leading-relaxed text-text-silver">
+            {block.comment}
+          </p>
+        )}
       </div>
     );
   }
@@ -116,12 +210,26 @@ const getVideoEmbed = (url: string) => {
   if (block.type === 'turntable') {
     const frames = getTurntableFrames(block.folder);
 
+    if (frames.length === 0) return null;
+
     return (
       <div class="mb-20">
-        {block.title && <h3 class="text-xl text-text-white mb-6 uppercase tracking-wider">{block.title}</h3>}
+        {block.title && (
+          <h3 class="text-xl text-text-white mb-6 uppercase tracking-wider">
+            {block.title}
+          </h3>
+        )}
 
-        <TurntableScrubber frames={frames} />
-        {block.comment && <p class="mt-4 text-sm leading-relaxed text-text-silver">{block.comment}</p>}
+        <TurntableScrubber
+          frames={frames}
+          fitToViewport={block.fitToViewport}
+        />
+
+        {block.comment && (
+          <p class="mt-4 text-sm leading-relaxed text-text-silver">
+            {block.comment}
+          </p>
+        )}
       </div>
     );
   }
@@ -131,10 +239,22 @@ const getVideoEmbed = (url: string) => {
 
     return (
       <div class="mb-20">
-        {block.title && <h3 class="text-xl text-text-white mb-6 uppercase tracking-wider">{block.title}</h3>}
+        {block.title && (
+          <h3 class="text-xl text-text-white mb-6 uppercase tracking-wider">
+            {block.title}
+          </h3>
+        )}
 
-        <DynamicAov passes={block.aovPasses} />
-        {block.comment && <p class="mt-4 text-sm leading-relaxed text-text-silver">{block.comment}</p>}
+        <DynamicAov
+          passes={block.aovPasses}
+          fitToViewport={block.fitToViewport}
+        />
+
+        {block.comment && (
+          <p class="mt-4 text-sm leading-relaxed text-text-silver">
+            {block.comment}
+          </p>
+        )}
       </div>
     );
   }

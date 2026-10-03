@@ -11,7 +11,7 @@ collections:
   # ============================================================
   # GLOBAL PAGES & SEO
   # ============================================================
-  
+
   - name: "pages"
     label: "Global Pages & SEO"
     files:
@@ -25,7 +25,7 @@ collections:
           - { label: "Main Headline", name: "headline", widget: "string", hint: "The last word of this sentence will automatically glow Amber!" }
           - { label: "Subheadline / Bio", name: "subheadline", widget: "text" }
           - { label: "Showreel URL", name: "showreelUrl", widget: "string", hint: "Paste a YouTube, Vimeo, or direct .mp4 link to update the homepage video." }
-          
+
           # SEO MOVED HERE!
           - { label: "Global Browser Title", name: "globalSeoTitle", widget: "string", default: "CABILO | Senior 3D Artist & Cinematics" }
           - { label: "Global Description", name: "globalSeoDescription", widget: "text" }
@@ -52,6 +52,7 @@ collections:
           - { label: "Subheadline", name: "subheadline", widget: "string" }
           - { label: "Body Content (Not used on Contact)", name: "body", widget: "hidden", default: "" }
 
+
   # ============================================================
   # PROJECTS
   # ============================================================
@@ -63,7 +64,6 @@ collections:
     slug: "{{slug}}"
 
     fields:
-
       - { label: "Title", name: "title", widget: "string" }
       - { label: "Category", name: "category", widget: "string" }
       - { label: "Thumbnail Image", name: "thumbnail", widget: "image" }
@@ -95,6 +95,7 @@ collections:
             fields:
               - { label: "Title", name: "title", widget: "string", required: false }
               - { label: "Image", name: "image", widget: "image" }
+              - { label: "Fit to viewport", name: "fitToViewport", widget: "boolean", default: true, hint: "Default ON. Constrains the image to fit within 75% of the monitor height. Disable for large detail or close-up images." }
               - { label: "Comment", name: "comment", widget: "text", required: false }
 
           - label: "Video"
@@ -112,6 +113,7 @@ collections:
             fields:
               - { label: "Title", name: "title", widget: "string", required: false }
               - { label: "Folder: turntables/...", name: "folder", widget: "string", hint: "Use the folder path relative to public/. Example: turntables/test. Do NOT start with / and do NOT include public/." }
+              - { label: "Fit to viewport", name: "fitToViewport", widget: "boolean", default: true, hint: "Default ON. Constrains the turntable to fit within 75% of the monitor height. Disable for large detail or close-up views." }
               - { label: "Comment", name: "comment", widget: "text", required: false }
 
           - label: "AOV"
@@ -126,9 +128,11 @@ collections:
                 fields:
                   - { label: "Name", name: "name", widget: "string" }
                   - { label: "Image", name: "image", widget: "image" }
+              - { label: "Fit to viewport", name: "fitToViewport", widget: "boolean", default: true, hint: "Default ON. Constrains the AOV comparison to fit within 75% of the monitor height. Disable for large detail or close-up views." }
               - { label: "Comment", name: "comment", widget: "text", required: false }
 
       - { label: "Project Breakdown", name: "body", widget: "markdown" }
+
 
   # ============================================================
   # LEARNING
@@ -141,7 +145,6 @@ collections:
     slug: "{{slug}}"
 
     fields:
-
       - { label: "Title", name: "title", widget: "string" }
       - { label: "Description", name: "description", widget: "string" }
       - { label: "Publish Date", name: "publishDate", widget: "datetime" }
@@ -149,12 +152,13 @@ collections:
       - { label: "Format", name: "format", widget: "select", options: ["Video", "Article"] }
       - { label: "Tags", name: "tags", widget: "list", default: ["Lighting", "Topology"] }
       - { label: "Thumbnail Image", name: "thumbnail", widget: "image" }
-      
-      # FIXED: Changed from youtubeId to universal videoUrl!
+
+      # FIXED: Universal video URL for the optional top video.
       - { label: "Video URL", name: "videoUrl", widget: "string", required: false, hint: "Paste a YouTube, Vimeo, or direct .mp4 link." }
 
       - { label: "Feature this post?", name: "featured", widget: "boolean", default: false }
 
+      # Shared media-block system used by Projects, Tutorials, and Breakdowns.
       - label: "Media Blocks"
         name: "mediaBlocks"
         widget: "list"
@@ -163,6 +167,7 @@ collections:
         collapsed: true
 
         types:
+
           - label: "Text Block"
             name: "text_block"
             widget: "object"
@@ -177,6 +182,7 @@ collections:
             fields:
               - { label: "Title", name: "title", widget: "string", required: false }
               - { label: "Image", name: "image", widget: "image" }
+              - { label: "Fit to viewport", name: "fitToViewport", widget: "boolean", default: true, hint: "Default ON. Constrains the image to fit within 75% of the monitor height. Disable for large detail or close-up images." }
               - { label: "Comment", name: "comment", widget: "text", required: false }
 
           - label: "Video"
@@ -194,6 +200,7 @@ collections:
             fields:
               - { label: "Title", name: "title", widget: "string", required: false }
               - { label: "Folder: turntables/...", name: "folder", widget: "string", hint: "Use the folder path relative to public/. Example: turntables/test. Do NOT start with / and do NOT include public/." }
+              - { label: "Fit to viewport", name: "fitToViewport", widget: "boolean", default: true, hint: "Default ON. Constrains the turntable to fit within 75% of the monitor height. Disable for large detail or close-up views." }
               - { label: "Comment", name: "comment", widget: "text", required: false }
 
           - label: "AOV"
@@ -202,14 +209,13 @@ collections:
             hint: "Upload a minimum of two passes (e.g. Viewport and Wireframe) to create an interactive slider."
             fields:
               - { label: "Title", name: "title", widget: "string", required: false }
-
               - label: "AOV Passes"
                 name: "aovPasses"
                 widget: "list"
                 fields:
                   - { label: "Name", name: "name", widget: "string" }
                   - { label: "Image", name: "image", widget: "image" }
-
+              - { label: "Fit to viewport", name: "fitToViewport", widget: "boolean", default: true, hint: "Default ON. Constrains the AOV comparison to fit within 75% of the monitor height. Disable for large detail or close-up views." }
               - { label: "Comment", name: "comment", widget: "text", required: false }
 
       - { label: "Article Content", name: "body", widget: "markdown" }

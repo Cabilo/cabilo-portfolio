@@ -13,6 +13,7 @@ export const mediaBlockSchema = z.discriminatedUnion('type', [
     type: z.literal('image'),
     title: z.string().optional(),
     image: z.string(),
+    fitToViewport: z.boolean().default(true),
     comment: z.string().optional(),
   }),
 
@@ -27,6 +28,7 @@ export const mediaBlockSchema = z.discriminatedUnion('type', [
     type: z.literal('turntable'),
     title: z.string().optional(),
     folder: z.string(),
+    fitToViewport: z.boolean().default(true),
     comment: z.string().optional(),
   }),
 
@@ -34,6 +36,7 @@ export const mediaBlockSchema = z.discriminatedUnion('type', [
     type: z.literal('aov'),
     title: z.string().optional(),
     aovPasses: z.array(aovPassSchema).default([]),
+    fitToViewport: z.boolean().default(true),
     comment: z.string().optional(),
   }),
 

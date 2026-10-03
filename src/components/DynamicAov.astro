@@ -5,12 +5,13 @@
  * A reusable AOV comparison viewer.
  *
  * UX rules:
- * - The comparison viewport is capped at 75vh.
+ * - The comparison viewport is capped at 75vh when enabled.
  * - Both images always occupy the same fixed viewport dimensions.
  * - The B image is translated underneath the clipper instead of being resized
  *   when the comparison slider moves.
  * - Horizontal touch gestures control the slider.
  * - Vertical touch gestures are ignored so the page can scroll naturally.
+ * - Native image dragging/selection is disabled.
  */
 
 export interface Props {
@@ -18,9 +19,11 @@ export interface Props {
     name: string;
     image: string;
   }[];
+  fitToViewport?: boolean;
 }
 
-const { passes } = Astro.props;
+const { passes, fitToViewport = true } = Astro.props;
+
 const defaultA = passes[0];
 const defaultB = passes.length > 1 ? passes[1] : passes[0];
 ---
@@ -29,25 +32,26 @@ const defaultB = passes.length > 1 ? passes[1] : passes[0];
   <div class="flex flex-col gap-6">
 
     <div
-      class="aov-container relative overflow-hidden max-w-full mx-auto bg-cabilo-obsidian"
-      style="touch-action: pan-y;"
+      class="aov-container relative overflow-hidden max-w-full mx-auto bg-cabilo-obsidian select-none"
+      style="touch-action: pan-y; -webkit-user-select: none; user-select: none;"
     >
 
       <img
         src={defaultA.image}
         alt="Side A"
-        class="img-a absolute inset-0 w-full h-full object-contain"
+        class="img-a absolute inset-0 w-full h-full object-contain pointer-events-none select-none"
         draggable="false"
       />
 
       <div
-        class="clipper-b absolute inset-0 border-l-2 border-brand-amber overflow-hidden"
+        class="clipper-b absolute inset-0 border-l-2 border-brand-amber overflow-hidden pointer-events-none"
         style="width: 50%; left: 50%;"
       >
         <img
           src={defaultB.image}
           alt="Side B"
-          class="img-b absolute top-0 left-0 h-full object-contain max-w-none"
+          class="img-b absolute top-0 left-0 h-full object-contain max-w-none pointer-events-none select-none"
+          style="-webkit-user-drag: none;"
           draggable="false"
         />
       </div>
@@ -61,10 +65,21 @@ const defaultB = passes.length > 1 ? passes[1] : passes[0];
         <div class="relative w-10 h-10 bg-brand-amber rounded-full shadow-[0_0_15px_rgba(230,115,0,0.8)] flex items-center justify-center pointer-events-none">
           <div class="flex items-center gap-1.5 text-cabilo-obsidian">
             <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M15 19l-7-7 7-7"></path>
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="3"
+                d="M15 19l-7-7 7-7"
+              ></path>
             </svg>
+
             <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M9 5l7 7-7 7"></path>
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="3"
+                d="M9 5l7 7-7 7"
+              ></path>
             </svg>
           </div>
         </div>
@@ -90,7 +105,11 @@ const defaultB = passes.length > 1 ? passes[1] : passes[0];
         <div class="flex flex-wrap gap-2">
           {passes.map((pass, index) => (
             <button
-              class={`btn-a px-3 py-1.5 rounded-md text-xs font-bold tracking-wider uppercase transition-colors ${index === 0 ? 'bg-brand-amber text-text-white' : 'bg-cabilo-card text-text-silver hover:text-text-white'}`}
+              class={`btn-a px-3 py-1.5 rounded-md text-xs font-bold tracking-wider uppercase transition-colors ${
+                index === 0
+                  ? 'bg-brand-amber text-text-white'
+                  : 'bg-cabilo-card text-text-silver hover:text-text-white'
+              }`}
               data-name={pass.name}
               data-image={pass.image}
             >
@@ -108,7 +127,11 @@ const defaultB = passes.length > 1 ? passes[1] : passes[0];
         <div class="flex flex-wrap gap-2">
           {passes.map((pass, index) => (
             <button
-              class={`btn-b px-3 py-1.5 rounded-md text-xs font-bold tracking-wider uppercase ${index === 1 ? 'bg-brand-amber text-text-white' : 'bg-cabilo-card text-text-silver hover:text-text-white'}`}
+              class={`btn-b px-3 py-1.5 rounded-md text-xs font-bold tracking-wider uppercase ${
+                index === 1
+                  ? 'bg-brand-amber text-text-white'
+                  : 'bg-cabilo-card text-text-silver hover:text-text-white'
+              }`}
               data-name={pass.name}
               data-image={pass.image}
             >
@@ -127,6 +150,7 @@ const defaultB = passes.length > 1 ? passes[1] : passes[0];
   class DynamicAov extends HTMLElement {
     connectedCallback() {
       if (this.dataset.initialized === 'true') return;
+
       this.dataset.initialized = 'true';
 
       const container = this.querySelector('.aov-container') as HTMLElement;
@@ -142,8 +166,10 @@ const defaultB = passes.length > 1 ? passes[1] : passes[0];
       if (!container || !clipperB || !slider || !imgA || !imgB) return;
 
       let isDragging = false;
+
       let touchStartX = 0;
       let touchStartY = 0;
+
       const touchThreshold = 8;
 
       const fixImageSize = () => {
@@ -151,22 +177,30 @@ const defaultB = passes.length > 1 ? passes[1] : passes[0];
 
         const aspectRatio = imgA.naturalWidth / imgA.naturalHeight;
         const availableWidth = this.clientWidth;
-        const availableHeight = window.innerHeight * 0.75;
 
         if (!availableWidth) return;
 
-        const widthFromHeight = availableHeight * aspectRatio;
-        const width = Math.min(availableWidth, widthFromHeight);
-        const height = width / aspectRatio;
+        let width: number;
+        let height: number;
+
+        if (fitToViewport) {
+          const availableHeight = window.innerHeight * 0.75;
+          const widthFromHeight = availableHeight * aspectRatio;
+
+          width = Math.min(availableWidth, widthFromHeight);
+          height = width / aspectRatio;
+        } else {
+          width = availableWidth;
+          height = width / aspectRatio;
+        }
 
         container.style.width = `${width}px`;
         container.style.height = `${height}px`;
 
-        // Keep the B image at the full viewport dimensions.
-        // The clipper reveals it; dragging the slider must never resize it.
+        // B must always match the full viewport.
+        // The clipper reveals it instead of resizing it.
         imgB.style.width = `${width}px`;
         imgB.style.height = `${height}px`;
-        imgB.style.transform = 'translateX(0)';
       };
 
       window.addEventListener('resize', fixImageSize);
@@ -180,6 +214,7 @@ const defaultB = passes.length > 1 ? passes[1] : passes[0];
         const rect = container.getBoundingClientRect();
 
         let position = ((clientX - rect.left) / rect.width) * 100;
+
         position = Math.max(0, Math.min(100, position));
 
         slider.style.left = `${position}%`;
@@ -187,9 +222,7 @@ const defaultB = passes.length > 1 ? passes[1] : passes[0];
         clipperB.style.width = `${100 - position}%`;
         clipperB.style.left = `${position}%`;
 
-        // Move the fixed-size B image with the clipper.
-        // This preserves the original image scale while changing only
-        // which portion is visible.
+        // Translate the fixed-size B image.
         imgB.style.transform = `translateX(-${position}%)`;
       };
 
@@ -212,23 +245,27 @@ const defaultB = passes.length > 1 ? passes[1] : passes[0];
             return;
           }
 
-          // Vertical gesture: cancel the AOV interaction completely
-          // and allow the page to scroll normally.
+          // Vertical gesture:
+          // cancel AOV interaction and let the page scroll.
           if (Math.abs(diffY) > Math.abs(diffX)) {
             isDragging = false;
             return;
           }
 
           e.preventDefault();
+
           updateSlider(currentX);
+
           return;
         }
 
         e.preventDefault();
+
         updateSlider(e.clientX);
       };
 
-      slider.addEventListener('mousedown', () => {
+      slider.addEventListener('mousedown', (e) => {
+        e.preventDefault();
         isDragging = true;
       });
 
@@ -239,10 +276,16 @@ const defaultB = passes.length > 1 ? passes[1] : passes[0];
 
           touchStartX = e.touches[0].clientX;
           touchStartY = e.touches[0].clientY;
+
           isDragging = true;
         },
         { passive: true }
       );
+
+      // Completely disable native image dragging/selection.
+      container.addEventListener('dragstart', (e) => {
+        e.preventDefault();
+      });
 
       window.addEventListener('mouseup', () => {
         isDragging = false;
@@ -257,7 +300,12 @@ const defaultB = passes.length > 1 ? passes[1] : passes[0];
       });
 
       window.addEventListener('mousemove', moveSlider);
-      window.addEventListener('touchmove', moveSlider, { passive: false });
+
+      window.addEventListener(
+        'touchmove',
+        moveSlider,
+        { passive: false }
+      );
 
       buttonsA.forEach((btn) => {
         btn.addEventListener('click', (e) => {
@@ -266,13 +314,27 @@ const defaultB = passes.length > 1 ? passes[1] : passes[0];
           imgA.src = target.getAttribute('data-image') || '';
           labelA.innerText = target.getAttribute('data-name') || '';
 
-          buttonsA.forEach((b) => {
-            b.classList.remove('bg-brand-amber', 'text-text-white');
-            b.classList.add('bg-cabilo-card', 'text-text-silver');
+          buttonsA.forEach((button) => {
+            button.classList.remove(
+              'bg-brand-amber',
+              'text-text-white'
+            );
+
+            button.classList.add(
+              'bg-cabilo-card',
+              'text-text-silver'
+            );
           });
 
-          target.classList.remove('bg-cabilo-card', 'text-text-silver');
-          target.classList.add('bg-brand-amber', 'text-text-white');
+          target.classList.remove(
+            'bg-cabilo-card',
+            'text-text-silver'
+          );
+
+          target.classList.add(
+            'bg-brand-amber',
+            'text-text-white'
+          );
         });
       });
 
@@ -283,13 +345,27 @@ const defaultB = passes.length > 1 ? passes[1] : passes[0];
           imgB.src = target.getAttribute('data-image') || '';
           labelB.innerText = target.getAttribute('data-name') || '';
 
-          buttonsB.forEach((b) => {
-            b.classList.remove('bg-brand-amber', 'text-text-white');
-            b.classList.add('bg-cabilo-card', 'text-text-silver');
+          buttonsB.forEach((button) => {
+            button.classList.remove(
+              'bg-brand-amber',
+              'text-text-white'
+            );
+
+            button.classList.add(
+              'bg-cabilo-card',
+              'text-text-silver'
+            );
           });
 
-          target.classList.remove('bg-cabilo-card', 'text-text-silver');
-          target.classList.add('bg-brand-amber', 'text-text-white');
+          target.classList.remove(
+            'bg-cabilo-card',
+            'text-text-silver'
+          );
+
+          target.classList.add(
+            'bg-brand-amber',
+            'text-text-white'
+          );
         });
       });
     }
