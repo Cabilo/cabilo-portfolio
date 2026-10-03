@@ -3,7 +3,23 @@
 import { ClientRouter } from 'astro:transitions';
 import '../styles/global.css';
 import Navbar from '../components/Navbar.astro'; 
-import Footer from '../components/Footer.astro'; // <--- Import the Footer!
+import Footer from '../components/Footer.astro'; 
+
+export interface Props {
+  title?: string;
+  description?: string;
+  image?: string;
+}
+
+// 1. We set up global defaults, but allow individual pages to override them!
+const { 
+  title = "CABILO | Senior 3D Artist & Cinematics",
+  description = "Portfolio of CABILO, a Senior 3D Artist specializing in high-end cinematics, Lookdev, and game animation.",
+  image = "https://cdna.artstation.com/p/assets/images/images/046/504/170/large/lucas-cabilo-ls-portraitheadscans-square-v001-0001.jpg"
+} = Astro.props;
+
+// 2. We grab the exact, current URL to pass to OpenGraph
+const currentUrl = new URL(Astro.url.pathname, Astro.site || 'https://cabilo.vercel.app').href;
 ---
 
 <!DOCTYPE html>
@@ -12,31 +28,29 @@ import Footer from '../components/Footer.astro'; // <--- Import the Footer!
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     
-    <title>CABILO | Senior 3D Artist & Cinematics</title>
-    <meta name="description" content="Portfolio of CABILO, a Senior 3D Artist specializing in high-end cinematics, Lookdev, and game animation." />
+    <title>{title}</title>
+    <meta name="description" content={description} />
     <meta name="author" content="CABILO" />
     
-    <meta property="og:title" content="CABILO | Senior 3D Artist" />
-    <meta property="og:description" content="Specializing in high-end cinematics, Lookdev, and game animation." />
+    <!-- Open Graph (For beautiful Discord / LinkedIn previews) -->
+    <meta property="og:title" content={title} />
+    <meta property="og:description" content={description} />
     <meta property="og:type" content="website" />
-    <meta property="og:url" content="https://cabilo.vercel.app/" />
-    <meta property="og:image" content="https://cdna.artstation.com/p/assets/images/images/046/504/170/large/lucas-cabilo-ls-portraitheadscans-square-v001-0001.jpg" />
+    <meta property="og:url" content={currentUrl} />
+    <meta property="og:image" content={image} />
     
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
 
-    <!-- THIS ENABLES BUTTERY SMOOTH FADE ANIMATIONS BETWEEN PAGES! -->
     <ClientRouter />
   </head>
   <body class="bg-cabilo-obsidian text-text-silver min-h-screen font-sans antialiased flex flex-col">
     
     <Navbar />
     
-    <!-- flex-grow pushes the footer to the absolute bottom of the screen! -->
     <div class="pt-24 flex-grow">
       <slot />
     </div>
 
-    <!-- Drop the Footer at the bottom of every page -->
     <Footer />
 
   </body>

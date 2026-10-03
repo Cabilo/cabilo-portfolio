@@ -16,7 +16,11 @@ const { doc } = Astro.props;
 const { Content } = await render(doc);
 ---
 
-<Layout>
+<Layout 
+  title={`${doc.data.title} | CABILO Learning`}
+  description={doc.data.description}
+  image={doc.data.thumbnail}
+>
   <main class="max-w-4xl mx-auto px-6 py-12 md:py-20">
     
     <!-- Header -->

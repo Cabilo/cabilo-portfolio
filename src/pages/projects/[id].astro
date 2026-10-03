@@ -151,7 +151,11 @@ const showreel = project.data.showreelUrl
   : null;
 ---
 
-<Layout>
+<Layout 
+  title={`${project.data.title} | CABILO`}
+  description={`Breakdown of ${project.data.title} - ${project.data.category} by CABILO.`}
+  image={project.data.thumbnail}
+>
   <main class="max-w-5xl mx-auto px-6 py-12 md:py-20">
 
     <!-- ====================================================== -->
