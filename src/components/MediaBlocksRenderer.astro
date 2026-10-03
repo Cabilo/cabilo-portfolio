@@ -94,39 +94,30 @@ const getVideoEmbed = (url: string) => {
   }
 };
 
-// ------------------------------------------------------------
-// ALIGNMENT HELPERS
-// ------------------------------------------------------------
+type Alignment = 'media-left' | 'center' | 'page-left' | 'page-right';
 
 const getAlignmentClasses = (
-  alignment: MediaBlock['titleAlign'],
+  alignment: Alignment | undefined,
   mediaType: MediaBlock['type'],
 ) => {
-  switch (alignment) {
+  const resolvedAlignment = alignment ?? 'page-left';
+
+  switch (resolvedAlignment) {
     case 'center':
       return 'w-full text-center';
-
-    case 'page-left':
-      return 'w-full text-left';
 
     case 'page-right':
       return 'w-full text-right';
 
     case 'media-left':
-    default:
-      /*
-       * Images have a real intrinsic width, so this makes the
-       * title/comment follow the actual media width instead of
-       * the full page width.
-       *
-       * Video, turntable, and AOV blocks remain full-width here
-       * because their interactive/rendering components manage
-       * their own viewport sizing.
-       */
       if (mediaType === 'image') {
         return 'w-fit max-w-full mx-auto text-left';
       }
 
+      return 'w-full text-left';
+
+    case 'page-left':
+    default:
       return 'w-full text-left';
   }
 };
@@ -164,7 +155,7 @@ const getAlignmentClasses = (
           <h3
             class:list={[
               'text-xl text-text-white mb-6 uppercase tracking-wider',
-              getAlignmentClasses(block.titleAlign, block.type),
+              getAlignmentClasses(block.titleAlign, 'image'),
             ]}
           >
             {block.title}
@@ -203,7 +194,7 @@ const getAlignmentClasses = (
           <p
             class:list={[
               'mt-4 text-sm leading-relaxed text-text-silver',
-              getAlignmentClasses(block.commentAlign, block.type),
+              getAlignmentClasses(block.commentAlign, 'image'),
             ]}
           >
             {block.comment}
@@ -224,7 +215,7 @@ const getAlignmentClasses = (
           <h3
             class:list={[
               'text-xl text-text-white mb-6 uppercase tracking-wider',
-              getAlignmentClasses(block.titleAlign, block.type),
+              getAlignmentClasses(block.titleAlign, 'video'),
             ]}
           >
             {block.title}
@@ -262,7 +253,7 @@ const getAlignmentClasses = (
           <p
             class:list={[
               'mt-4 text-sm leading-relaxed text-text-silver',
-              getAlignmentClasses(block.commentAlign, block.type),
+              getAlignmentClasses(block.commentAlign, 'video'),
             ]}
           >
             {block.comment}
@@ -283,7 +274,7 @@ const getAlignmentClasses = (
           <h3
             class:list={[
               'text-xl text-text-white mb-6 uppercase tracking-wider',
-              getAlignmentClasses(block.titleAlign, block.type),
+              getAlignmentClasses(block.titleAlign, 'turntable'),
             ]}
           >
             {block.title}
@@ -299,7 +290,7 @@ const getAlignmentClasses = (
           <p
             class:list={[
               'mt-4 text-sm leading-relaxed text-text-silver',
-              getAlignmentClasses(block.commentAlign, block.type),
+              getAlignmentClasses(block.commentAlign, 'turntable'),
             ]}
           >
             {block.comment}
@@ -318,7 +309,7 @@ const getAlignmentClasses = (
           <h3
             class:list={[
               'text-xl text-text-white mb-6 uppercase tracking-wider',
-              getAlignmentClasses(block.titleAlign, block.type),
+              getAlignmentClasses(block.titleAlign, 'aov'),
             ]}
           >
             {block.title}
@@ -334,7 +325,7 @@ const getAlignmentClasses = (
           <p
             class:list={[
               'mt-4 text-sm leading-relaxed text-text-silver',
-              getAlignmentClasses(block.commentAlign, block.type),
+              getAlignmentClasses(block.commentAlign, 'aov'),
             ]}
           >
             {block.comment}
