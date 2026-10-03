@@ -7,25 +7,70 @@ const { frames } = Astro.props;
 const frameDataString = JSON.stringify(frames);
 ---
 
-<turntable-scrubber data-frames={frameDataString} class="flex flex-col gap-3 w-full">
+<turntable-scrubber
+  data-frames={frameDataString}
+  class="flex flex-col gap-3 w-full"
+>
+  <div
+    id="tt-container"
+    class="relative w-full max-h-[75vh] bg-cabilo-obsidian overflow-hidden ring-1 ring-cabilo-card shadow-lg cursor-ew-resize flex items-center justify-center"
+    style="touch-action: pan-y;"
+  >
+    <img
+      id="tt-display"
+      src={frames[0]}
+      alt="3D Turntable"
+      class="block w-full max-w-full max-h-[75vh] h-auto object-contain transition-transform duration-150 ease-out select-none"
+      style="transform: scale(1); transform-origin: 50% 50%;"
+      draggable="false"
+    />
 
-  <div id="tt-container" class="relative w-full max-h-[75vh] bg-cabilo-obsidian overflow-hidden ring-1 ring-cabilo-card shadow-lg cursor-ew-resize flex items-center justify-center" style="touch-action: pan-y;">
-    <img id="tt-display" src={frames[0]} alt="3D Turntable" class="block w-full max-w-full max-h-[75vh] h-auto object-contain transition-transform duration-150 ease-out select-none" style="transform: scale(1); transform-origin: 50% 50%;" draggable="false" />
+    <div
+      id="tt-overlay"
+      class="absolute inset-0 bg-black/10 flex flex-col items-center justify-center pointer-events-none transition-opacity duration-700 z-20"
+    >
+      <div
+        class="flex flex-col items-center gap-2 bg-cabilo-dark/20 backdrop-blur-md px-6 py-4 rounded-xl border border-brand-amber/50 text-brand-amber shadow-[0_0_20px_rgba(230,115,0,0.3)]"
+      >
+        <svg
+          class="w-6 h-6 animate-pulse mb-1"
+          fill="none"
+          stroke="currentColor"
+          viewBox="0 0 24 24"
+        >
+          <path
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            stroke-width="2"
+            d="M10 8l-4 4 4 4m4-8l4 4-4 4"
+          ></path>
+        </svg>
 
-    <div id="tt-overlay" class="absolute inset-0 bg-black/10 flex flex-col items-center justify-center pointer-events-none transition-opacity duration-700 z-20">
-      <div class="flex flex-col items-center gap-2 bg-cabilo-dark/20 backdrop-blur-md px-6 py-4 rounded-xl border border-brand-amber/50 text-brand-amber shadow-[0_0_20px_rgba(230,115,0,0.3)]">
-        <svg class="w-6 h-6 animate-pulse mb-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 8l-4 4 4 4m4-8l4 4-4 4"></path></svg>
-        <span class="text-xs uppercase tracking-widest font-bold text-text-white">Drag to Rotate</span>
-        <span class="text-[10px] uppercase tracking-widest text-text-silver">Scroll to Zoom • Hover to Pan</span>
+        <span class="text-xs uppercase tracking-widest font-bold text-text-white">
+          Drag to Rotate
+        </span>
+
+        <span class="text-[10px] uppercase tracking-widest text-text-silver">
+          Scroll to Zoom • Hover to Pan
+        </span>
       </div>
     </div>
   </div>
 
-  <div class="flex items-center justify-center gap-6 text-[10px] tracking-widest text-text-silver font-mono bg-cabilo-dark/50 py-2 rounded border border-cabilo-card w-fit mx-auto px-6">
-    <span>FRAME <span id="tt-counter" class="text-text-white font-bold">001</span> / {String(frames.length).padStart(3, '0')}</span>
-    <span>ZOOM <span id="tt-zoom" class="text-text-white font-bold">1.0</span>x</span>
-  </div>
+  <div
+    class="flex items-center justify-center gap-6 text-[10px] tracking-widest text-text-silver font-mono bg-cabilo-dark/50 py-2 rounded border border-cabilo-card w-fit mx-auto px-6"
+  >
+    <span>
+      FRAME
+      <span id="tt-counter" class="text-text-white font-bold">001</span>
+      / {String(frames.length).padStart(3, '0')}
+    </span>
 
+    <span>
+      ZOOM
+      <span id="tt-zoom" class="text-text-white font-bold">1.0</span>x
+    </span>
+  </div>
 </turntable-scrubber>
 
 <script>
@@ -50,9 +95,16 @@ const frameDataString = JSON.stringify(frames);
 
       let currentFrameIndex = 0;
       let isDragging = false;
+
       let startX = 0;
       let startY = 0;
       let startFrame = 0;
+
+      // Touch gestures are only allowed to control the turntable when
+      // the gesture actually started inside the turntable.
+      let touchStartedInside = false;
+      let touchGestureCancelled = false;
+
       let hasInteracted = false;
 
       let currentScale = 1;
@@ -64,9 +116,13 @@ const frameDataString = JSON.stringify(frames);
       const loadingFrames = new Set<number>();
 
       const loadFrame = (index: number) => {
-        const normalizedIndex = ((index % totalFrames) + totalFrames) % totalFrames;
+        const normalizedIndex =
+          ((index % totalFrames) + totalFrames) % totalFrames;
 
-        if (imageCache.has(normalizedIndex) || loadingFrames.has(normalizedIndex)) {
+        if (
+          imageCache.has(normalizedIndex) ||
+          loadingFrames.has(normalizedIndex)
+        ) {
           return;
         }
 
@@ -99,7 +155,8 @@ const frameDataString = JSON.stringify(frames);
       window.addEventListener('resize', updateSensitivity);
 
       const updateFrame = (newIndex: number) => {
-        currentFrameIndex = ((newIndex % totalFrames) + totalFrames) % totalFrames;
+        currentFrameIndex =
+          ((newIndex % totalFrames) + totalFrames) % totalFrames;
 
         loadFrame(currentFrameIndex);
 
@@ -117,11 +174,21 @@ const frameDataString = JSON.stringify(frames);
         }
       };
 
-      const updateTransformOrigin = (clientX: number, clientY: number) => {
+      const updateTransformOrigin = (
+        clientX: number,
+        clientY: number
+      ) => {
         const rect = container.getBoundingClientRect();
 
-        const x = Math.max(0, Math.min(100, ((clientX - rect.left) / rect.width) * 100));
-        const y = Math.max(0, Math.min(100, ((clientY - rect.top) / rect.height) * 100));
+        const x = Math.max(
+          0,
+          Math.min(100, ((clientX - rect.left) / rect.width) * 100)
+        );
+
+        const y = Math.max(
+          0,
+          Math.min(100, ((clientY - rect.top) / rect.height) * 100)
+        );
 
         display.style.transformOrigin = `${x}% ${y}%`;
       };
@@ -130,30 +197,44 @@ const frameDataString = JSON.stringify(frames);
         if ('touches' in e) {
           if (e.touches.length === 0) return;
 
+          touchStartedInside = true;
+          touchGestureCancelled = false;
+          isDragging = false;
+
           startX = e.touches[0].clientX;
           startY = e.touches[0].clientY;
           startFrame = currentFrameIndex;
-          isDragging = false;
-        } else {
-          startX = e.clientX;
-          startY = e.clientY;
-          startFrame = currentFrameIndex;
-          isDragging = true;
+
+          if (!hasInteracted && overlay) {
+            overlay.style.opacity = '0';
+            hasInteracted = true;
+          }
+
+          return;
         }
+
+        startX = e.clientX;
+        startY = e.clientY;
+        startFrame = currentFrameIndex;
+        isDragging = true;
 
         if (!hasInteracted && overlay) {
           overlay.style.opacity = '0';
           hasInteracted = true;
         }
 
-        if (!('touches' in e)) {
-          this.style.cursor = 'grabbing';
-        }
+        this.style.cursor = 'grabbing';
       };
 
       const doDrag = (e: MouseEvent | TouchEvent) => {
         if ('touches' in e) {
           if (e.touches.length === 0) return;
+
+          // The touch did not begin inside this turntable.
+          // It can never activate the turntable.
+          if (!touchStartedInside || touchGestureCancelled) {
+            return;
+          }
 
           const currentX = e.touches[0].clientX;
           const currentY = e.touches[0].clientY;
@@ -162,11 +243,18 @@ const frameDataString = JSON.stringify(frames);
           const diffY = currentY - startY;
 
           if (!isDragging) {
-            if (Math.abs(diffX) < touchThreshold && Math.abs(diffY) < touchThreshold) {
+            if (
+              Math.abs(diffX) < touchThreshold &&
+              Math.abs(diffY) < touchThreshold
+            ) {
               return;
             }
 
+            // Once the gesture is identified as vertical, permanently
+            // cancel the turntable interaction for this touch.
             if (Math.abs(diffY) > Math.abs(diffX)) {
+              touchGestureCancelled = true;
+              isDragging = false;
               return;
             }
 
@@ -178,6 +266,7 @@ const frameDataString = JSON.stringify(frames);
 
           const frameOffset = Math.round(diffX / sensitivity);
           updateFrame(startFrame + frameOffset);
+
           return;
         }
 
@@ -199,34 +288,52 @@ const frameDataString = JSON.stringify(frames);
 
       const stopDrag = () => {
         isDragging = false;
-        this.style.cursor = currentScale > 1 ? 'crosshair' : 'ew-resize';
+        touchStartedInside = false;
+        touchGestureCancelled = false;
+
+        this.style.cursor =
+          currentScale > 1 ? 'crosshair' : 'ew-resize';
       };
 
-      container.addEventListener('wheel', (e) => {
-        e.preventDefault();
+      container.addEventListener(
+        'wheel',
+        (e) => {
+          e.preventDefault();
 
-        if (!hasInteracted && overlay) {
-          overlay.style.opacity = '0';
-          hasInteracted = true;
-        }
+          if (!hasInteracted && overlay) {
+            overlay.style.opacity = '0';
+            hasInteracted = true;
+          }
 
-        updateTransformOrigin(e.clientX, e.clientY);
+          updateTransformOrigin(e.clientX, e.clientY);
 
-        currentScale += e.deltaY * -0.002;
-        currentScale = Math.min(Math.max(minScale, currentScale), maxScale);
+          currentScale += e.deltaY * -0.002;
+          currentScale = Math.min(
+            Math.max(minScale, currentScale),
+            maxScale
+          );
 
-        display.style.transform = `scale(${currentScale})`;
-        zoomCounter.innerText = currentScale.toFixed(1);
+          display.style.transform = `scale(${currentScale})`;
+          zoomCounter.innerText = currentScale.toFixed(1);
 
-        this.style.cursor = currentScale > 1 ? 'crosshair' : 'ew-resize';
-      }, { passive: false });
+          this.style.cursor =
+            currentScale > 1 ? 'crosshair' : 'ew-resize';
+        },
+        { passive: false }
+      );
 
       container.addEventListener('mousedown', startDrag);
       window.addEventListener('mousemove', doDrag);
       window.addEventListener('mouseup', stopDrag);
 
-      container.addEventListener('touchstart', startDrag, { passive: true });
-      window.addEventListener('touchmove', doDrag, { passive: false });
+      container.addEventListener('touchstart', startDrag, {
+        passive: true,
+      });
+
+      window.addEventListener('touchmove', doDrag, {
+        passive: false,
+      });
+
       window.addEventListener('touchend', stopDrag);
       window.addEventListener('touchcancel', stopDrag);
 

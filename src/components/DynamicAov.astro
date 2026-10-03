@@ -1,5 +1,17 @@
 ---
-// src/components/DynamicAov.astro
+/**
+ * DynamicAov.astro
+ *
+ * A reusable AOV comparison viewer.
+ *
+ * UX rules:
+ * - The comparison viewport is capped at 75vh.
+ * - Both images always occupy the same fixed viewport dimensions.
+ * - The B image is translated underneath the clipper instead of being resized
+ *   when the comparison slider moves.
+ * - Horizontal touch gestures control the slider.
+ * - Vertical touch gestures are ignored so the page can scroll naturally.
+ */
 
 export interface Props {
   passes: {
@@ -13,36 +25,68 @@ const defaultA = passes[0];
 const defaultB = passes.length > 1 ? passes[1] : passes[0];
 ---
 
-<!-- 1. Notice how the <dynamic-aov> tag now wraps the ENTIRE HTML block! -->
 <dynamic-aov class="block w-full">
   <div class="flex flex-col gap-6">
 
-    <div class="aov-container relative overflow-hidden max-w-full mx-auto bg-cabilo-obsidian" style="touch-action: pan-y;">
+    <div
+      class="aov-container relative overflow-hidden max-w-full mx-auto bg-cabilo-obsidian"
+      style="touch-action: pan-y;"
+    >
 
-      <img src={defaultA.image} alt="Side A" class="img-a absolute inset-0 w-full h-full object-contain" draggable="false" />
+      <img
+        src={defaultA.image}
+        alt="Side A"
+        class="img-a absolute inset-0 w-full h-full object-contain"
+        draggable="false"
+      />
 
-      <div class="clipper-b absolute inset-0 border-l-2 border-brand-amber overflow-hidden" style="width: 50%; left: 50%;">
-        <img src={defaultB.image} alt="Side B" class="img-b absolute inset-0 w-full h-full object-contain max-w-none" draggable="false" />
+      <div
+        class="clipper-b absolute inset-0 border-l-2 border-brand-amber overflow-hidden"
+        style="width: 50%; left: 50%;"
+      >
+        <img
+          src={defaultB.image}
+          alt="Side B"
+          class="img-b absolute top-0 left-0 h-full object-contain max-w-none"
+          draggable="false"
+        />
       </div>
 
-      <div class="aov-slider absolute top-0 bottom-0 w-12 cursor-ew-resize flex items-center justify-center z-10 group" style="left: 50%; transform: translateX(-50%); touch-action: pan-y;">
+      <div
+        class="aov-slider absolute top-0 bottom-0 w-12 cursor-ew-resize flex items-center justify-center z-10 group"
+        style="left: 50%; transform: translateX(-50%); touch-action: pan-y;"
+      >
         <div class="absolute inset-y-0 w-0.5 bg-brand-amber/50 group-hover:bg-brand-amber transition-colors"></div>
+
         <div class="relative w-10 h-10 bg-brand-amber rounded-full shadow-[0_0_15px_rgba(230,115,0,0.8)] flex items-center justify-center pointer-events-none">
           <div class="flex items-center gap-1.5 text-cabilo-obsidian">
-            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M15 19l-7-7 7-7"></path></svg>
-            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M9 5l7 7-7 7"></path></svg>
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M15 19l-7-7 7-7"></path>
+            </svg>
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M9 5l7 7-7 7"></path>
+            </svg>
           </div>
         </div>
       </div>
 
-      <div class="label-a absolute bottom-4 left-4 bg-cabilo-obsidian/80 backdrop-blur-sm px-3 py-1 rounded text-xs tracking-widest text-text-white uppercase pointer-events-none">{defaultA.name}</div>
-      <div class="label-b absolute bottom-4 right-4 bg-cabilo-obsidian/80 backdrop-blur-sm px-3 py-1 rounded text-xs tracking-widest text-text-white uppercase pointer-events-none">{defaultB.name}</div>
+      <div class="label-a absolute bottom-4 left-4 bg-cabilo-obsidian/80 backdrop-blur-sm px-3 py-1 rounded text-xs tracking-widest text-text-white uppercase pointer-events-none">
+        {defaultA.name}
+      </div>
+
+      <div class="label-b absolute bottom-4 right-4 bg-cabilo-obsidian/80 backdrop-blur-sm px-3 py-1 rounded text-xs tracking-widest text-text-white uppercase pointer-events-none">
+        {defaultB.name}
+      </div>
+
     </div>
 
     <div class="grid grid-cols-1 md:grid-cols-2 gap-8 bg-cabilo-dark p-6 rounded-md border border-cabilo-card">
 
       <div>
-        <h4 class="text-text-silver text-xs tracking-widest uppercase mb-3">Left Side (A)</h4>
+        <h4 class="text-text-silver text-xs tracking-widest uppercase mb-3">
+          Left Side (A)
+        </h4>
+
         <div class="flex flex-wrap gap-2">
           {passes.map((pass, index) => (
             <button
@@ -57,11 +101,14 @@ const defaultB = passes.length > 1 ? passes[1] : passes[0];
       </div>
 
       <div>
-        <h4 class="text-text-silver text-xs tracking-widest uppercase mb-3">Right Side (B)</h4>
+        <h4 class="text-text-silver text-xs tracking-widest uppercase mb-3">
+          Right Side (B)
+        </h4>
+
         <div class="flex flex-wrap gap-2">
           {passes.map((pass, index) => (
             <button
-              class={`btn-b px-3 py-1.5 rounded-md text-xs font-bold tracking-wider uppercase transition-colors ${index === 1 ? 'bg-brand-amber text-text-white' : 'bg-cabilo-card text-text-silver hover:text-text-white'}`}
+              class={`btn-b px-3 py-1.5 rounded-md text-xs font-bold tracking-wider uppercase ${index === 1 ? 'bg-brand-amber text-text-white' : 'bg-cabilo-card text-text-silver hover:text-text-white'}`}
               data-name={pass.name}
               data-image={pass.image}
             >
@@ -72,12 +119,12 @@ const defaultB = passes.length > 1 ? passes[1] : passes[0];
       </div>
 
     </div>
+
   </div>
 </dynamic-aov>
 
 <script>
   class DynamicAov extends HTMLElement {
-    // 2. connectedCallback is the correct way to wake up a Custom Element
     connectedCallback() {
       if (this.dataset.initialized === 'true') return;
       this.dataset.initialized = 'true';
@@ -114,11 +161,20 @@ const defaultB = passes.length > 1 ? passes[1] : passes[0];
 
         container.style.width = `${width}px`;
         container.style.height = `${height}px`;
+
+        // Keep the B image at the full viewport dimensions.
+        // The clipper reveals it; dragging the slider must never resize it.
+        imgB.style.width = `${width}px`;
+        imgB.style.height = `${height}px`;
+        imgB.style.transform = 'translateX(0)';
       };
 
       window.addEventListener('resize', fixImageSize);
+
       fixImageSize();
+
       imgA.addEventListener('load', fixImageSize);
+      imgB.addEventListener('load', fixImageSize);
 
       const updateSlider = (clientX: number) => {
         const rect = container.getBoundingClientRect();
@@ -127,8 +183,14 @@ const defaultB = passes.length > 1 ? passes[1] : passes[0];
         position = Math.max(0, Math.min(100, position));
 
         slider.style.left = `${position}%`;
+
         clipperB.style.width = `${100 - position}%`;
         clipperB.style.left = `${position}%`;
+
+        // Move the fixed-size B image with the clipper.
+        // This preserves the original image scale while changing only
+        // which portion is visible.
+        imgB.style.transform = `translateX(-${position}%)`;
       };
 
       const moveSlider = (e: MouseEvent | TouchEvent) => {
@@ -139,12 +201,20 @@ const defaultB = passes.length > 1 ? passes[1] : passes[0];
 
           const currentX = e.touches[0].clientX;
           const currentY = e.touches[0].clientY;
+
           const diffX = currentX - touchStartX;
           const diffY = currentY - touchStartY;
 
-          if (Math.abs(diffX) < touchThreshold && Math.abs(diffY) < touchThreshold) return;
+          if (
+            Math.abs(diffX) < touchThreshold &&
+            Math.abs(diffY) < touchThreshold
+          ) {
+            return;
+          }
 
-          if (!isDragging || Math.abs(diffY) > Math.abs(diffX)) {
+          // Vertical gesture: cancel the AOV interaction completely
+          // and allow the page to scroll normally.
+          if (Math.abs(diffY) > Math.abs(diffX)) {
             isDragging = false;
             return;
           }
@@ -162,13 +232,17 @@ const defaultB = passes.length > 1 ? passes[1] : passes[0];
         isDragging = true;
       });
 
-      slider.addEventListener('touchstart', (e) => {
-        if (e.touches.length === 0) return;
+      slider.addEventListener(
+        'touchstart',
+        (e) => {
+          if (e.touches.length === 0) return;
 
-        touchStartX = e.touches[0].clientX;
-        touchStartY = e.touches[0].clientY;
-        isDragging = true;
-      }, { passive: true });
+          touchStartX = e.touches[0].clientX;
+          touchStartY = e.touches[0].clientY;
+          isDragging = true;
+        },
+        { passive: true }
+      );
 
       window.addEventListener('mouseup', () => {
         isDragging = false;
@@ -185,13 +259,14 @@ const defaultB = passes.length > 1 ? passes[1] : passes[0];
       window.addEventListener('mousemove', moveSlider);
       window.addEventListener('touchmove', moveSlider, { passive: false });
 
-      buttonsA.forEach(btn => {
+      buttonsA.forEach((btn) => {
         btn.addEventListener('click', (e) => {
           const target = e.currentTarget as HTMLButtonElement;
+
           imgA.src = target.getAttribute('data-image') || '';
           labelA.innerText = target.getAttribute('data-name') || '';
 
-          buttonsA.forEach(b => {
+          buttonsA.forEach((b) => {
             b.classList.remove('bg-brand-amber', 'text-text-white');
             b.classList.add('bg-cabilo-card', 'text-text-silver');
           });
@@ -201,13 +276,14 @@ const defaultB = passes.length > 1 ? passes[1] : passes[0];
         });
       });
 
-      buttonsB.forEach(btn => {
+      buttonsB.forEach((btn) => {
         btn.addEventListener('click', (e) => {
           const target = e.currentTarget as HTMLButtonElement;
+
           imgB.src = target.getAttribute('data-image') || '';
           labelB.innerText = target.getAttribute('data-name') || '';
 
-          buttonsB.forEach(b => {
+          buttonsB.forEach((b) => {
             b.classList.remove('bg-brand-amber', 'text-text-white');
             b.classList.add('bg-cabilo-card', 'text-text-silver');
           });
