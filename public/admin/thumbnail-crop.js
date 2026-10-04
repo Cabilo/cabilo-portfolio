@@ -58,6 +58,16 @@
     );
   }
 
+  function cropCenterFromSavedPosition(position, movement, frameSize, cropSize) {
+    if (movement <= 0 || frameSize <= 0) return 50;
+
+    var half = cropSize / 2;
+    var center = 50 + ((clamp(numberOr(position, 50), 0, 100) - 50) / 100) *
+      (movement / frameSize) * 100;
+
+    return clamp(center, half, 100 - half);
+  }
+
   function findImageUrl(controlId) {
     var control = document.getElementById(controlId);
     if (!control) return '';
@@ -146,12 +156,58 @@
       }
     },
 
-    componentDidUpdate: function (prevProps) {
+    componentDidUpdate: function (prevProps, prevState) {
+      if (!prevState.open && this.state.open) {
+        this.syncEditorGeometry();
+      }
+
       if (prevProps.value !== this.props.value && !this.state.open) {
         this.setState({
           draft: normalizeValue(this.props.value)
         });
       }
+    },
+
+    syncEditorGeometry: function () {
+      var frame = document.querySelector('[data-crop-frame]');
+      var image = frame ? frame.querySelector('img') : null;
+
+      if (!frame || !image || !image.naturalWidth || !image.naturalHeight) return;
+
+      var frameRect = frame.getBoundingClientRect();
+      var baseScale = Math.max(
+        frameRect.width / image.naturalWidth,
+        frameRect.height / image.naturalHeight
+      );
+      var movementWidth = Math.max(
+        0,
+        image.naturalWidth * baseScale * this.state.draft.zoom - frameRect.width
+      );
+      var movementHeight = Math.max(
+        0,
+        image.naturalHeight * baseScale * this.state.draft.zoom - frameRect.height
+      );
+      var cropSize = cropSizeForZoom(this.state.draft.zoom);
+
+      this.setState({
+        cropCenterX: cropCenterFromSavedPosition(
+          this.state.draft.positionX,
+          movementWidth,
+          frameRect.width,
+          cropSize
+        ),
+        cropCenterY: cropCenterFromSavedPosition(
+          this.state.draft.positionY,
+          movementHeight,
+          frameRect.height,
+          cropSize
+        ),
+        imagePanX: 0,
+        imagePanY: 0,
+        thumbnailAspectCenterY: thumbnailPositionToCenter(
+          this.state.draft.positionY
+        )
+      });
     },
 
     refreshImage: function () {
@@ -660,18 +716,14 @@
         objectFit: 'cover',
         objectPosition: draft.positionX + '% ' + draft.positionY + '%',
         transform:
-          'translate(calc(' +
-          ((50 - draft.positionX) * (draft.zoom - 1)) +
-          '% + ' +
+          'translate(' +
           this.state.imagePanX +
-          'px), calc(' +
-          ((50 - draft.positionY) * (draft.zoom - 1)) +
-          '% + ' +
+          'px, ' +
           this.state.imagePanY +
-          'px)) scale(' +
+          'px) scale(' +
           draft.zoom +
           ')',
-        transformOrigin: 'center',
+        transformOrigin: draft.positionX + '% ' + draft.positionY + '%',
         pointerEvents: 'none',
         userSelect: 'none',
         WebkitUserSelect: 'none'
