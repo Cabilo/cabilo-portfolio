@@ -457,62 +457,40 @@
         WebkitUserSelect: 'none'
       };
 
-      var previewPositionX = draft.positionX;
-      var previewPositionY = draft.positionY;
       var previewFrame = document.querySelector('[data-crop-frame]');
-      var previewImage = previewFrame ? previewFrame.querySelector('img') : null;
+      var previewRect = previewFrame
+        ? previewFrame.getBoundingClientRect()
+        : null;
 
-      if (
-        previewFrame &&
-        previewImage &&
-        previewImage.naturalWidth &&
-        previewImage.naturalHeight
-      ) {
-        var previewRect = previewFrame.getBoundingClientRect();
-        var previewScale = Math.max(
-          previewRect.width / previewImage.naturalWidth,
-          previewRect.height / previewImage.naturalHeight
-        );
-        var previewMovementWidth = Math.max(
-          0,
-          previewImage.naturalWidth * previewScale * draft.zoom - previewRect.width
-        );
-        var previewMovementHeight = Math.max(
-          0,
-          previewImage.naturalHeight * previewScale * draft.zoom - previewRect.height
-        );
+      /*
+       * Crop-window movement is applied as a direct pixel translation.
+       * This is intentional: moving the crop window 40px must move the
+       * image underneath it by exactly 40px in the opposite direction.
+       */
+      var cropPanX = previewRect
+        ? ((50 - this.state.cropCenterX) / 100) * previewRect.width
+        : 0;
 
-        previewPositionX = previewMovementWidth > 0
-          ? clamp(
-              draft.positionX +
-                ((this.state.cropCenterX - 50) * previewRect.width / previewMovementWidth) * 100,
-              0,
-              100
-            )
-          : 50;
-
-        previewPositionY = previewMovementHeight > 0
-          ? clamp(
-              draft.positionY +
-                ((this.state.cropCenterY - 50) * previewRect.height / previewMovementHeight) * 100,
-              0,
-              100
-            )
-          : 50;
-      }
+      var cropPanY = previewRect
+        ? ((50 - this.state.cropCenterY) / 100) * previewRect.height
+        : 0;
 
       var imageStyle = {
         display: 'block',
         width: '100%',
         height: '100%',
         objectFit: 'cover',
-        objectPosition: previewPositionX + '% ' + previewPositionY + '%',
+        objectPosition: draft.positionX + '% ' + draft.positionY + '%',
         transform:
           'translate(calc(' +
-          ((50 - previewPositionX) * (draft.zoom - 1)) +
-          '%), calc(' +
-          ((50 - previewPositionY) * (draft.zoom - 1)) +
-          '%)) scale(' +
+          ((50 - draft.positionX) * (draft.zoom - 1)) +
+          '% + ' +
+          cropPanX +
+          'px), calc(' +
+          ((50 - draft.positionY) * (draft.zoom - 1)) +
+          '% + ' +
+          cropPanY +
+          'px)) scale(' +
           draft.zoom +
           ')',
         transformOrigin: 'center',
@@ -578,7 +556,7 @@
         handleStyle.top = isTop ? '-16px' : 'auto';
         handleStyle.bottom = isTop ? 'auto' : '-16px';
         handleStyle.left = isLeft ? '-16px' : 'auto';
-        handleStyle.right = isLeft ? 'auto' : '16px';
+        handleStyle.right = isLeft ? 'auto' : '-16px';
 
         var horizontalStyle = {
           position: 'absolute',
