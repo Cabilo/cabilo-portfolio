@@ -3,11 +3,18 @@ title: Test Number 2
 description: Another test after going to decap turbo
 publishDate: 2026-10-01T01:05:00.000-03:00
 type: Breakdown
-format: Article
 tags:
   - Lighting
   - Topology
+softwareUsed:
+  - ZBrush
+  - Blender
+  - Nuke
 thumbnail: https://blog.lipsumhub.com/wp-content/uploads/2024/07/lorem-ipsum-meaning-in-english-lipsumhub.jpg
+thumbnailCrop:
+  zoom: 1
+  positionX: 0
+  positionY: 0
 featured: true
 ---
 ## Why do we use it?

@@ -2,16 +2,6 @@
 title: About
 headline: About Lucas Cabiló
 subheadline: Senior 3D Artist
-softwareArsenal:
-  - RizomUV
-  - Plasticity
-  - Zbrush
-  - Houdini
-  - Nuke
-  - Maya
-  - Substance Painter
-  - Substance Designer
-  - Mari
 ---
 
 With over a decade of experience, I specialize in crafting high-end cinematic realities, game cinematics, and complex Lookdev for the entertainment industry.

@@ -1,12 +1,44 @@
 backend:
   name: turbo-github
   turbo_site_id: 1474ffb3-9850-4801-a13d-418ab9c4a71c
-  branch: main
+  branch: architecture-functions
 
 media_folder: "public/uploads"
 public_folder: "/uploads"
 
 collections:
+
+  # ============================================================
+  # POOLS
+  # ============================================================
+
+  - name: "pools"
+    label: "Pools"
+    files:
+      - label: "Tag Pool"
+        name: "tags"
+        file: "src/content/pools/tags.json"
+        fields:
+          - label: "Tags"
+            name: "values"
+            widget: "list"
+            hint: "Canonical Tag Pool values. These power Tags, Role, Client, and Category across Projects and Learning."
+            fields:
+              - label: "Name"
+                name: "name"
+                widget: "string"
+      - label: "Software Pool"
+        name: "software"
+        file: "src/content/pools/software.json"
+        fields:
+          - label: "Software"
+            name: "values"
+            widget: "list"
+            hint: "Canonical Software Pool values. These power Software Used across Projects and Learning."
+            fields:
+              - label: "Name"
+                name: "name"
+                widget: "string"
 
   # ============================================================
   # PROJECTS
@@ -25,11 +57,32 @@ collections:
 
       - label: "Category"
         name: "category"
-        widget: "string"
+        widget: "relation"
+        collection: "pools"
+        file: "tags"
+        search_fields:
+          - "values.*.name"
+        value_field: "values.*.name"
+        display_fields:
+          - "values.*.name"
+        hint: "Uses the canonical Tag Pool. Example: Character."
+
+      - label: "Publish Date"
+        name: "publishDate"
+        widget: "datetime"
+        required: false
 
       - label: "Thumbnail"
         name: "thumbnail"
         widget: "image"
+
+      - label: "Thumbnail Crop"
+        name: "thumbnailCrop"
+        widget: "thumbnailCrop"
+        image_field: "thumbnail"
+        required: false
+        hint: "Open the crop editor to position and zoom the thumbnail. The square editor controls the same crop values used by the site."
+
 
       - label: "Showreel URL"
         name: "showreelUrl"
@@ -38,18 +91,55 @@ collections:
 
       - label: "Role"
         name: "role"
-        widget: "string"
+        widget: "relation"
+        collection: "pools"
+        file: "tags"
+        search_fields:
+          - "values.*.name"
+        value_field: "values.*.name"
+        display_fields:
+          - "values.*.name"
         default: "Lead 3D Artist"
+        hint: "Uses the canonical Tag Pool. Example: Lead 3D Artist."
 
       - label: "Client"
         name: "client"
-        widget: "string"
+        widget: "relation"
+        collection: "pools"
+        file: "tags"
+        search_fields:
+          - "values.*.name"
+        value_field: "values.*.name"
+        display_fields:
+          - "values.*.name"
         default: "Personal Project"
+        hint: "Uses the canonical Tag Pool. Example: Nike."
+
+      - label: "Tags"
+        name: "tags"
+        widget: "relation"
+        collection: "pools"
+        file: "tags"
+        multiple: true
+        min: 1
+        search_fields:
+          - "values.*.name"
+        value_field: "values.*.name"
+        display_fields:
+          - "values.*.name"
 
       - label: "Software Used"
         name: "softwareUsed"
-        widget: "list"
-        default: []
+        widget: "relation"
+        collection: "pools"
+        file: "software"
+        multiple: true
+        min: 1
+        search_fields:
+          - "values.*.name"
+        value_field: "values.*.name"
+        display_fields:
+          - "values.*.name"
 
       - label: "Media Blocks"
         name: "mediaBlocks"
@@ -295,20 +385,42 @@ collections:
           - "Tutorial"
           - "Breakdown"
 
-      - label: "Format"
-        name: "format"
-        widget: "select"
-        options:
-          - "Video"
-          - "Article"
-
       - label: "Tags"
         name: "tags"
-        widget: "list"
+        widget: "relation"
+        collection: "pools"
+        file: "tags"
+        multiple: true
+        min: 1
+        search_fields:
+          - "values.*.name"
+        value_field: "values.*.name"
+        display_fields:
+          - "values.*.name"
+
+      - label: "Software Used"
+        name: "softwareUsed"
+        widget: "relation"
+        collection: "pools"
+        file: "software"
+        multiple: true
+        min: 1
+        search_fields:
+          - "values.*.name"
+        value_field: "values.*.name"
+        display_fields:
+          - "values.*.name"
 
       - label: "Thumbnail"
         name: "thumbnail"
         widget: "image"
+
+      - label: "Thumbnail Crop"
+        name: "thumbnailCrop"
+        widget: "thumbnailCrop"
+        image_field: "thumbnail"
+        required: false
+        hint: "Open the crop editor to position and zoom the thumbnail. The square editor controls the same crop values used by the site."
 
       - label: "Video URL"
         name: "videoUrl"

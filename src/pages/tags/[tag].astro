@@ -2,36 +2,69 @@
 import { getCollection } from 'astro:content';
 import Layout from '../../layouts/Layout.astro';
 import ProjectCard from '../../components/ProjectCard.astro';
+import Thumbnail from '../../components/Thumbnail.astro';
+import { normalizeTaxonomyValue, slugifyTaxonomyValue } from '../../lib/taxonomy';
 
 export async function getStaticPaths() {
-  const allProjects = await getCollection('projects');
-  const allLearning = await getCollection('learning');
+  const [allTags, allSoftware, allProjects, allLearning] = await Promise.all([
+    getCollection('tags'),
+    getCollection('software'),
+    getCollection('projects'),
+    getCollection('learning'),
+  ]);
 
-  const uniqueTags = new Set<string>();
-  allProjects.forEach(p => p.data.softwareUsed.forEach(tag => uniqueTags.add(tag)));
-  allLearning.forEach(l => l.data.tags.forEach(tag => uniqueTags.add(tag)));
-
-  // We create a safety array to prevent duplicate URL collisions
-  const processedSlugs = new Set<string>();
   const paths: any[] = [];
 
-  Array.from(uniqueTags).forEach((tag) => {
-    const slug = tag.toString().toLowerCase().replace(/\s+/g, '-').replace(/[^\w-]+/g, '');
-    
-    // Only build the page if we haven't already built this exact slug!
-    if (!processedSlugs.has(slug)) {
-      processedSlugs.add(slug);
-      
-      // Case-insensitive filtering so "ZBrush" and "zbrush" both match
-      const filteredProjects = allProjects.filter(p => p.data.softwareUsed.some(t => t.toLowerCase() === tag.toLowerCase()));
-      const filteredLearning = allLearning.filter(l => l.data.tags.some(t => t.toLowerCase() === tag.toLowerCase()));
+  const addPoolPaths = (
+    pool: typeof allTags,
+    kind: 'tag' | 'software',
+  ) => {
+    pool.forEach((entry) => {
+      const value = entry.data.name;
+      const slug = slugifyTaxonomyValue(value);
+
+      const filteredProjects = allProjects.filter((project) => {
+        const values =
+          kind === 'tag'
+            ? [
+                project.data.category,
+                project.data.role,
+                project.data.client,
+                ...(project.data.tags ?? []),
+              ]
+            : project.data.softwareUsed ?? [];
+
+        return values.some(
+          (item) =>
+            normalizeTaxonomyValue(item) === normalizeTaxonomyValue(value),
+        );
+      });
+
+      const filteredLearning = allLearning.filter((doc) => {
+        const values =
+          kind === 'tag'
+            ? doc.data.tags ?? []
+            : doc.data.softwareUsed ?? [];
+
+        return values.some(
+          (item) =>
+            normalizeTaxonomyValue(item) === normalizeTaxonomyValue(value),
+        );
+      });
 
       paths.push({
         params: { tag: slug },
-        props: { tagName: tag, projects: filteredProjects, learning: filteredLearning },
+        props: {
+          tagName: value,
+          projects: filteredProjects,
+          learning: filteredLearning,
+        },
       });
-    }
-  });
+    });
+  };
+
+  addPoolPaths(allTags, 'tag');
+  addPoolPaths(allSoftware, 'software');
 
   return paths;
 }
@@ -57,7 +90,7 @@ const { tagName, projects, learning } = Astro.props;
         <h2 class="text-2xl font-bold text-text-white uppercase tracking-widest mb-8 border-b border-cabilo-card pb-4">Projects</h2>
         <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
           {projects.map((project) => (
-            <ProjectCard title={project.data.title} category={project.data.category} image={project.data.thumbnail} link={`/projects/${project.id}`} />
+            <ProjectCard title={project.data.title} category={project.data.category} image={project.data.thumbnail} crop={project.data.thumbnailCrop} link={`/projects/${project.id}`} />
           ))}
         </div>
       </div>
@@ -70,7 +103,7 @@ const { tagName, projects, learning } = Astro.props;
           {learning.map((doc) => (
             <a href={`/${doc.data.type.toLowerCase()}s/${doc.id}`} class="group flex flex-col bg-cabilo-dark border border-cabilo-card rounded-md overflow-hidden hover:border-brand-amber transition-all duration-300 shadow-lg">
               <div class="aspect-video relative overflow-hidden bg-cabilo-obsidian">
-                <img src={doc.data.thumbnail} alt={doc.data.title} class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700 ease-out opacity-80 group-hover:opacity-100" />
+                <Thumbnail image={doc.data.thumbnail} alt={doc.data.title} crop={doc.data.thumbnailCrop} class="w-full h-full transition-transform duration-700 ease-out opacity-80 group-hover:opacity-100" />
               </div>
               <div class="p-6 flex flex-col gap-3 flex-grow">
                 <span class="text-[10px] font-bold tracking-widest uppercase text-brand-gold">{doc.data.type}</span>

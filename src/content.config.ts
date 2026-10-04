@@ -1,7 +1,8 @@
 // src/content.config.ts
 
 import { z, defineCollection } from 'astro:content';
-import { glob } from 'astro/loaders';
+import { file, glob } from 'astro/loaders';
+import { slugifyTaxonomyValue } from './lib/taxonomy';
 
 const aovPassSchema = z.object({
   name: z.string(),
@@ -11,6 +12,12 @@ const aovPassSchema = z.object({
 const alignmentSchema = z
   .enum(['media-left', 'center', 'page-left', 'page-right'])
   .default('page-left');
+
+const thumbnailCropSchema = z.object({
+  zoom: z.number().min(1).max(3).default(1),
+  positionX: z.number().min(0).max(100).default(50),
+  positionY: z.number().min(0).max(100).default(50),
+});
 
 export const mediaBlockSchema = z.discriminatedUnion('type', [
   z.object({
@@ -61,16 +68,48 @@ export const mediaBlockSchema = z.discriminatedUnion('type', [
 
 export type MediaBlock = z.infer<typeof mediaBlockSchema>;
 
+const taxonomyEntrySchema = z.object({
+  name: z.string().min(1),
+});
+
+
+const taxonomyFileLoader = (filePath: string) =>
+  file(filePath, {
+    parser: (contents) => {
+      const parsed = JSON.parse(contents) as {
+        values: Array<{ name: string }>;
+      };
+
+      return parsed.values.map((value) => ({
+        id: slugifyTaxonomyValue(value.name),
+        name: value.name,
+      }));
+    },
+  });
+
+const tagCollection = defineCollection({
+  loader: taxonomyFileLoader('./src/content/pools/tags.json'),
+  schema: taxonomyEntrySchema,
+});
+
+const softwareCollection = defineCollection({
+  loader: taxonomyFileLoader('./src/content/pools/software.json'),
+  schema: taxonomyEntrySchema,
+});
+
 const projectCollection = defineCollection({
   loader: glob({ pattern: "**/*.md", base: "./src/content/projects" }),
   schema: z.object({
     title: z.string(),
     category: z.string(),
+    publishDate: z.date().optional(),
     thumbnail: z.string(),
+    thumbnailCrop: thumbnailCropSchema.optional(),
     showreelUrl: z.string().optional(),
     role: z.string().default('Lead 3D Artist'),
     client: z.string().default('Personal Project'),
-    softwareUsed: z.array(z.string()).default([]),
+    tags: z.array(z.string()).min(1),
+    softwareUsed: z.array(z.string()).min(1),
     mediaBlocks: z.array(mediaBlockSchema).optional(),
   }),
 });
@@ -82,9 +121,10 @@ const learningCollection = defineCollection({
     description: z.string(),
     publishDate: z.date(),
     type: z.enum(["Tutorial", "Breakdown"]),
-    format: z.enum(["Video", "Article"]),
     tags: z.array(z.string()),
+    softwareUsed: z.array(z.string()).default([]),
     thumbnail: z.string(),
+    thumbnailCrop: thumbnailCropSchema.optional(),
 
     // FIXED: Universal video URL for the optional top video.
     videoUrl: z.string().optional(),
@@ -103,7 +143,6 @@ const pagesCollection = defineCollection({
     headline: z.string().optional(),
     subheadline: z.string().optional(),
     showreelUrl: z.string().optional(),
-    softwareArsenal: z.array(z.string()).optional(),
 
     // NEW: Global SEO pulled from Homepage
     globalSeoTitle: z.string().optional(),
@@ -113,6 +152,8 @@ const pagesCollection = defineCollection({
 });
 
 export const collections = {
+  tags: tagCollection,
+  software: softwareCollection,
   projects: projectCollection,
   learning: learningCollection,
   pages: pagesCollection,

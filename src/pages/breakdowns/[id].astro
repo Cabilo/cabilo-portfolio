@@ -2,6 +2,8 @@
 import { getCollection, render } from 'astro:content';
 import Layout from '../../layouts/Layout.astro';
 import MediaBlocksRenderer from '../../components/MediaBlocksRenderer.astro';
+import { getVideoEmbed } from '../../lib/video';
+import { slugifyTaxonomyValue } from '../../lib/taxonomy';
 
 export async function getStaticPaths() {
   const learningDocs = await getCollection('learning');
@@ -16,31 +18,8 @@ export async function getStaticPaths() {
 const { doc } = Astro.props;
 const { Content } = await render(doc);
 const mediaBlocks = doc.data.mediaBlocks ?? [];
+const topVideo = getVideoEmbed(doc.data.videoUrl);
 
-// Helper for the top video
-const getVideoEmbed = (url: string) => {
-  if (!url) return null;
-  try {
-    const parsedUrl = new URL(url);
-    const hostname = parsedUrl.hostname.replace(/^www\./, '');
-    if (hostname === 'youtube.com' || hostname === 'm.youtube.com') {
-      const videoId = parsedUrl.searchParams.get('v');
-      if (videoId) return { type: 'youtube', src: `https://www.youtube.com/embed/${videoId}?autoplay=1&mute=1&controls=1&modestbranding=1&rel=0` };
-    }
-    if (hostname === 'youtu.be') {
-      const videoId = parsedUrl.pathname.replace('/', '');
-      if (videoId) return { type: 'youtube', src: `https://www.youtube.com/embed/${videoId}?autoplay=1&mute=1&controls=1&modestbranding=1&rel=0` };
-    }
-    if (hostname === 'vimeo.com') {
-      const videoId = parsedUrl.pathname.split('/').filter(Boolean)[0];
-      if (videoId) return { type: 'vimeo', src: `https://player.vimeo.com/video/${videoId}?autoplay=1&muted=1` };
-    }
-    if (/\.(mp4|webm|ogg)(\?.*)?$/i.test(parsedUrl.pathname)) return { type: 'direct', src: url };
-    return { type: 'unknown', src: url };
-  } catch { return { type: 'unknown', src: url }; }
-};
-
-const topVideo = doc.data.videoUrl ? getVideoEmbed(doc.data.videoUrl) : null;
 ---
 
 <Layout 
@@ -53,7 +32,12 @@ const topVideo = doc.data.videoUrl ? getVideoEmbed(doc.data.videoUrl) : null;
     <div class="mb-12 text-center flex flex-col items-center">
       <div class="flex flex-wrap justify-center gap-2 mb-6">
         {doc.data.tags.map((tag: string) => (
-          <span class="text-xs font-bold tracking-widest uppercase text-brand-gold bg-brand-gold/10 px-3 py-1.5 rounded">{tag}</span>
+          <a
+            href={`/tags/${slugifyTaxonomyValue(tag)}`}
+            class="text-xs font-bold tracking-widest uppercase text-brand-gold bg-brand-gold/10 px-3 py-1.5 rounded"
+          >
+            {tag}
+          </a>
         ))}
       </div>
       <h1 class="text-3xl md:text-5xl font-bold text-text-white mb-6 leading-tight uppercase">{doc.data.title}</h1>
@@ -76,6 +60,22 @@ const topVideo = doc.data.videoUrl ? getVideoEmbed(doc.data.videoUrl) : null;
 
     <!-- PLUG IN THE MASTER MEDIA BLOCKS NODE! -->
     <MediaBlocksRenderer blocks={mediaBlocks} />
+
+    {doc.data.softwareUsed?.length > 0 && (
+      <div class="mb-12 border-t border-cabilo-card pt-8">
+        <h4 class="text-xs uppercase tracking-widest text-text-white font-bold mb-4">Software Used</h4>
+        <div class="flex flex-wrap gap-2">
+          {doc.data.softwareUsed.map((software: string) => (
+            <a
+              href={`/tags/${slugifyTaxonomyValue(software)}`}
+              class="px-3 py-2 bg-cabilo-dark border border-cabilo-card rounded-md text-sm text-text-silver"
+            >
+              {software}
+            </a>
+          ))}
+        </div>
+      </div>
+    )}
 
     <div class="prose prose-invert prose-p:text-text-silver prose-headings:text-text-white prose-a:text-brand-amber max-w-none prose-img:rounded-md prose-img:border prose-img:border-cabilo-card prose-hr:border-cabilo-card border-t border-cabilo-card pt-12">
       <Content />

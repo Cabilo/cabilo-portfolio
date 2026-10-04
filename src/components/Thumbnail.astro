@@ -1,0 +1,40 @@
+---
+export interface Props {
+  image: string;
+  alt: string;
+  crop?: {
+    zoom?: number;
+    positionX?: number;
+    positionY?: number;
+  };
+  class?: string;
+}
+
+const { image, alt, crop, class: className = '' } = Astro.props;
+
+const zoom = crop?.zoom ?? 1;
+const positionX = crop?.positionX ?? 50;
+const positionY = crop?.positionY ?? 50;
+---
+
+<img
+  src={image}
+  alt={alt}
+  class={`thumbnail-image ${className}`}
+  style={`--thumbnail-zoom: ${zoom}; object-position: ${positionX}% ${positionY}%;`}
+  loading="lazy"
+/>
+
+<style>
+  .thumbnail-image {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transform: scale(var(--thumbnail-zoom));
+    transform-origin: center;
+  }
+
+  :global(.group:hover) .thumbnail-image {
+    transform: scale(calc(var(--thumbnail-zoom) * 1.05));
+  }
+</style>

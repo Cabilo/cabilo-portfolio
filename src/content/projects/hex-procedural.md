@@ -1,6 +1,8 @@
 ---
 title: Hex Procedural Concept
 category: Lookdev
+tags:
+  - Lookdev
 thumbnail: https://cdnb.artstation.com/p/assets/images/images/017/488/445/large/lucas-cabilo-hex-big.jpg?1556184275
 role: Lookdev Artist
 client: Concept Art
