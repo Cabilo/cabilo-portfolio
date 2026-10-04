@@ -55,6 +55,34 @@
 
     componentDidMount: function () {
       this.refreshImage();
+
+      var self = this;
+      window.setTimeout(function () {
+        self.lastObservedImageUrl = findImageUrl(self.props.forID);
+
+        self.imageWatcher = window.setInterval(function () {
+          var nextImageUrl = findImageUrl(self.props.forID);
+
+          if (nextImageUrl !== self.lastObservedImageUrl) {
+            var previousImageUrl = self.lastObservedImageUrl;
+            self.lastObservedImageUrl = nextImageUrl;
+            self.setState({ imageUrl: nextImageUrl });
+
+            if (!previousImageUrl && nextImageUrl && !self.state.open) {
+              self.setState({
+                open: true,
+                draft: normalizeValue(self.props.value)
+              });
+            }
+          }
+        }, 300);
+      }, 600);
+    },
+
+    componentWillUnmount: function () {
+      if (this.imageWatcher) {
+        window.clearInterval(this.imageWatcher);
+      }
     },
 
     componentDidUpdate: function (prevProps) {
