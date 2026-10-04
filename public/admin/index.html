@@ -10,11 +10,53 @@
       body { margin: 0; background-color: #09090b; }
       html { filter: invert(95%) hue-rotate(180deg); }
       img, video, iframe, picture, [style*="background-image"] { filter: invert(100%) hue-rotate(180deg); }
+      #cabilo-image-diagnostic {
+        position: fixed; z-index: 2147483647; left: 12px; right: 12px; bottom: 12px;
+        max-height: 42vh; overflow: auto; padding: 12px; border: 2px solid #ffcc00;
+        border-radius: 8px; background: #111; color: #fff;
+        font: 12px/1.45 -apple-system, BlinkMacSystemFont, sans-serif;
+        white-space: pre-wrap; word-break: break-word; box-shadow: 0 4px 20px rgba(0,0,0,.5);
+      }
+      #cabilo-image-diagnostic strong { color: #ffcc00; }
     </style>
   </head>
   <body>
     <div id="nc-root"></div>
+    <div id="cabilo-image-diagnostic">
+      <strong>IMAGE DIAGNOSTIC</strong>
+      <div id="cabilo-image-diagnostic-content">Waiting for Decap image fields...</div>
+    </div>
     <script src="https://cdn.jsdelivr.net/npm/decap-cms@3.17.0-beta.0/dist/decap-cms.js"></script>
     <script src="/admin/thumbnail-crop.js"></script>
+    <script>
+      (() => {
+        const panel = document.getElementById('cabilo-image-diagnostic-content');
+        function inspectImages() {
+          const images = [...document.querySelectorAll('img')].filter(img => !img.closest('#cabilo-image-diagnostic'));
+          if (!images.length) {
+            panel.textContent = 'No <img> elements found yet.';
+            return;
+          }
+          panel.textContent = images.map((img, index) => {
+            const src = img.getAttribute('src') || '';
+            const currentSrc = img.currentSrc || '';
+            const loaded = img.naturalWidth > 0;
+            return [
+              'Image ' + (index + 1),
+              'src: ' + (src || '[EMPTY]'),
+              'currentSrc: ' + (currentSrc || '[EMPTY]'),
+              'complete: ' + img.complete,
+              'natural size: ' + img.naturalWidth + ' × ' + img.naturalHeight,
+              'status: ' + (loaded ? 'LOADED' : (img.complete ? 'BROKEN / NOT RESOLVED' : 'LOADING'))
+            ].join('\n');
+          }).join('\n\n');
+        }
+        new MutationObserver(inspectImages).observe(document.documentElement, {
+          subtree: true, childList: true, attributes: true, attributeFilter: ['src']
+        });
+        setInterval(inspectImages, 500);
+        inspectImages();
+      })();
+    </script>
   </body>
 </html>
