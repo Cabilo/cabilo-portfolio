@@ -182,7 +182,8 @@
          */ 
         next.positionX = movementWidth > 0
           ? clamp(
-              next.positionX -
+              next.positionX +
+                ((this.state.cropCenterX - 50) * frame.width / movementWidth) * 100 -
                 (this.state.imagePanX / movementWidth) * 100,
               0,
               100
@@ -191,7 +192,8 @@
 
         next.positionY = movementHeight > 0
           ? clamp(
-              next.positionY -
+              next.positionY +
+                ((this.state.cropCenterY - 50) * frame.height / movementHeight) * 100 -
                 (this.state.imagePanY / movementHeight) * 100,
               0,
               100
