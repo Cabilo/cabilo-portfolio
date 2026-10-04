@@ -186,7 +186,7 @@
         if (selection) selection.removeAllRanges();
       }
 
-      var viewport = event.currentTarget.parentElement.getBoundingClientRect();
+      var viewport = event.currentTarget.parentElement.parentElement.getBoundingClientRect();
       var start = {
         x: event.clientX,
         y: event.clientY,
@@ -206,11 +206,13 @@
 
         var dx = moveEvent.clientX - start.x;
         var dy = moveEvent.clientY - start.y;
-        var distance = Math.max(Math.abs(dx), Math.abs(dy));
         var direction = event.currentTarget.getAttribute('data-direction') || 'se';
-        var signedDistance = (direction === 'nw' || direction === 'ne' && dy < 0 || direction === 'sw' && dx < 0)
-          ? distance
-          : -distance;
+        var signedDistance;
+
+        if (direction === 'nw') signedDistance = (-dx - dy) / Math.sqrt(2);
+        if (direction === 'ne') signedDistance = (dx - dy) / Math.sqrt(2);
+        if (direction === 'sw') signedDistance = (-dx + dy) / Math.sqrt(2);
+        if (direction === 'se') signedDistance = (dx + dy) / Math.sqrt(2);
 
         var currentSize = sizeForZoom(start.zoom);
         var size = clamp(
@@ -373,38 +375,38 @@
                     },
                       h('img', { src: imageUrl, alt: 'Thumbnail crop preview', style: imageStyle, draggable: false }),
                       h('div', { style: overlayStyle }),
-                      h('div', { style: squareStyle }),
+                      h('div', { style: squareStyle },
+                        ['nw', 'ne', 'sw', 'se'].map(function (direction) {
+                          var cornerStyle = {
+                            position: 'absolute',
+                            width: '18px',
+                            height: '18px',
+                            background: '#fff',
+                            border: '2px solid #18181b',
+                            borderRadius: '50%',
+                            pointerEvents: 'auto',
+                            cursor: direction === 'nw' || direction === 'se' ? 'nwse-resize' : 'nesw-resize',
+                            touchAction: 'none',
+                            userSelect: 'none',
+                            WebkitUserSelect: 'none'
+                          };
 
-                      ['nw', 'ne', 'sw', 'se'].map(function (direction) {
-                        var cornerStyle = {
-                          position: 'absolute',
-                          width: '18px',
-                          height: '18px',
-                          background: '#fff',
-                          border: '2px solid #18181b',
-                          borderRadius: '50%',
-                          pointerEvents: 'auto',
-                          cursor: direction === 'nw' || direction === 'se' ? 'nwse-resize' : 'nesw-resize',
-                          touchAction: 'none',
-                          userSelect: 'none',
-                          WebkitUserSelect: 'none'
-                        };
+                          if (direction.indexOf('n') !== -1) cornerStyle.top = '-10px';
+                          if (direction.indexOf('s') !== -1) cornerStyle.bottom = '-10px';
+                          if (direction.indexOf('w') !== -1) cornerStyle.left = '-10px';
+                          if (direction.indexOf('e') !== -1) cornerStyle.right = '-10px';
 
-                        if (direction.indexOf('n') !== -1) cornerStyle.top = 'calc(50% - ' + (cropSize / 2) + '%)';
-                        if (direction.indexOf('s') !== -1) cornerStyle.bottom = 'calc(50% - ' + (cropSize / 2) + '%)';
-                        if (direction.indexOf('w') !== -1) cornerStyle.left = 'calc(50% - ' + (cropSize / 2) + '%)';
-                        if (direction.indexOf('e') !== -1) cornerStyle.right = 'calc(50% - ' + (cropSize / 2) + '%)';
-
-                        return h('div', {
-                          key: direction,
-                          'data-direction': direction,
-                          style: cornerStyle,
-                          onPointerDown: self.handleResizePointerDown,
-                          onDragStart: function (event) {
-                            event.preventDefault();
-                          }
-                        });
-                      }),
+                          return h('div', {
+                            key: direction,
+                            'data-direction': direction,
+                            style: cornerStyle,
+                            onPointerDown: self.handleResizePointerDown,
+                            onDragStart: function (event) {
+                              event.preventDefault();
+                            }
+                          });
+                        })
+                      ),
 
                       h('div', {
                         style: {
