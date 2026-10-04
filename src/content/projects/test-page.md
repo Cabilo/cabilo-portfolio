@@ -14,9 +14,9 @@ title: Test Page
 category: Lighting
 thumbnail: https://cdn.80.lv/api/upload/content/43/images/68d189e5acf9b/widen_920x0.jpg
 thumbnailCrop:
-  zoom: 1
-  positionX: 0
-  positionY: 0
+  zoom: 1.448847077901617
+  positionX: 50
+  positionY: 60.781671159029656
 showreelUrl: https://www.youtube.com/watch?v=vRMMimi6cKM
 role: Lead 3D Artist
 client: Personal Project
