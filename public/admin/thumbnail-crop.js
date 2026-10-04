@@ -162,6 +162,28 @@
       if (!frameElement) return;
 
       var frame = frameElement.getBoundingClientRect();
+      var imageElement = frameElement.querySelector('img');
+
+      if (!imageElement) return;
+
+      var naturalWidth = imageElement.naturalWidth;
+      var naturalHeight = imageElement.naturalHeight;
+
+      if (!naturalWidth || !naturalHeight) return;
+
+      var baseScale = Math.max(
+        frame.width / naturalWidth,
+        frame.height / naturalHeight
+      );
+
+      var baseImageWidth = naturalWidth * baseScale;
+      var baseImageHeight = naturalHeight * baseScale;
+      var zoom = this.state.draft.zoom;
+
+      // Position values map across the full movement range of the
+      // final zoomed image, including square images.
+      var movementWidth = Math.max(0, baseImageWidth * zoom - frame.width);
+      var movementHeight = Math.max(0, baseImageHeight * zoom - frame.height);
 
       var start = {
         x: event.clientX,
@@ -175,17 +197,23 @@
 
         var next = normalizeValue(this.state.draft);
 
-        next.positionX = clamp(
-          start.positionX - ((moveEvent.clientX - start.x) / frame.width) * 100,
-          0,
-          100
-        );
+        next.positionX = movementWidth > 0
+          ? clamp(
+              start.positionX -
+                ((moveEvent.clientX - start.x) / movementWidth) * 100,
+              0,
+              100
+            )
+          : 50;
 
-        next.positionY = clamp(
-          start.positionY - ((moveEvent.clientY - start.y) / frame.height) * 100,
-          0,
-          100
-        );
+        next.positionY = movementHeight > 0
+          ? clamp(
+              start.positionY -
+                ((moveEvent.clientY - start.y) / movementHeight) * 100,
+              0,
+              100
+            )
+          : 50;
 
         this.setState({ draft: next });
         clearSelection();
@@ -319,7 +347,14 @@
         height: '100%',
         objectFit: 'cover',
         objectPosition: draft.positionX + '% ' + draft.positionY + '%',
-        transform: 'scale(' + draft.zoom + ')',
+        transform:
+          'translate(calc(' +
+          ((50 - draft.positionX) * (draft.zoom - 1)) +
+          '%), calc(' +
+          ((50 - draft.positionY) * (draft.zoom - 1)) +
+          '%)) scale(' +
+          draft.zoom +
+          ')',
         transformOrigin: 'center',
         pointerEvents: 'none',
         userSelect: 'none',
