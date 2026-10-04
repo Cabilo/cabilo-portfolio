@@ -28,7 +28,7 @@
   }
 
   // zoom 1 = largest crop window; zoom 3 = smallest crop window.
-  // 100% means the crop window fills the entire square frame.
+  // The crop window is always centered inside the outer frame.
   function cropSizeForZoom(zoom) {
     return 100 - ((zoom - 1) / 2) * 64;
   }
@@ -289,7 +289,23 @@
       var draft = this.state.draft;
       var imageUrl = this.state.imageUrl;
       var cropSize = cropSizeForZoom(draft.zoom);
-      var cropOffset = (100 - cropSize) / 2;
+
+      /*
+       * The crop square stays centered inside the frame.
+       * The image itself moves underneath it.
+       *
+       * The important geometry is that the crop square is allowed
+       * to reach the frame edges. Its visual size changes with zoom,
+       * but its position is not coupled to the image position.
+       *
+       * Interaction model:
+       *
+       * FRAME
+       * ├── IMAGE LAYER       -> only layer that moves the image
+       * ├── DIM LAYER         -> visual only, never receives pointer events
+       * └── CROP LAYER        -> visual boundary; center drag moves the image
+       *     └── FOUR HANDLES   -> only elements that resize the crop
+       */
 
       var buttonStyle = {
         display: 'inline-flex',
@@ -304,16 +320,6 @@
         fontWeight: '600',
         cursor: 'pointer'
       };
-
-      /*
-       * Interaction model:
-       *
-       * FRAME
-       * ├── IMAGE LAYER       -> only layer that moves the image
-       * ├── DIM LAYER         -> visual only, never receives pointer events
-       * └── CROP LAYER        -> visual boundary; center drag moves the image
-       *     └── FOUR HANDLES   -> only elements that resize the crop
-       */
 
       var frameStyle = {
         position: 'relative',
@@ -368,6 +374,12 @@
         pointerEvents: 'none'
       };
 
+      /*
+       * The crop square uses its own fixed center coordinate.
+       * This keeps the crop geometry independent from image panning.
+       */
+      var cropOffset = (100 - cropSize) / 2;
+
       var cropLayerStyle = {
         position: 'absolute',
         left: cropOffset + '%',
@@ -414,7 +426,7 @@
         handleStyle.top = isTop ? '-16px' : 'auto';
         handleStyle.bottom = isTop ? 'auto' : '-16px';
         handleStyle.left = isLeft ? '-16px' : 'auto';
-        handleStyle.right = isLeft ? 'auto' : '-16px';
+        handleStyle.right = isLeft ? 'auto' : '16px';
 
         var horizontalStyle = {
           position: 'absolute',
@@ -530,7 +542,6 @@
                       style: frameStyle
                     },
 
-                      // 1. IMAGE / DRAG LAYER
                       h('div', {
                         style: imageLayerStyle,
                         onPointerDown: self.handleImagePointerDown,
@@ -549,7 +560,6 @@
                         })
                       ),
 
-                      // 2. DIMMING — four panels around the crop, never interactive
                       h('div', {
                         style: dimLayerStyle
                       },
@@ -587,7 +597,6 @@
                         })
                       ),
 
-                      // 3. CROP LAYER — boundary only; center drag moves the image
                       h('div', {
                         style: cropLayerStyle,
                         onPointerDown: self.handleImagePointerDown,
