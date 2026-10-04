@@ -260,53 +260,65 @@
         centerY: this.state.cropCenterY
       };
 
-      /*
-       * The crop square has two boundaries:
-       * 1. It must stay completely inside the outer frame.
-       * 2. It should travel far enough for the image edge to touch the
-       *    crop edge, but never travel beyond that point.
-       *
-       * The image and crop move in opposite directions, so the usable
-       * center travel is half the image's excess travel, minus half the
-       * crop size.
-       */
-      /*
-       * The image range is the distance required for the zoomed image
-       * to reach either edge of the frame. The crop square has its own
-       * independent range so it can never leave the white frame.
-       *
-       * The usable range is the intersection of those two ranges.
-       */
-      var imageMinCenterX = 50 - maxCropTravelX / 2;
-      var imageMaxCenterX = 50 + maxCropTravelX / 2;
-      var imageMinCenterY = 50 - maxCropTravelY / 2;
-      var imageMaxCenterY = 50 + maxCropTravelY / 2;
-
       var cropHalf = cropSize / 2;
       var frameMinX = cropHalf;
       var frameMaxX = 100 - cropHalf;
       var frameMinY = cropHalf;
       var frameMaxY = 100 - cropHalf;
 
-      var minCenter = Math.max(imageMinCenterX, frameMinX);
-      var maxCenter = Math.min(imageMaxCenterX, frameMaxX);
-      var minCenterY = Math.max(imageMinCenterY, frameMinY);
-      var maxCenterY = Math.min(imageMaxCenterY, frameMaxY);
-
+      /*
+       * One continuous drag controls two things in sequence:
+       *
+       * 1. The crop window moves until its edge touches the white frame.
+       * 2. Any additional pointer movement is handed to the image.
+       *
+       * This removes the old hard stop. The crop never crosses the frame,
+       * but the image continues moving in the same visual direction as
+       * the drag after the crop has reached that frame edge.
+       */
       var onMove = function (moveEvent) {
         moveEvent.preventDefault();
 
+        var pointerDeltaX = ((moveEvent.clientX - start.x) / frameRect.width) * 100;
+        var pointerDeltaY = ((moveEvent.clientY - start.y) / frameRect.height) * 100;
+
+        var requestedCenterX = start.centerX + pointerDeltaX;
+        var requestedCenterY = start.centerY + pointerDeltaY;
+
+        var nextCenterX = clamp(requestedCenterX, frameMinX, frameMaxX);
+        var nextCenterY = clamp(requestedCenterY, frameMinY, frameMaxY);
+
+        var excessX = requestedCenterX - nextCenterX;
+        var excessY = requestedCenterY - nextCenterY;
+        var next = normalizeValue(this.state.draft);
+
+        /*
+         * The crop consumes the pointer movement first. Once it reaches
+         * the frame edge, the remaining movement pans the image.
+         * Positive crop movement moves the image in the matching visual
+         * direction, so the image position value changes in the opposite
+         * direction because its 0-100 range represents image translation.
+         */
+        if (movementWidth > 0 && excessX !== 0) {
+          next.positionX = clamp(
+            start.positionX - (excessX / (movementWidth / frameRect.width)) * 100,
+            0,
+            100
+          );
+        }
+
+        if (movementHeight > 0 && excessY !== 0) {
+          next.positionY = clamp(
+            start.positionY - (excessY / (movementHeight / frameRect.height)) * 100,
+            0,
+            100
+          );
+        }
+
         this.setState({
-          cropCenterX: clamp(
-            start.centerX + ((moveEvent.clientX - start.x) / frameRect.width) * 100,
-            minCenter,
-            maxCenter
-          ),
-          cropCenterY: clamp(
-            start.centerY + ((moveEvent.clientY - start.y) / frameRect.height) * 100,
-            minCenterY,
-            maxCenterY
-          )
+          draft: next,
+          cropCenterX: nextCenterX,
+          cropCenterY: nextCenterY
         });
 
         clearSelection();
