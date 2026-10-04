@@ -80,6 +80,7 @@ const projectCollection = defineCollection({
   schema: z.object({
     title: z.string(),
     category: z.string(),
+    publishDate: z.date().optional(),
     thumbnail: z.string(),
     showreelUrl: z.string().optional(),
     role: z.string().default('Lead 3D Artist'),
