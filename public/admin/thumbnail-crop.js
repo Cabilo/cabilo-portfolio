@@ -28,12 +28,13 @@
   }
 
   // zoom 1 = largest crop window; zoom 3 = smallest crop window.
+  // 100% means the crop window fills the entire square frame.
   function cropSizeForZoom(zoom) {
-    return 86 - ((zoom - 1) / 2) * 50;
+    return 100 - ((zoom - 1) / 2) * 64;
   }
 
   function zoomForCropSize(size) {
-    return 1 + ((86 - size) / 50) * 2;
+    return 1 + ((100 - size) / 64) * 2;
   }
 
   function findImageUrl(controlId) {
@@ -150,6 +151,55 @@
       });
     },
 
+    handleCropPointerDown: function (event) {
+      if (!this.state.imageUrl) return;
+
+      event.preventDefault();
+      event.stopPropagation();
+      clearSelection();
+
+      var frame = event.currentTarget.closest('[data-crop-frame]');
+      if (!frame) return;
+
+      var frameRect = frame.getBoundingClientRect();
+
+      var start = {
+        x: event.clientX,
+        y: event.clientY,
+        positionX: this.state.draft.positionX,
+        positionY: this.state.draft.positionY
+      };
+
+      var onMove = function (moveEvent) {
+        moveEvent.preventDefault();
+
+        var next = normalizeValue(this.state.draft);
+
+        next.positionX = clamp(
+          start.positionX - ((moveEvent.clientX - start.x) / frameRect.width) * 100,
+          0,
+          100
+        );
+
+        next.positionY = clamp(
+          start.positionY - ((moveEvent.clientY - start.y) / frameRect.height) * 100,
+          0,
+          100
+        );
+
+        this.setState({ draft: next });
+        clearSelection();
+      }.bind(this);
+
+      var onUp = function () {
+        window.removeEventListener('pointermove', onMove);
+        window.removeEventListener('pointerup', onUp);
+      };
+
+      window.addEventListener('pointermove', onMove, { passive: false });
+      window.addEventListener('pointerup', onUp);
+    },
+
     handleImagePointerDown: function (event) {
       if (!this.state.imageUrl) return;
 
@@ -232,7 +282,7 @@
         var nextSize = clamp(
           start.size + (diagonal / frameRect.width) * 100,
           36,
-          86
+          100
         );
 
         var next = normalizeValue(this.state.draft);
@@ -339,10 +389,11 @@
         border: '2px solid #fff',
         boxSizing: 'border-box',
         overflow: 'visible',
-        pointerEvents: 'none',
+        pointerEvents: 'auto',
         touchAction: 'none',
         userSelect: 'none',
-        WebkitUserSelect: 'none'
+        WebkitUserSelect: 'none',
+        cursor: 'move'
       };
 
       function makeDimStyle(position) {
@@ -549,7 +600,14 @@
 
                       // 3. CROP LAYER — boundary only; it does not drag the image
                       h('div', {
-                        style: cropLayerStyle
+                        style: cropLayerStyle,
+                        onPointerDown: self.handleCropPointerDown,
+                        onDragStart: function (event) {
+                          event.preventDefault();
+                        },
+                        onSelectStart: function (event) {
+                          event.preventDefault();
+                        }
                       },
                         makeHandle('nw'),
                         makeHandle('ne'),
