@@ -3,6 +3,7 @@ import { getCollection, render } from 'astro:content';
 import Layout from '../../layouts/Layout.astro';
 import MediaBlocksRenderer from '../../components/MediaBlocksRenderer.astro';
 import { getVideoEmbed } from '../../lib/video';
+import { slugifyTaxonomyValue } from '../../lib/taxonomy';
 
 export async function getStaticPaths() {
   const projects = await getCollection('projects');
@@ -40,7 +41,7 @@ const showreel = getVideoEmbed(project.data.showreelUrl);
         <div class="flex flex-wrap gap-2 mt-5">
           {project.data.tags.map((tag) => (
             <a
-              href={`/tags/${tag.toLowerCase().replace(/\s+/g, '-').replace(/[^\w-]+/g, '')}`}
+              href={`/tags/${slugifyTaxonomyValue(tag)}`}
               class="text-xs font-bold tracking-widest uppercase text-brand-gold bg-brand-gold/10 px-3 py-1.5 rounded"
             >
               {tag}
@@ -75,7 +76,7 @@ const showreel = getVideoEmbed(project.data.showreelUrl);
         <div class="flex flex-col gap-2">
           {project.data.softwareUsed.map((software) => (
             <a
-              href={`/tags/${software.toLowerCase().replace(/\s+/g, '-').replace(/[^\w-]+/g, '')}`}
+              href={`/tags/${slugifyTaxonomyValue(software)}`}
               class="px-3 py-2 bg-cabilo-dark border border-cabilo-card rounded-md text-sm text-text-silver"
             >
               {software}

@@ -6,54 +6,65 @@ import Thumbnail from '../../components/Thumbnail.astro';
 import { normalizeTaxonomyValue, slugifyTaxonomyValue } from '../../lib/taxonomy';
 
 export async function getStaticPaths() {
-  const projectValues = (project: any) => [
-    project.data.category,
-    project.data.role,
-    project.data.client,
-    ...(project.data.tags ?? []),
-    ...(project.data.softwareUsed ?? []),
-  ];
+  const [allTags, allSoftware, allProjects, allLearning] = await Promise.all([
+    getCollection('tags'),
+    getCollection('software'),
+    getCollection('projects'),
+    getCollection('learning'),
+  ]);
 
-  const allProjects = await getCollection('projects');
-  const allLearning = await getCollection('learning');
-
-  const uniqueValues = new Set<string>();
-
-  allProjects.forEach((project) => {
-    projectValues(project).forEach((value) => uniqueValues.add(value));
-  });
-
-  allLearning.forEach((doc) => {
-    [...(doc.data.tags ?? []), ...(doc.data.softwareUsed ?? [])].forEach((value) => {
-      uniqueValues.add(value);
-    });
-  });
-
-  const processedSlugs = new Set<string>();
   const paths: any[] = [];
 
-  Array.from(uniqueValues).forEach((value) => {
-    const slug = slugifyTaxonomyValue(value);
+  const addPoolPaths = (
+    pool: typeof allTags,
+    kind: 'tag' | 'software',
+  ) => {
+    pool.forEach((entry) => {
+      const value = entry.data.name;
+      const slug = slugifyTaxonomyValue(value);
 
-    if (!processedSlugs.has(slug)) {
-      processedSlugs.add(slug);
+      const filteredProjects = allProjects.filter((project) => {
+        const values =
+          kind === 'tag'
+            ? [
+                project.data.category,
+                project.data.role,
+                project.data.client,
+                ...(project.data.tags ?? []),
+              ]
+            : project.data.softwareUsed ?? [];
 
-      const filteredProjects = allProjects.filter((project) =>
-        projectValues(project).some((item) => normalizeTaxonomyValue(item) === normalizeTaxonomyValue(value)),
-      );
+        return values.some(
+          (item) =>
+            normalizeTaxonomyValue(item) === normalizeTaxonomyValue(value),
+        );
+      });
 
-      const filteredLearning = allLearning.filter((doc) =>
-        [...(doc.data.tags ?? []), ...(doc.data.softwareUsed ?? [])].some(
-          (item) => normalizeTaxonomyValue(item) === normalizeTaxonomyValue(value),
-        ),
-      );
+      const filteredLearning = allLearning.filter((doc) => {
+        const values =
+          kind === 'tag'
+            ? doc.data.tags ?? []
+            : doc.data.softwareUsed ?? [];
+
+        return values.some(
+          (item) =>
+            normalizeTaxonomyValue(item) === normalizeTaxonomyValue(value),
+        );
+      });
 
       paths.push({
         params: { tag: slug },
-        props: { tagName: value, projects: filteredProjects, learning: filteredLearning },
+        props: {
+          tagName: value,
+          projects: filteredProjects,
+          learning: filteredLearning,
+        },
       });
-    }
-  });
+    });
+  };
+
+  addPoolPaths(allTags, 'tag');
+  addPoolPaths(allSoftware, 'software');
 
   return paths;
 }
