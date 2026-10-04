@@ -73,6 +73,8 @@
         cropCenterY: 50,
         imagePanX: 0,
         imagePanY: 0,
+        showRuleOfThirds: false,
+        showThumbnailAspect: false,
         imageUrl: ''
       };
     },
@@ -102,7 +104,9 @@
               cropCenterX: 50,
               cropCenterY: 50,
               imagePanX: 0,
-              imagePanY: 0
+              imagePanY: 0,
+              showRuleOfThirds: false,
+              showThumbnailAspect: false
             });
           }
         }, 300);
@@ -144,7 +148,9 @@
         cropCenterX: 50,
         cropCenterY: 50,
         imagePanX: 0,
-        imagePanY: 0
+        imagePanY: 0,
+        showRuleOfThirds: false,
+        showThumbnailAspect: false
       });
     },
 
@@ -538,7 +544,7 @@
         overflow: 'hidden',
         background: '#111',
         border: '2px solid #fff',
-        borderRadius: '6px',
+        borderRadius: '0',
         boxSizing: 'border-box',
         touchAction: 'none',
         userSelect: 'none',
@@ -606,6 +612,46 @@
         userSelect: 'none',
         WebkitUserSelect: 'none',
         cursor: 'move'
+      };
+
+      var overlayLayerStyle = {
+        position: 'absolute',
+        left: cropLeft + '%',
+        top: cropTop + '%',
+        width: cropSize + '%',
+        height: cropSize + '%',
+        zIndex: '4',
+        pointerEvents: 'none',
+        overflow: 'hidden'
+      };
+
+      var thirdsStyle = {
+        position: 'absolute',
+        inset: '0',
+        pointerEvents: 'none'
+      };
+
+      function makeThirdLine(position) {
+        return h('div', {
+          style: Object.assign({
+            position: 'absolute',
+            borderStyle: 'dotted',
+            borderColor: 'rgba(255,255,255,.7)',
+            pointerEvents: 'none'
+          }, position)
+        });
+      }
+
+      var thumbnailAspectStyle = {
+        position: 'absolute',
+        left: '50%',
+        top: '50%',
+        width: '100%',
+        aspectRatio: '16 / 9',
+        transform: 'translate(-50%, -50%)',
+        border: '2px solid rgba(230,115,0,.72)',
+        boxSizing: 'border-box',
+        pointerEvents: 'none'
       };
 
       function makeDimStyle(position) {
@@ -809,6 +855,22 @@
                       ),
 
                       h('div', {
+                        style: overlayLayerStyle
+                      },
+                        this.state.showRuleOfThirds
+                          ? h('div', { style: thirdsStyle },
+                              makeThirdLine({ top: '0', bottom: '0', left: '33.333%', borderLeftWidth: '1px' }),
+                              makeThirdLine({ top: '0', bottom: '0', left: '66.666%', borderLeftWidth: '1px' }),
+                              makeThirdLine({ left: '0', right: '0', top: '33.333%', borderTopWidth: '1px' }),
+                              makeThirdLine({ left: '0', right: '0', top: '66.666%', borderTopWidth: '1px' })
+                            )
+                          : null,
+                        this.state.showThumbnailAspect
+                          ? h('div', { style: thumbnailAspectStyle })
+                          : null
+                      ),
+
+                      h('div', {
                         style: cropLayerStyle,
                         onPointerDown: self.handleCropPointerDown,
                         onDragStart: function (event) {
@@ -854,6 +916,64 @@
                       marginBottom: '22px'
                     }
                   }, 'Select a thumbnail first to open the crop preview.'),
+
+              h('div', {
+                style: {
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  gap: '10px',
+                  flexWrap: 'wrap',
+                  marginBottom: '18px'
+                }
+              },
+                h('label', {
+                  style: {
+                    display: 'inline-flex',
+                    alignItems: 'center',
+                    gap: '7px',
+                    padding: '8px 10px',
+                    border: '1px solid #52525b',
+                    borderRadius: '4px',
+                    color: '#f4f4f5',
+                    fontSize: '12px',
+                    cursor: 'pointer',
+                    userSelect: 'none'
+                  }
+                },
+                  h('input', {
+                    type: 'checkbox',
+                    checked: this.state.showRuleOfThirds,
+                    onChange: function (event) {
+                      self.setState({ showRuleOfThirds: event.target.checked });
+                    }
+                  }),
+                  'Rule of Thirds'
+                ),
+                h('label', {
+                  style: {
+                    display: 'inline-flex',
+                    alignItems: 'center',
+                    gap: '7px',
+                    padding: '8px 10px',
+                    border: '1px solid #52525b',
+                    borderRadius: '4px',
+                    color: '#f4f4f5',
+                    fontSize: '12px',
+                    cursor: 'pointer',
+                    userSelect: 'none'
+                  }
+                },
+                  h('input', {
+                    type: 'checkbox',
+                    checked: this.state.showThumbnailAspect,
+                    onChange: function (event) {
+                      self.setState({ showThumbnailAspect: event.target.checked });
+                    }
+                  }),
+                  'Portfolio Aspect (16:9)'
+                )
+              ),
 
               h('div', {
                 style: {
