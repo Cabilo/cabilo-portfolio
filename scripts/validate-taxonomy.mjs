@@ -4,7 +4,7 @@ import path from 'node:path';
 const root = process.cwd();
 
 const readPool = (folder) => {
-  const directory = path.join(root, 'src', 'content', folder);
+  const directory = path.join(root, 'src', 'content', 'pools', folder);
   const files = fs.existsSync(directory)
     ? fs.readdirSync(directory).filter((file) => file.endsWith('.md'))
     : [];
@@ -57,8 +57,8 @@ const similarity = (left, right) => {
   return longest === 0 ? 1 : 1 - levenshtein(left, right) / longest;
 };
 
-const tags = readPool('tags');
-const software = readPool('software');
+const tags = readPool('tag-pool');
+const software = readPool('software-pool');
 const all = [
   ...tags.map((entry) => ({ ...entry, pool: 'Tag Pool' })),
   ...software.map((entry) => ({ ...entry, pool: 'Software Pool' })),

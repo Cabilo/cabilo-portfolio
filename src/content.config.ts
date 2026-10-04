@@ -72,12 +72,12 @@ const taxonomyEntrySchema = z.object({
 });
 
 const tagCollection = defineCollection({
-  loader: glob({ pattern: "**/*.md", base: "./src/content/tags" }),
+  loader: glob({ pattern: "**/*.md", base: "./src/content/pools/tag-pool" }),
   schema: taxonomyEntrySchema,
 });
 
 const softwareCollection = defineCollection({
-  loader: glob({ pattern: "**/*.md", base: "./src/content/software" }),
+  loader: glob({ pattern: "**/*.md", base: "./src/content/pools/software-pool" }),
   schema: taxonomyEntrySchema,
 });
 

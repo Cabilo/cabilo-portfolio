@@ -9,27 +9,48 @@ public_folder: "/uploads"
 collections:
 
   # ============================================================
-  # TAG POOL
+  # POOLS
   # ============================================================
 
-  - name: "tags"
-    label: "Tag Pool"
-    folder: "src/content/tags"
+  - name: "pools"
+    label: "Pools"
+    folder: "src/content/pools"
     create: true
+    identifier_field: name
     slug: "{{slug}}"
+    nested:
+      depth: 2
+      subfolders: false
+      summary: "{{name}}"
+    meta:
+      path:
+        widget: string
+        label: "Path"
     fields:
       - label: "Canonical Name"
         name: "name"
         widget: "string"
 
   # ============================================================
-  # SOFTWARE POOL
+  # HIDDEN POOL RELATIONS
   # ============================================================
+
+  - name: "tags"
+    label: "Tag Pool"
+    folder: "src/content/pools/tag-pool"
+    create: true
+    hide: true
+    slug: "{{slug}}"
+    fields:
+      - label: "Canonical Name"
+        name: "name"
+        widget: "string"
 
   - name: "software"
     label: "Software Pool"
-    folder: "src/content/software"
+    folder: "src/content/pools/software-pool"
     create: true
+    hide: true
     slug: "{{slug}}"
     fields:
       - label: "Canonical Name"
