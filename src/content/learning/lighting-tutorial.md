@@ -4,13 +4,13 @@ description: A deep dive into Lumen, physically based light values, and
   cinematic post-processing volumes for realistic character lighting.
 publishDate: 2024-10-15
 type: Tutorial
-format: Video
 tags:
-  - Unreal Engine 5
   - Lighting
   - Cinematics
+softwareUsed:
+  - Unreal Engine 5
 thumbnail: https://images.unsplash.com/photo-1605379399642-870262d3d051?w=800
-youtubeId: doUDJFKLyZs
+videoUrl: https://www.youtube.com/watch?v=doUDJFKLyZs
 featured: true
 ---
 

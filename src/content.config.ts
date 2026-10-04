@@ -61,6 +61,20 @@ export const mediaBlockSchema = z.discriminatedUnion('type', [
 
 export type MediaBlock = z.infer<typeof mediaBlockSchema>;
 
+const taxonomyEntrySchema = z.object({
+  name: z.string().min(1),
+});
+
+const tagCollection = defineCollection({
+  loader: glob({ pattern: "**/*.md", base: "./src/content/tags" }),
+  schema: taxonomyEntrySchema,
+});
+
+const softwareCollection = defineCollection({
+  loader: glob({ pattern: "**/*.md", base: "./src/content/software" }),
+  schema: taxonomyEntrySchema,
+});
+
 const projectCollection = defineCollection({
   loader: glob({ pattern: "**/*.md", base: "./src/content/projects" }),
   schema: z.object({
@@ -70,7 +84,8 @@ const projectCollection = defineCollection({
     showreelUrl: z.string().optional(),
     role: z.string().default('Lead 3D Artist'),
     client: z.string().default('Personal Project'),
-    softwareUsed: z.array(z.string()).default([]),
+    tags: z.array(z.string()).min(1),
+    softwareUsed: z.array(z.string()).min(1),
     mediaBlocks: z.array(mediaBlockSchema).optional(),
   }),
 });
@@ -82,8 +97,8 @@ const learningCollection = defineCollection({
     description: z.string(),
     publishDate: z.date(),
     type: z.enum(["Tutorial", "Breakdown"]),
-    format: z.enum(["Video", "Article"]),
     tags: z.array(z.string()),
+    softwareUsed: z.array(z.string()).default([]),
     thumbnail: z.string(),
 
     // FIXED: Universal video URL for the optional top video.
@@ -113,6 +128,8 @@ const pagesCollection = defineCollection({
 });
 
 export const collections = {
+  tags: tagCollection,
+  software: softwareCollection,
   projects: projectCollection,
   learning: learningCollection,
   pages: pagesCollection,

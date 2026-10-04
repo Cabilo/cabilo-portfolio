@@ -2,33 +2,54 @@
 import { getCollection } from 'astro:content';
 import Layout from '../../layouts/Layout.astro';
 import ProjectCard from '../../components/ProjectCard.astro';
+import { normalizeTaxonomyValue, slugifyTaxonomyValue } from '../../lib/taxonomy';
+
+const projectValues = (project: any) => [
+  project.data.category,
+  project.data.role,
+  project.data.client,
+  ...(project.data.tags ?? []),
+  ...(project.data.softwareUsed ?? []),
+];
 
 export async function getStaticPaths() {
   const allProjects = await getCollection('projects');
   const allLearning = await getCollection('learning');
 
-  const uniqueTags = new Set<string>();
-  allProjects.forEach(p => p.data.softwareUsed.forEach(tag => uniqueTags.add(tag)));
-  allLearning.forEach(l => l.data.tags.forEach(tag => uniqueTags.add(tag)));
+  const uniqueValues = new Set<string>();
 
-  // We create a safety array to prevent duplicate URL collisions
+  allProjects.forEach((project) => {
+    projectValues(project).forEach((value) => uniqueValues.add(value));
+  });
+
+  allLearning.forEach((doc) => {
+    [...(doc.data.tags ?? []), ...(doc.data.softwareUsed ?? [])].forEach((value) => {
+      uniqueValues.add(value);
+    });
+  });
+
   const processedSlugs = new Set<string>();
   const paths: any[] = [];
 
-  Array.from(uniqueTags).forEach((tag) => {
-    const slug = tag.toString().toLowerCase().replace(/\s+/g, '-').replace(/[^\w-]+/g, '');
-    
-    // Only build the page if we haven't already built this exact slug!
+  Array.from(uniqueValues).forEach((value) => {
+    const slug = slugifyTaxonomyValue(value);
+
     if (!processedSlugs.has(slug)) {
       processedSlugs.add(slug);
-      
-      // Case-insensitive filtering so "ZBrush" and "zbrush" both match
-      const filteredProjects = allProjects.filter(p => p.data.softwareUsed.some(t => t.toLowerCase() === tag.toLowerCase()));
-      const filteredLearning = allLearning.filter(l => l.data.tags.some(t => t.toLowerCase() === tag.toLowerCase()));
+
+      const filteredProjects = allProjects.filter((project) =>
+        projectValues(project).some((item) => normalizeTaxonomyValue(item) === normalizeTaxonomyValue(value)),
+      );
+
+      const filteredLearning = allLearning.filter((doc) =>
+        [...(doc.data.tags ?? []), ...(doc.data.softwareUsed ?? [])].some(
+          (item) => normalizeTaxonomyValue(item) === normalizeTaxonomyValue(value),
+        ),
+      );
 
       paths.push({
         params: { tag: slug },
-        props: { tagName: tag, projects: filteredProjects, learning: filteredLearning },
+        props: { tagName: value, projects: filteredProjects, learning: filteredLearning },
       });
     }
   });

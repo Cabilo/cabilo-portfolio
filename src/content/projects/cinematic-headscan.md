@@ -1,4 +1,6 @@
 ---
+tags:
+  - Lookdev
 softwareUsed:
   - Maya
   - Arnold

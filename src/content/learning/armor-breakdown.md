@@ -4,11 +4,11 @@ description: Breaking down the exact node setup and topology flow used to create
   the battle-tested armor asset.
 publishDate: 2024-11-01
 type: Breakdown
-format: Article
 tags:
+  - Lookdev
+softwareUsed:
   - ZBrush
   - Substance Painter
-  - Lookdev
 thumbnail: https://cdna.artstation.com/p/assets/images/images/021/496/060/large/lucas-cabilo-screenshot037.jpg?1571899681
 featured: false
 mediaBlocks:

@@ -27,7 +27,7 @@ const tutorials = allLearning
           
           <div class="aspect-video relative overflow-hidden bg-cabilo-obsidian">
             <img src={tutorial.data.thumbnail} alt={tutorial.data.title} class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700 ease-out opacity-80 group-hover:opacity-100" />
-            {tutorial.data.format === 'Video' && (
+            {Boolean(tutorial.data.videoUrl) && (
               <div class="absolute inset-0 flex items-center justify-center pointer-events-none">
                 <div class="w-12 h-12 bg-brand-amber/90 backdrop-blur rounded-full flex items-center justify-center text-text-white shadow-[0_0_20px_rgba(230,115,0,0.5)]">
                   <svg class="w-6 h-6 ml-1" fill="currentColor" viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>

@@ -1,12 +1,14 @@
 ---
 title: Test Page
 category: Lookdev
+tags:
+  - Lookdev
 thumbnail: https://cdn.80.lv/api/upload/content/43/images/68d189e5acf9b/widen_920x0.jpg
 showreelUrl: https://www.youtube.com/watch?v=vRMMimi6cKM
 role: Lead 3D Artist
 client: Personal Project
 softwareUsed:
-  - Zbrush
+  - ZBrush
 mediaBlocks:
   - type: turntable
     folder: turntables/test

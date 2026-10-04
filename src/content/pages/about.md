@@ -5,7 +5,7 @@ subheadline: Senior 3D Artist
 softwareArsenal:
   - RizomUV
   - Plasticity
-  - Zbrush
+  - ZBrush
   - Houdini
   - Nuke
   - Maya

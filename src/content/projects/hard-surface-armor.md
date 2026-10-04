@@ -1,6 +1,8 @@
 ---
 title: Hard Surface Armor
 category: Cinematics
+tags:
+  - Cinematics
 thumbnail: https://cdna.artstation.com/p/assets/images/images/021/496/060/large/lucas-cabilo-screenshot037.jpg?1571899681
 role: 3D Modeler & Lookdev
 client: Personal Project

@@ -1,12 +1,40 @@
 backend:
   name: turbo-github
   turbo_site_id: 1474ffb3-9850-4801-a13d-418ab9c4a71c
-  branch: main
+  branch: architecture-functions
 
 media_folder: "public/uploads"
 public_folder: "/uploads"
 
 collections:
+
+  # ============================================================
+  # TAG POOL
+  # ============================================================
+
+  - name: "tags"
+    label: "Tag Pool"
+    folder: "src/content/tags"
+    create: true
+    slug: "{{slug}}"
+    fields:
+      - label: "Canonical Name"
+        name: "name"
+        widget: "string"
+
+  # ============================================================
+  # SOFTWARE POOL
+  # ============================================================
+
+  - name: "software"
+    label: "Software Pool"
+    folder: "src/content/software"
+    create: true
+    slug: "{{slug}}"
+    fields:
+      - label: "Canonical Name"
+        name: "name"
+        widget: "string"
 
   # ============================================================
   # PROJECTS
@@ -25,7 +53,14 @@ collections:
 
       - label: "Category"
         name: "category"
-        widget: "string"
+        widget: "relation"
+        collection: "tags"
+        search_fields:
+          - "name"
+        value_field: "name"
+        display_fields:
+          - "name"
+        hint: "Uses the canonical Tag Pool. Example: Character."
 
       - label: "Thumbnail"
         name: "thumbnail"
@@ -38,17 +73,59 @@ collections:
 
       - label: "Role"
         name: "role"
-        widget: "string"
+        widget: "relation"
+        collection: "tags"
+        search_fields:
+          - "name"
+        value_field: "name"
+        display_fields:
+          - "name"
         default: "Lead 3D Artist"
+        hint: "Uses the canonical Tag Pool. Example: Lead 3D Artist."
 
       - label: "Client"
         name: "client"
-        widget: "string"
+        widget: "relation"
+        collection: "tags"
+        search_fields:
+          - "name"
+        value_field: "name"
+        display_fields:
+          - "name"
         default: "Personal Project"
+        hint: "Uses the canonical Tag Pool. Example: Nike."
+
+      - label: "Tags"
+        name: "tags"
+        widget: "list"
+        required: true
+        min: 1
+        field:
+          label: "Tag"
+          name: "tag"
+          widget: "relation"
+          collection: "tags"
+          search_fields:
+            - "name"
+          value_field: "name"
+          display_fields:
+            - "name"
 
       - label: "Software Used"
         name: "softwareUsed"
         widget: "list"
+        required: true
+        min: 1
+        field:
+          label: "Software"
+          name: "software"
+          widget: "relation"
+          collection: "software"
+          search_fields:
+            - "name"
+          value_field: "name"
+          display_fields:
+            - "name"
         default: []
 
       - label: "Media Blocks"
@@ -295,16 +372,37 @@ collections:
           - "Tutorial"
           - "Breakdown"
 
-      - label: "Format"
-        name: "format"
-        widget: "select"
-        options:
-          - "Video"
-          - "Article"
-
       - label: "Tags"
         name: "tags"
         widget: "list"
+        required: true
+        min: 1
+        field:
+          label: "Tag"
+          name: "tag"
+          widget: "relation"
+          collection: "tags"
+          search_fields:
+            - "name"
+          value_field: "name"
+          display_fields:
+            - "name"
+
+      - label: "Software Used"
+        name: "softwareUsed"
+        widget: "list"
+        required: true
+        min: 1
+        field:
+          label: "Software"
+          name: "software"
+          widget: "relation"
+          collection: "software"
+          search_fields:
+            - "name"
+          value_field: "name"
+          display_fields:
+            - "name"
 
       - label: "Thumbnail"
         name: "thumbnail"
