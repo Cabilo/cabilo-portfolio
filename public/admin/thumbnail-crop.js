@@ -279,6 +279,16 @@
         WebkitUserSelect: 'none'
       };
 
+      var imageLayerStyle = {
+        position: 'absolute',
+        inset: '0',
+        overflow: 'hidden',
+        zIndex: '1',
+        touchAction: 'none',
+        userSelect: 'none',
+        WebkitUserSelect: 'none'
+      };
+
       var imageStyle = {
         width: '100%',
         height: '100%',
@@ -377,26 +387,31 @@
                     }
                   },
                     h('div', {
-                      style: previewStyle,
-                      onPointerDown: self.handleImagePointerDown,
-                      onDragStart: function (event) {
-                        event.preventDefault();
-                      },
-                      onSelectStart: function (event) {
-                        event.preventDefault();
-                      }
+                      style: previewStyle
                     },
-                      h('img', {
-                        src: imageUrl,
-                        alt: 'Thumbnail crop preview',
-                        style: imageStyle,
-                        draggable: false
-                      }),
+                      h('div', {
+                        style: imageLayerStyle,
+                        onPointerDown: self.handleImagePointerDown,
+                        onDragStart: function (event) {
+                          event.preventDefault();
+                        },
+                        onSelectStart: function (event) {
+                          event.preventDefault();
+                        }
+                      },
+                        h('img', {
+                          src: imageUrl,
+                          alt: 'Thumbnail crop preview',
+                          style: imageStyle,
+                          draggable: false
+                        })
+                      ),
 
                       h('div', {
                         style: {
                           position: 'absolute',
                           inset: '0',
+                          zIndex: '4',
                           pointerEvents: 'none'
                         }
                       },
@@ -509,7 +524,8 @@
                           fontSize: '11px',
                           pointerEvents: 'none',
                           userSelect: 'none',
-                          WebkitUserSelect: 'none'
+                          WebkitUserSelect: 'none',
+                          zIndex: '6'
                         }
                       }, 'Drag image · Drag a corner to resize crop')
                     )
