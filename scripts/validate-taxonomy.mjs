@@ -3,23 +3,22 @@ import path from 'node:path';
 
 const root = process.cwd();
 
-const readPool = (folder) => {
-  const directory = path.join(root, 'src', 'content', 'pools', folder);
-  const files = fs.existsSync(directory)
-    ? fs.readdirSync(directory).filter((file) => file.endsWith('.md'))
-    : [];
+const readPool = (fileName) => {
+  const filePath = path.join(root, 'src', 'content', 'pools', fileName);
+  const parsed = JSON.parse(fs.readFileSync(filePath, 'utf8'));
 
-  return files.map((file) => {
-    const content = fs.readFileSync(path.join(directory, file), 'utf8');
-    const match = content.match(/^name:\s*(.+)$/m);
+  if (!Array.isArray(parsed.values)) {
+    throw new Error(`Taxonomy pool "${fileName}" must contain a "values" array.`);
+  }
 
-    if (!match) {
-      throw new Error(`Taxonomy entry "${folder}/${file}" is missing a canonical "name".`);
+  return parsed.values.map((entry, index) => {
+    if (!entry || typeof entry.name !== 'string') {
+      throw new Error(`Taxonomy pool "${fileName}" has an invalid value at index ${index}.`);
     }
 
     return {
-      name: match[1].trim(),
-      file: path.join(folder, file),
+      name: entry.name.trim(),
+      file: fileName,
     };
   });
 };
@@ -57,8 +56,8 @@ const similarity = (left, right) => {
   return longest === 0 ? 1 : 1 - levenshtein(left, right) / longest;
 };
 
-const tags = readPool('tag-pool');
-const software = readPool('software-pool');
+const tags = readPool('tags.json');
+const software = readPool('software.json');
 const all = [
   ...tags.map((entry) => ({ ...entry, pool: 'Tag Pool' })),
   ...software.map((entry) => ({ ...entry, pool: 'Software Pool' })),

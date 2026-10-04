@@ -1,3 +1,0 @@
----
-name: Substance Designer
----

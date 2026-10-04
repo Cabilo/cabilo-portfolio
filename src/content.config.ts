@@ -1,7 +1,8 @@
 // src/content.config.ts
 
 import { z, defineCollection } from 'astro:content';
-import { glob } from 'astro/loaders';
+import { file, glob } from 'astro/loaders';
+import { slugifyTaxonomyValue } from './lib/taxonomy';
 
 const aovPassSchema = z.object({
   name: z.string(),
@@ -71,13 +72,28 @@ const taxonomyEntrySchema = z.object({
   name: z.string().min(1),
 });
 
+
+const taxonomyFileLoader = (filePath: string) =>
+  file(filePath, {
+    parser: (contents) => {
+      const parsed = JSON.parse(contents) as {
+        values: Array<{ name: string }>;
+      };
+
+      return parsed.values.map((value) => ({
+        id: slugifyTaxonomyValue(value.name),
+        name: value.name,
+      }));
+    },
+  });
+
 const tagCollection = defineCollection({
-  loader: glob({ pattern: "**/*.md", base: "./src/content/pools/tag-pool" }),
+  loader: taxonomyFileLoader('./src/content/pools/tags.json'),
   schema: taxonomyEntrySchema,
 });
 
 const softwareCollection = defineCollection({
-  loader: glob({ pattern: "**/*.md", base: "./src/content/pools/software-pool" }),
+  loader: taxonomyFileLoader('./src/content/pools/software.json'),
   schema: taxonomyEntrySchema,
 });
 
