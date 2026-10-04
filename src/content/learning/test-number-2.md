@@ -8,7 +8,13 @@ tags:
   - Topology
 softwareUsed:
   - ZBrush
+  - Blender
+  - Nuke
 thumbnail: https://blog.lipsumhub.com/wp-content/uploads/2024/07/lorem-ipsum-meaning-in-english-lipsumhub.jpg
+thumbnailCrop:
+  zoom: 1
+  positionX: 0
+  positionY: 0
 featured: true
 ---
 ## Why do we use it?
