@@ -964,7 +964,8 @@
                           src: imageUrl,
                           alt: 'Thumbnail crop preview',
                           style: imageStyle,
-                          draggable: false
+                          draggable: false,
+                          onLoad: self.syncEditorGeometry
                         })
                       ),
 
