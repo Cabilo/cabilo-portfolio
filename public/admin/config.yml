@@ -417,6 +417,229 @@ collections:
         value_field: "values.*.name"
         display_fields:
           - "values.*.name"
+
+      - label: "Thumbnail"
+        name: "thumbnail"
+        widget: "image"
+
+      - label: "Thumbnail Crop"
+        name: "thumbnailCrop"
+        widget: "object"
+        required: false
+        fields:
+          - label: "Zoom"
+            name: "zoom"
+            widget: "number"
+            min: 1
+            max: 3
+            step: 0.05
+            default: 1
+          - label: "Position X"
+            name: "positionX"
+            widget: "number"
+            min: 0
+            max: 100
+            step: 1
+            default: 50
+          - label: "Position Y"
+            name: "positionY"
+            widget: "number"
+            min: 0
+            max: 100
+            step: 1
+            default: 50
+
+      - label: "Video URL"
+        name: "videoUrl"
+        widget: "string"
+        required: false
+
+      - label: "Featured"
+        name: "featured"
+        widget: "boolean"
+        default: false
+
+      - label: "Media Blocks"
+        name: "mediaBlocks"
+        widget: "list"
+        required: false
+        types:
+
+          - label: "Text Block"
+            name: "text_block"
+            widget: "object"
+            fields:
+
+              - label: "Title"
+                name: "title"
+                widget: "string"
+                required: false
+
+              - label: "Content"
+                name: "content"
+                widget: "markdown"
+                default: ""
+
+          - label: "Image"
+            name: "image"
+            widget: "object"
+            fields:
+
+              - label: "Title"
+                name: "title"
+                widget: "string"
+                required: false
+
+              - label: "Title Alignment"
+                name: "titleAlign"
+                widget: "select"
+                required: false
+                default: "page-left"
+                options:
+                  - { label: "Media Left", value: "media-left" }
+                  - { label: "Center", value: "center" }
+                  - { label: "Page Left", value: "page-left" }
+                  - { label: "Page Right", value: "page-right" }
+
+              - label: "Image"
+                name: "image"
+                widget: "image"
+
+              - label: "Fit to viewport"
+                name: "fitToViewport"
+                widget: "boolean"
+                required: false
+                default: true
+
+              - label: "Comment"
+                name: "comment"
+                widget: "text"
+                required: false
+
+              - label: "Comment Alignment"
+                name: "commentAlign"
+                widget: "select"
+                required: false
+                default: "page-left"
+                options:
+                  - { label: "Media Left", value: "media-left" }
+                  - { label: "Center", value: "center" }
+                  - { label: "Page Left", value: "page-left" }
+                  - { label: "Page Right", value: "page-right" }
+
+          - label: "Video"
+            name: "video"
+            widget: "object"
+            fields:
+
+              - label: "Title"
+                name: "title"
+                widget: "string"
+                required: false
+
+              - label: "Title Alignment"
+                name: "titleAlign"
+                widget: "select"
+                required: false
+                default: "page-left"
+                options:
+                  - { label: "Media Left", value: "media-left" }
+                  - { label: "Center", value: "center" }
+                  - { label: "Page Left", value: "page-left" }
+                  - { label: "Page Right", value: "page-right" }
+
+              - label: "Video URL"
+                name: "videoUrl"
+                widget: "string"
+
+              - label: "Comment"
+                name: "comment"
+                widget: "text"
+                required: false
+
+              - label: "Comment Alignment"
+                name: "commentAlign"
+                widget: "select"
+                required: false
+                default: "page-left"
+                options:
+                  - { label: "Media Left", value: "media-left" }
+                  - { label: "Center", value: "center" }
+                  - { label: "Page Left", value: "page-left" }
+                  - { label: "Page Right", value: "page-right" }
+
+          - label: "Turntable"
+            name: "turntable"
+            widget: "object"
+            fields:
+
+              - label: "Title"
+                name: "title"
+                widget: "string"
+                required: false
+
+              - label: "Title Alignment"
+                name: "titleAlign"
+                widget: "select"
+                required: false
+                default: "page-left"
+                options:
+                  - { label: "Media Left", value: "media-left" }
+                  - { label: "Center", value: "center" }
+                  - { label: "Page Left", value: "page-left" }
+                  - { label: "Page Right", value: "page-right" }
+
+              - label: "Folder"
+                name: "folder"
+                widget: "string"
+
+              - label: "Fit to viewport"
+                name: "fitToViewport"
+                widget: "boolean"
+                required: false
+                default: true
+
+              - label: "Comment"
+                name: "comment"
+                widget: "text"
+                required: false
+
+              - label: "Comment Alignment"
+                name: "commentAlign"
+                widget: "select"
+                required: false
+                default: "page-left"
+                options:
+                  - { label: "Media Left", value: "media-left" }
+                  - { label: "Center", value: "center" }
+                  - { label: "Page Left", value: "page-left" }
+                  - { label: "Page Right", value: "page-right" }
+
+          - label: "AOV"
+            name: "aov"
+            widget: "object"
+            fields:
+
+              - label: "Title"
+                name: "title"
+                widget: "string"
+                required: false
+
+              - label: "Title Alignment"
+                name: "titleAlign"
+                widget: "select"
+                required: false
+                default: "page-left"
+                options:
+                  - { label: "Media Left", value: "media-left" }
+                  - { label: "Center", value: "center" }
+                  - { label: "Page Left", value: "page-left" }
+                  - { label: "Page Right", value: "page-right" }
+
+              - label: "AOV Passes"
+                name: "aovPasses"
+                widget: "list"
+                default: []
                 fields:
 
                   - label: "Name"
