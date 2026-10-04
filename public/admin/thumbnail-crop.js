@@ -14,11 +14,16 @@
     return Math.min(max, Math.max(min, value));
   }
 
+  function numberOr(value, fallback) {
+    var number = Number(value);
+    return Number.isFinite(number) ? number : fallback;
+  }
+
   function normalizeValue(value) {
     return {
-      zoom: clamp(Number(value && value.zoom) || DEFAULTS.zoom, 1, 3),
-      positionX: clamp(Number(value && value.positionX) || DEFAULTS.positionX, 0, 100),
-      positionY: clamp(Number(value && value.positionY) || DEFAULTS.positionY, 0, 100)
+      zoom: clamp(numberOr(value && value.zoom, DEFAULTS.zoom), 1, 3),
+      positionX: clamp(numberOr(value && value.positionX, DEFAULTS.positionX), 0, 100),
+      positionY: clamp(numberOr(value && value.positionY, DEFAULTS.positionY), 0, 100)
     };
   }
 
@@ -105,8 +110,9 @@
         positionY: this.state.draft.positionY
       };
 
+      var viewport = event.currentTarget.getBoundingClientRect();
+
       var onMove = function (moveEvent) {
-        var viewport = event.currentTarget.getBoundingClientRect();
         var next = normalizeValue(this.state.draft);
 
         next.positionX = clamp(
