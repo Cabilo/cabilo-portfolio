@@ -38,6 +38,7 @@ const uniqueCategories = ["All", ...new Set(allProjects.map(project => project.d
           title={project.data.title} 
           category={project.data.category} 
           image={project.data.thumbnail} 
+          crop={project.data.thumbnailCrop}
           link={`/projects/${project.id}`} 
         />
       </div>
