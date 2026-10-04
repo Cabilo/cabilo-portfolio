@@ -260,10 +260,34 @@
         centerY: this.state.cropCenterY
       };
 
-      var minCenter = 50 - maxCropTravelX / 2;
-      var maxCenter = 50 + maxCropTravelX / 2;
-      var minCenterY = 50 - maxCropTravelY / 2;
-      var maxCenterY = 50 + maxCropTravelY / 2;
+      /*
+       * The crop square has two boundaries:
+       * 1. It must stay completely inside the outer frame.
+       * 2. It should travel far enough for the image edge to touch the
+       *    crop edge, but never travel beyond that point.
+       *
+       * The image and crop move in opposite directions, so the usable
+       * center travel is half the image's excess travel, minus half the
+       * crop size.
+       */
+      var imageTravelX = maxCropTravelX / 2;
+      var imageTravelY = maxCropTravelY / 2;
+      var cropHalf = cropSize / 2;
+
+      var imageBoundMinX = 50 - imageTravelX / 2 - cropHalf / 2;
+      var imageBoundMaxX = 50 + imageTravelX / 2 - cropHalf / 2;
+      var imageBoundMinY = 50 - imageTravelY / 2 - cropHalf / 2;
+      var imageBoundMaxY = 50 + imageTravelY / 2 - cropHalf / 2;
+
+      var frameMinX = cropHalf;
+      var frameMaxX = 100 - cropHalf;
+      var frameMinY = cropHalf;
+      var frameMaxY = 100 - cropHalf;
+
+      var minCenter = clamp(imageBoundMinX, frameMinX, frameMaxX);
+      var maxCenter = clamp(imageBoundMaxX, frameMinX, frameMaxX);
+      var minCenterY = clamp(imageBoundMinY, frameMinY, frameMaxY);
+      var maxCenterY = clamp(imageBoundMaxY, frameMinY, frameMaxY);
 
       var onMove = function (moveEvent) {
         moveEvent.preventDefault();
