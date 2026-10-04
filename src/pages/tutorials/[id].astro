@@ -17,6 +17,7 @@ export async function getStaticPaths() {
 const { doc } = Astro.props;
 const { Content } = await render(doc);
 const mediaBlocks = doc.data.mediaBlocks ?? [];
+const topVideo = getVideoEmbed(doc.data.videoUrl);
 
 ---
 
