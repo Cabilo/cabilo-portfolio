@@ -266,7 +266,9 @@
         x: event.clientX,
         y: event.clientY,
         centerX: this.state.cropCenterX,
-        centerY: this.state.cropCenterY
+        centerY: this.state.cropCenterY,
+        imagePanX: this.state.imagePanX,
+        imagePanY: this.state.imagePanY
       };
 
       var cropHalf = cropSize / 2;
@@ -310,9 +312,28 @@
         var excessPixelsX = (excessX / 100) * frameRect.width;
         var excessPixelsY = (excessY / 100) * frameRect.height;
 
+        /*
+         * Image pan is accumulated across multiple drags. The zoomed image
+         * can only travel half of its total excess width/height from the
+         * centered starting position in either direction.
+         */
+        var maxImagePanX = movementWidth / 2;
+        var maxImagePanY = movementHeight / 2;
+
+        var nextImagePanX = clamp(
+          start.imagePanX + excessPixelsX,
+          -maxImagePanX,
+          maxImagePanX
+        );
+        var nextImagePanY = clamp(
+          start.imagePanY + excessPixelsY,
+          -maxImagePanY,
+          maxImagePanY
+        );
+
         this.setState({
-          imagePanX: excessPixelsX,
-          imagePanY: excessPixelsY,
+          imagePanX: nextImagePanX,
+          imagePanY: nextImagePanY,
           cropCenterX: nextCenterX,
           cropCenterY: nextCenterY
         });
