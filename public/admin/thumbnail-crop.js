@@ -293,7 +293,7 @@
         transform: 'translate(-50%, -50%)',
         border: '2px solid #fff',
         boxShadow: '0 0 0 9999px rgba(0,0,0,.58)',
-        pointerEvents: 'none',
+        pointerEvents: 'auto',
         userSelect: 'none',
         WebkitUserSelect: 'none'
       };
@@ -419,7 +419,7 @@
                         })
                       ),
                       h('div', Object.assign({}, squareStyle, {
-                        pointerEvents: 'none'
+                        onPointerDown: self.handlePointerDown
                       }),
                         ['nw', 'ne', 'sw', 'se'].map(function (direction) {
                           var isTop = direction.indexOf('n') !== -1;
@@ -427,8 +427,8 @@
 
                           var cornerStyle = {
                             position: 'absolute',
-                            width: '22px',
-                            height: '22px',
+                            width: '28px',
+                            height: '28px',
                             pointerEvents: 'auto',
                             touchAction: 'none',
                             userSelect: 'none',
@@ -451,8 +451,8 @@
 
                           var horizontalStyle = {
                             position: 'absolute',
-                            width: '12px',
-                            height: '2px',
+                            width: '16px',
+                            height: '3px',
                             background: '#fff',
                             top: isTop ? '0' : 'auto',
                             bottom: isTop ? 'auto' : '0',
@@ -463,8 +463,8 @@
 
                           var verticalStyle = {
                             position: 'absolute',
-                            width: '2px',
-                            height: '12px',
+                            width: '3px',
+                            height: '16px',
                             background: '#fff',
                             top: isTop ? '0' : 'auto',
                             bottom: isTop ? 'auto' : '0',
