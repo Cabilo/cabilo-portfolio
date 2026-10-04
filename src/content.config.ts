@@ -12,6 +12,12 @@ const alignmentSchema = z
   .enum(['media-left', 'center', 'page-left', 'page-right'])
   .default('page-left');
 
+const thumbnailCropSchema = z.object({
+  zoom: z.number().min(1).max(3).default(1),
+  positionX: z.number().min(0).max(100).default(50),
+  positionY: z.number().min(0).max(100).default(50),
+});
+
 export const mediaBlockSchema = z.discriminatedUnion('type', [
   z.object({
     type: z.literal('image'),
@@ -82,6 +88,7 @@ const projectCollection = defineCollection({
     category: z.string(),
     publishDate: z.date().optional(),
     thumbnail: z.string(),
+    thumbnailCrop: thumbnailCropSchema.optional(),
     showreelUrl: z.string().optional(),
     role: z.string().default('Lead 3D Artist'),
     client: z.string().default('Personal Project'),
@@ -101,6 +108,7 @@ const learningCollection = defineCollection({
     tags: z.array(z.string()),
     softwareUsed: z.array(z.string()).default([]),
     thumbnail: z.string(),
+    thumbnailCrop: thumbnailCropSchema.optional(),
 
     // FIXED: Universal video URL for the optional top video.
     videoUrl: z.string().optional(),

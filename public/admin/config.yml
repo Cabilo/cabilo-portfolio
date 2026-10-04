@@ -71,6 +71,34 @@ collections:
         name: "thumbnail"
         widget: "image"
 
+      - label: "Thumbnail Crop"
+        name: "thumbnailCrop"
+        widget: "object"
+        required: false
+        fields:
+          - label: "Zoom"
+            name: "zoom"
+            widget: "number"
+            min: 1
+            max: 3
+            step: 0.05
+            default: 1
+          - label: "Position X"
+            name: "positionX"
+            widget: "number"
+            min: 0
+            max: 100
+            step: 1
+            default: 50
+          - label: "Position Y"
+            name: "positionY"
+            widget: "number"
+            min: 0
+            max: 100
+            step: 1
+            default: 50
+
+
       - label: "Showreel URL"
         name: "showreelUrl"
         widget: "string"
@@ -412,6 +440,34 @@ collections:
       - label: "Thumbnail"
         name: "thumbnail"
         widget: "image"
+
+      - label: "Thumbnail Crop"
+        name: "thumbnailCrop"
+        widget: "object"
+        required: false
+        fields:
+          - label: "Zoom"
+            name: "zoom"
+            widget: "number"
+            min: 1
+            max: 3
+            step: 0.05
+            default: 1
+          - label: "Position X"
+            name: "positionX"
+            widget: "number"
+            min: 0
+            max: 100
+            step: 1
+            default: 50
+          - label: "Position Y"
+            name: "positionY"
+            widget: "number"
+            min: 0
+            max: 100
+            step: 1
+            default: 50
+
 
       - label: "Video URL"
         name: "videoUrl"

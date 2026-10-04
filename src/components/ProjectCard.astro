@@ -6,10 +6,17 @@ export interface Props {
   category: string;
   image: string;
   link: string;
+  crop?: {
+    zoom?: number;
+    positionX?: number;
+    positionY?: number;
+  };
 }
 
 // This extracts the variables so we can use them in the HTML below
-const { title, category, image, link } = Astro.props;
+import Thumbnail from './Thumbnail.astro';
+
+const { title, category, image, link, crop } = Astro.props;
 ---
 
 <!-- 
@@ -20,10 +27,11 @@ const { title, category, image, link } = Astro.props;
   
   <!-- Image Container (16:9 ratio) -->
   <div class="aspect-video overflow-hidden bg-cabilo-obsidian">
-    <img 
-      src={image} 
-      alt={title} 
-      class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700 ease-out opacity-80 group-hover:opacity-100"
+    <Thumbnail
+      image={image}
+      alt={title}
+      crop={crop}
+      class="w-full h-full transition-transform duration-700 ease-out opacity-80 group-hover:opacity-100"
     />
   </div>
 
