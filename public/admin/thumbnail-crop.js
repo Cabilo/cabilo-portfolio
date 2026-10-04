@@ -519,28 +519,6 @@
 
               h('div', {
                 style: {
-                  display: 'grid',
-                  gap: '14px',
-                  marginBottom: '22px'
-                }
-              },
-                h('label', {},
-                  h('div', { style: { marginBottom: '5px', fontSize: '12px', color: '#a1a1aa' } }, 'Zoom'),
-                  h('input', {
-                    type: 'range',
-                    min: '1',
-                    max: '3',
-                    step: '0.05',
-                    value: draft.zoom,
-                    onChange: function (event) { self.updateDraft('zoom', event.target.value); },
-                    style: { width: '100%' }
-                  }),
-                  h('div', { style: { fontSize: '12px', color: '#a1a1aa' } }, draft.zoom.toFixed(2) + '×')
-                )
-              ),
-
-              h('div', {
-                style: {
                   display: 'flex',
                   justifyContent: 'space-between',
                   gap: '10px'
