@@ -21,7 +21,7 @@ const positionY = crop?.positionY ?? 50;
   src={image}
   alt={alt}
   class={`thumbnail-image ${className}`}
-  style={`--thumbnail-zoom: ${zoom}; --thumbnail-position-x: ${positionX}; --thumbnail-position-y: ${positionY}; object-position: ${positionX}% ${positionY}%;`}
+  style={`--thumbnail-zoom: ${zoom}; --thumbnail-position-x: ${positionX}; --thumbnail-position-y: ${positionY}; object-position: ${positionX}% ${positionY}%; transform-origin: ${positionX}% ${positionY}%;`}
   loading="lazy"
 />
 
@@ -30,12 +30,7 @@ const positionY = crop?.positionY ?? 50;
     width: 100%;
     height: 100%;
     object-fit: cover;
-    transform:
-      translate(
-        calc((50 - var(--thumbnail-position-x)) * (var(--thumbnail-zoom) - 1) * 1%),
-        calc((50 - var(--thumbnail-position-y)) * (var(--thumbnail-zoom) - 1) * 1%)
-      )
-      scale(var(--thumbnail-zoom));
+    transform: scale(var(--thumbnail-zoom));
     transform-origin: center;
   }
 
