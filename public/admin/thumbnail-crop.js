@@ -71,6 +71,8 @@
         draft: normalizeValue(this.props.value),
         cropCenterX: 50,
         cropCenterY: 50,
+        imagePanX: 0,
+        imagePanY: 0,
         imageUrl: ''
       };
     },
@@ -98,7 +100,9 @@
               open: true,
               draft: normalizeValue(self.props.value),
               cropCenterX: 50,
-              cropCenterY: 50
+              cropCenterY: 50,
+              imagePanX: 0,
+              imagePanY: 0
             });
           }
         }, 300);
@@ -138,7 +142,9 @@
         open: true,
         draft: normalizeValue(this.props.value),
         cropCenterX: 50,
-        cropCenterY: 50
+        cropCenterY: 50,
+        imagePanX: 0,
+        imagePanY: 0
       });
     },
 
@@ -166,10 +172,18 @@
           imageElement.naturalHeight * baseScale * next.zoom - frame.height
         );
 
+        /*
+         * imagePanX/Y are editor-only pixels added after the crop reaches
+         * the frame edge. Convert that temporary pan back into the same
+         * 0-100 position values used by the site renderer.
+         *
+         * The editor image moves in the same direction as the drag, while
+         * positionX/Y use the opposite direction to represent that move.
+         */ 
         next.positionX = movementWidth > 0
           ? clamp(
-              next.positionX +
-                ((this.state.cropCenterX - 50) * frame.width / movementWidth) * 100,
+              next.positionX -
+                (this.state.imagePanX / movementWidth) * 100,
               0,
               100
             )
@@ -177,8 +191,8 @@
 
         next.positionY = movementHeight > 0
           ? clamp(
-              next.positionY +
-                ((this.state.cropCenterY - 50) * frame.height / movementHeight) * 100,
+              next.positionY -
+                (this.state.imagePanY / movementHeight) * 100,
               0,
               100
             )
@@ -246,13 +260,6 @@
         );
       }
 
-      var maxCropTravelX = movementWidth > 0
-        ? (movementWidth / frameRect.width) * 100
-        : 0;
-      var maxCropTravelY = movementHeight > 0
-        ? (movementHeight / frameRect.height) * 100
-        : 0;
-
       var start = {
         x: event.clientX,
         y: event.clientY,
@@ -290,33 +297,20 @@
 
         var excessX = requestedCenterX - nextCenterX;
         var excessY = requestedCenterY - nextCenterY;
-        var next = normalizeValue(this.state.draft);
 
         /*
-         * The crop consumes the pointer movement first. Once it reaches
-         * the frame edge, the remaining movement pans the image.
-         * Positive crop movement moves the image in the matching visual
-         * direction, so the image position value changes in the opposite
-         * direction because its 0-100 range represents image translation.
+         * The crop consumes the pointer movement first. Only the movement
+         * that remains after the crop touches the frame becomes image pan.
+         *
+         * Convert the excess back to pixels so the image follows the
+         * pointer 1:1 after the handoff.
          */
-        if (movementWidth > 0 && excessX !== 0) {
-          next.positionX = clamp(
-            start.positionX - (excessX / (movementWidth / frameRect.width)) * 100,
-            0,
-            100
-          );
-        }
-
-        if (movementHeight > 0 && excessY !== 0) {
-          next.positionY = clamp(
-            start.positionY - (excessY / (movementHeight / frameRect.height)) * 100,
-            0,
-            100
-          );
-        }
+        var excessPixelsX = (excessX / 100) * frameRect.width;
+        var excessPixelsY = (excessY / 100) * frameRect.height;
 
         this.setState({
-          draft: next,
+          imagePanX: excessPixelsX,
+          imagePanY: excessPixelsY,
           cropCenterX: nextCenterX,
           cropCenterY: nextCenterY
         });
@@ -539,24 +533,6 @@
         WebkitUserSelect: 'none'
       };
 
-      var previewFrame = document.querySelector('[data-crop-frame]');
-      var previewRect = previewFrame
-        ? previewFrame.getBoundingClientRect()
-        : null;
-
-      /*
-       * Crop-window movement is applied as a direct pixel translation.
-       * This is intentional: moving the crop window 40px must move the
-       * image underneath it by exactly 40px in the opposite direction.
-       */
-      var cropPanX = previewRect
-        ? ((50 - this.state.cropCenterX) / 100) * previewRect.width
-        : 0;
-
-      var cropPanY = previewRect
-        ? ((50 - this.state.cropCenterY) / 100) * previewRect.height
-        : 0;
-
       var imageStyle = {
         display: 'block',
         width: '100%',
@@ -567,11 +543,11 @@
           'translate(calc(' +
           ((50 - draft.positionX) * (draft.zoom - 1)) +
           '% + ' +
-          cropPanX +
+          this.state.imagePanX +
           'px), calc(' +
           ((50 - draft.positionY) * (draft.zoom - 1)) +
           '% + ' +
-          cropPanY +
+          this.state.imagePanY +
           'px)) scale(' +
           draft.zoom +
           ')',
