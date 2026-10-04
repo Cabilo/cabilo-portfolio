@@ -122,14 +122,16 @@
       this.setState({ draft: normalizeValue(DEFAULTS) });
     },
 
-    updateDraft: function (key, value) {
-      var next = normalizeValue(this.state.draft);
-      next[key] = clamp(Number(value), key === 'zoom' ? 1 : 0, key === 'zoom' ? 3 : 100);
-      this.setState({ draft: next });
-    },
-
     handlePointerDown: function (event) {
       if (!this.state.imageUrl) return;
+
+      event.preventDefault();
+      event.stopPropagation();
+
+      if (window.getSelection) {
+        var selection = window.getSelection();
+        if (selection) selection.removeAllRanges();
+      }
 
       var start = {
         x: event.clientX,
@@ -141,6 +143,8 @@
       var viewport = event.currentTarget.getBoundingClientRect();
 
       var onMove = function (moveEvent) {
+        moveEvent.preventDefault();
+
         var next = normalizeValue(this.state.draft);
 
         next.positionX = clamp(
@@ -155,6 +159,11 @@
         );
 
         this.setState({ draft: next });
+
+        if (window.getSelection) {
+          var selection = window.getSelection();
+          if (selection) selection.removeAllRanges();
+        }
       }.bind(this);
 
       var onUp = function () {
@@ -162,9 +171,71 @@
         window.removeEventListener('pointerup', onUp);
       };
 
-      window.addEventListener('pointermove', onMove);
+      window.addEventListener('pointermove', onMove, { passive: false });
       window.addEventListener('pointerup', onUp);
-      event.currentTarget.setPointerCapture && event.currentTarget.setPointerCapture(event.pointerId);
+    },
+
+    handleResizePointerDown: function (event) {
+      if (!this.state.imageUrl) return;
+
+      event.preventDefault();
+      event.stopPropagation();
+
+      if (window.getSelection) {
+        var selection = window.getSelection();
+        if (selection) selection.removeAllRanges();
+      }
+
+      var viewport = event.currentTarget.parentElement.getBoundingClientRect();
+      var start = {
+        x: event.clientX,
+        y: event.clientY,
+        zoom: this.state.draft.zoom
+      };
+
+      var sizeForZoom = function (zoom) {
+        return 88 - ((zoom - 1) / 2) * 52;
+      };
+
+      var zoomForSize = function (size) {
+        return 1 + ((88 - size) / 52) * 2;
+      };
+
+      var onMove = function (moveEvent) {
+        moveEvent.preventDefault();
+
+        var dx = moveEvent.clientX - start.x;
+        var dy = moveEvent.clientY - start.y;
+        var distance = Math.max(Math.abs(dx), Math.abs(dy));
+        var direction = event.currentTarget.getAttribute('data-direction') || 'se';
+        var signedDistance = (direction === 'nw' || direction === 'ne' && dy < 0 || direction === 'sw' && dx < 0)
+          ? distance
+          : -distance;
+
+        var currentSize = sizeForZoom(start.zoom);
+        var size = clamp(
+          currentSize + (signedDistance / viewport.width) * 100,
+          36,
+          88
+        );
+
+        var next = normalizeValue(this.state.draft);
+        next.zoom = clamp(zoomForSize(size), 1, 3);
+        this.setState({ draft: next });
+
+        if (window.getSelection) {
+          var selection = window.getSelection();
+          if (selection) selection.removeAllRanges();
+        }
+      }.bind(this);
+
+      var onUp = function () {
+        window.removeEventListener('pointermove', onMove);
+        window.removeEventListener('pointerup', onUp);
+      };
+
+      window.addEventListener('pointermove', onMove, { passive: false });
+      window.addEventListener('pointerup', onUp);
     },
 
     render: function () {
@@ -215,16 +286,21 @@
         background: 'linear-gradient(rgba(0,0,0,.58), rgba(0,0,0,.58))'
       };
 
+      var cropSize = 88 - ((draft.zoom - 1) / 2) * 52;
+
       var squareStyle = {
         position: 'absolute',
-        width: 'min(72%, 260px)',
+        width: cropSize + '%',
+        maxWidth: '560px',
         aspectRatio: '1 / 1',
         left: '50%',
         top: '50%',
         transform: 'translate(-50%, -50%)',
         border: '2px solid #fff',
         boxShadow: '0 0 0 9999px rgba(0,0,0,.58)',
-        pointerEvents: 'none'
+        pointerEvents: 'none',
+        userSelect: 'none',
+        WebkitUserSelect: 'none'
       };
 
       var modal = this.state.open
@@ -285,12 +361,51 @@
                     }
                   },
                     h('div', {
-                      style: Object.assign({}, previewStyle, { maxWidth: '640px' }),
-                      onPointerDown: this.handlePointerDown
+                      style: Object.assign({}, previewStyle, {
+                        maxWidth: '640px',
+                        userSelect: 'none',
+                        WebkitUserSelect: 'none'
+                      }),
+                      onPointerDown: this.handlePointerDown,
+                      onDragStart: function (event) {
+                        event.preventDefault();
+                      }
                     },
-                      h('img', { src: imageUrl, alt: 'Thumbnail crop preview', style: imageStyle }),
+                      h('img', { src: imageUrl, alt: 'Thumbnail crop preview', style: imageStyle, draggable: false }),
                       h('div', { style: overlayStyle }),
                       h('div', { style: squareStyle }),
+
+                      ['nw', 'ne', 'sw', 'se'].map(function (direction) {
+                        var cornerStyle = {
+                          position: 'absolute',
+                          width: '18px',
+                          height: '18px',
+                          background: '#fff',
+                          border: '2px solid #18181b',
+                          borderRadius: '50%',
+                          pointerEvents: 'auto',
+                          cursor: direction === 'nw' || direction === 'se' ? 'nwse-resize' : 'nesw-resize',
+                          touchAction: 'none',
+                          userSelect: 'none',
+                          WebkitUserSelect: 'none'
+                        };
+
+                        if (direction.indexOf('n') !== -1) cornerStyle.top = 'calc(50% - ' + (cropSize / 2) + '%)';
+                        if (direction.indexOf('s') !== -1) cornerStyle.bottom = 'calc(50% - ' + (cropSize / 2) + '%)';
+                        if (direction.indexOf('w') !== -1) cornerStyle.left = 'calc(50% - ' + (cropSize / 2) + '%)';
+                        if (direction.indexOf('e') !== -1) cornerStyle.right = 'calc(50% - ' + (cropSize / 2) + '%)';
+
+                        return h('div', {
+                          key: direction,
+                          'data-direction': direction,
+                          style: cornerStyle,
+                          onPointerDown: self.handleResizePointerDown,
+                          onDragStart: function (event) {
+                            event.preventDefault();
+                          }
+                        });
+                      }),
+
                       h('div', {
                         style: {
                           position: 'absolute',
@@ -302,9 +417,11 @@
                           background: 'rgba(0,0,0,.72)',
                           color: '#fff',
                           fontSize: '11px',
-                          pointerEvents: 'none'
+                          pointerEvents: 'none',
+                          userSelect: 'none',
+                          WebkitUserSelect: 'none'
                         }
-                      }, 'Drag image')
+                      }, 'Drag image · Drag a corner to resize crop')
                     )
                   )
                 : h('div', {
@@ -388,7 +505,7 @@
             style: buttonStyle
           }, 'Open Crop Editor'),
           h('span', { style: { color: '#666', fontSize: '12px' } },
-            'Zoom ' + value.zoom.toFixed(2) + '× · X ' + Math.round(value.positionX) + ' · Y ' + Math.round(value.positionY)
+            'Crop ' + Math.round(88 - ((value.zoom - 1) / 2) * 52) + '% · X ' + Math.round(value.positionX) + ' · Y ' + Math.round(value.positionY)
           )
         ),
         modal
@@ -405,7 +522,7 @@
           color: '#666',
           fontSize: '12px'
         }
-      }, 'Zoom ' + value.zoom.toFixed(2) + '× · Position ' + Math.round(value.positionX) + '% / ' + Math.round(value.positionY) + '%');
+      }, 'Crop ' + Math.round(88 - ((value.zoom - 1) / 2) * 52) + '% · Position ' + Math.round(value.positionX) + '% / ' + Math.round(value.positionY) + '%');
     }
   });
 
