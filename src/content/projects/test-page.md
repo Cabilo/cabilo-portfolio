@@ -1,14 +1,27 @@
 ---
+softwareUsed:
+  - ZBrush
+aovPasses:
+  - name: Beauty
+    image: https://help.maxon.net/r3d/cinema/en-us/Content/Resources/Images/aov_scene_beauty17ce.jpg
+  - image: https://help.maxon.net/r3d/cinema/en-us/Content/Resources/Images/aov_scene_test.Reflectionsb184.jpg
+    name: Reflection
+  - name: Depth
+    image: https://help.maxon.net/r3d/cinema/en-us/Content/Resources/Images/aov_utility.Z_Normalized_Inverted4230.jpg
+  - name: Wireframe
+    image: https://help.maxon.net/r3d/cinema/en-us/Content/Resources/Images/aov_utility.Wireframe1353.jpg
 title: Test Page
-category: Lookdev
-tags:
-  - Lookdev
+category: Lighting
 thumbnail: https://cdn.80.lv/api/upload/content/43/images/68d189e5acf9b/widen_920x0.jpg
+thumbnailCrop:
+  zoom: 1
+  positionX: 0
+  positionY: 0
 showreelUrl: https://www.youtube.com/watch?v=vRMMimi6cKM
 role: Lead 3D Artist
 client: Personal Project
-softwareUsed:
-  - ZBrush
+tags:
+  - Lookdev
 mediaBlocks:
   - type: turntable
     folder: turntables/test
@@ -54,15 +67,6 @@ mediaBlocks:
   - type: turntable
     folder: turntables/testb
 aovTitle: LEGACY
-aovPasses:
-  - name: Beauty
-    image: https://help.maxon.net/r3d/cinema/en-us/Content/Resources/Images/aov_scene_beauty17ce.jpg
-  - image: https://help.maxon.net/r3d/cinema/en-us/Content/Resources/Images/aov_scene_test.Reflectionsb184.jpg
-    name: Reflection
-  - name: Depth
-    image: https://help.maxon.net/r3d/cinema/en-us/Content/Resources/Images/aov_utility.Z_Normalized_Inverted4230.jpg
-  - name: Wireframe
-    image: https://help.maxon.net/r3d/cinema/en-us/Content/Resources/Images/aov_utility.Wireframe1353.jpg
 ---
 ## What is Lorem Ipsum?
 
