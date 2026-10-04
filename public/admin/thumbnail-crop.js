@@ -281,13 +281,6 @@
         pointerEvents: 'none'
       };
 
-      var overlayStyle = {
-        position: 'absolute',
-        inset: '0',
-        pointerEvents: 'none',
-        background: 'linear-gradient(rgba(0,0,0,.58), rgba(0,0,0,.58))'
-      };
-
       var cropSize = 54 - ((draft.zoom - 1) / 2) * 18;
 
       var squareStyle = {
@@ -371,30 +364,114 @@
                       onPointerDown: this.handlePointerDown,
                       onDragStart: function (event) {
                         event.preventDefault();
+                      },
+                      onSelectStart: function (event) {
+                        event.preventDefault();
                       }
                     },
                       h('img', { src: imageUrl, alt: 'Thumbnail crop preview', style: imageStyle, draggable: false }),
-                      h('div', { style: overlayStyle }),
-                      h('div', { style: squareStyle },
+                      h('div', {
+                        style: {
+                          position: 'absolute',
+                          inset: '0',
+                          pointerEvents: 'none'
+                        }
+                      },
+                        h('div', {
+                          style: {
+                            position: 'absolute',
+                            left: '0',
+                            right: '0',
+                            top: '0',
+                            height: 'calc(50% - ' + (cropSize / 2) + '%)',
+                            background: 'rgba(0,0,0,.58)'
+                          }
+                        }),
+                        h('div', {
+                          style: {
+                            position: 'absolute',
+                            left: '0',
+                            right: '0',
+                            bottom: '0',
+                            height: 'calc(50% - ' + (cropSize / 2) + '%)',
+                            background: 'rgba(0,0,0,.58)'
+                          }
+                        }),
+                        h('div', {
+                          style: {
+                            left: '0',
+                            top: 'calc(50% - ' + (cropSize / 2) + '%)',
+                            bottom: 'calc(50% - ' + (cropSize / 2) + '%)',
+                            width: 'calc(50% - ' + (cropSize / 2) + '%)',
+                            background: 'rgba(0,0,0,.58)',
+                            position: 'absolute'
+                          }
+                        }),
+                        h('div', {
+                          style: {
+                            right: '0',
+                            top: 'calc(50% - ' + (cropSize / 2) + '%)',
+                            bottom: 'calc(50% - ' + (cropSize / 2) + '%)',
+                            width: 'calc(50% - ' + (cropSize / 2) + '%)',
+                            background: 'rgba(0,0,0,.58)',
+                            position: 'absolute'
+                          }
+                        })
+                      ),
+                      h('div', Object.assign({}, squareStyle, {
+                        pointerEvents: 'none'
+                      }),
                         ['nw', 'ne', 'sw', 'se'].map(function (direction) {
+                          var isTop = direction.indexOf('n') !== -1;
+                          var isLeft = direction.indexOf('w') !== -1;
+
                           var cornerStyle = {
                             position: 'absolute',
-                            width: '18px',
-                            height: '18px',
-                            background: '#fff',
-                            border: '2px solid #18181b',
-                            borderRadius: '50%',
+                            width: '22px',
+                            height: '22px',
                             pointerEvents: 'auto',
-                            cursor: direction === 'nw' || direction === 'se' ? 'nwse-resize' : 'nesw-resize',
                             touchAction: 'none',
                             userSelect: 'none',
-                            WebkitUserSelect: 'none'
+                            WebkitUserSelect: 'none',
+                            cursor: direction === 'nw' || direction === 'se' ? 'nwse-resize' : 'nesw-resize',
+                            boxSizing: 'border-box'
                           };
 
-                          if (direction.indexOf('n') !== -1) cornerStyle.top = '-10px';
-                          if (direction.indexOf('s') !== -1) cornerStyle.bottom = '-10px';
-                          if (direction.indexOf('w') !== -1) cornerStyle.left = '-10px';
-                          if (direction.indexOf('e') !== -1) cornerStyle.right = '-10px';
+                          if (isTop) {
+                            cornerStyle.top = '-2px';
+                          } else {
+                            cornerStyle.bottom = '-2px';
+                          }
+
+                          if (isLeft) {
+                            cornerStyle.left = '-2px';
+                          } else {
+                            cornerStyle.right = '-2px';
+                          }
+
+                          var horizontalStyle = {
+                            position: 'absolute',
+                            width: '12px',
+                            height: '2px',
+                            background: '#fff',
+                            top: isTop ? '0' : 'auto',
+                            bottom: isTop ? 'auto' : '0',
+                            left: isLeft ? '0' : 'auto',
+                            right: isLeft ? 'auto' : '0',
+                            pointerEvents: 'none'
+                          };
+
+                          var verticalStyle = {
+                            position: 'absolute',
+                            width: '2px',
+                            height: '12px',
+                            background: '#fff',
+                            top: isTop ? '0' : 'auto',
+                            bottom: isTop ? 'auto' : '0',
+                            left: isLeft ? '0' : 'auto',
+                            right: isLeft ? 'auto' : '0',
+                            pointerEvents: 'none'
+                          };
 
                           return h('div', {
                             key: direction,
@@ -404,7 +481,10 @@
                             onDragStart: function (event) {
                               event.preventDefault();
                             }
-                          });
+                          },
+                            h('div', { style: horizontalStyle }),
+                            h('div', { style: verticalStyle })
+                          );
                         })
                       ),
 
