@@ -337,7 +337,7 @@
               },
                 h('div', {},
                   h('div', { style: { fontSize: '18px', fontWeight: '700' } }, 'Thumbnail Crop'),
-                  h('div', { style: { marginTop: '4px', color: '#a1a1aa', fontSize: '13px' } }, 'Drag the image to reposition it. Use zoom to tighten the crop.')
+                  h('div', { style: { marginTop: '4px', color: '#a1a1aa', fontSize: '13px' } }, 'Drag the image to reposition it. Drag a corner bracket to resize the crop.')
                 ),
                 h('button', {
                   type: 'button',
@@ -419,74 +419,69 @@
                         })
                       ),
                       h('div', Object.assign({}, squareStyle, {
-                        pointerEvents: 'none'
+                        zIndex: '4',
+                        boxShadow: 'none'
                       }),
-                        ['nw', 'ne', 'sw', 'se'].map(function (direction) {
-                          var isTop = direction.indexOf('n') !== -1;
-                          var isLeft = direction.indexOf('w') !== -1;
 
-                          var cornerStyle = {
-                            position: 'absolute',
-                            width: '22px',
-                            height: '22px',
-                            pointerEvents: 'auto',
-                            touchAction: 'none',
-                            userSelect: 'none',
-                            WebkitUserSelect: 'none',
-                            cursor: direction === 'nw' || direction === 'se' ? 'nwse-resize' : 'nesw-resize',
-                            boxSizing: 'border-box'
-                          };
+                      ['nw', 'ne', 'sw', 'se'].map(function (direction) {
+                        var isTop = direction.indexOf('n') !== -1;
+                        var isLeft = direction.indexOf('w') !== -1;
 
-                          if (isTop) {
-                            cornerStyle.top = '-2px';
-                          } else {
-                            cornerStyle.bottom = '-2px';
+                        var cornerStyle = {
+                          position: 'absolute',
+                          width: '28px',
+                          height: '28px',
+                          zIndex: '10',
+                          pointerEvents: 'auto',
+                          touchAction: 'none',
+                          userSelect: 'none',
+                          WebkitUserSelect: 'none',
+                          cursor: direction === 'nw' || direction === 'se' ? 'nwse-resize' : 'nesw-resize',
+                          boxSizing: 'border-box'
+                        };
+
+                        cornerStyle.left = isLeft
+                          ? 'calc(50% - ' + (cropSize / 2) + '% - 14px)'
+                          : 'calc(50% + ' + (cropSize / 2) + '% - 14px)';
+                        cornerStyle.top = isTop
+                          ? 'calc(50% - ' + (cropSize / 2) + '% - 14px)'
+                          : 'calc(50% + ' + (cropSize / 2) + '% - 14px)';
+
+                        var horizontalStyle = {
+                          position: 'absolute',
+                          width: '14px',
+                          height: '3px',
+                          background: '#fff',
+                          top: isTop ? '13px' : '12px',
+                          left: isLeft ? '13px' : '1px',
+                          pointerEvents: 'none',
+                          borderRadius: '1px'
+                        };
+
+                        var verticalStyle = {
+                          position: 'absolute',
+                          width: '3px',
+                          height: '14px',
+                          background: '#fff',
+                          top: isTop ? '13px' : '1px',
+                          left: isLeft ? '13px' : '12px',
+                          pointerEvents: 'none',
+                          borderRadius: '1px'
+                        };
+
+                        return h('div', {
+                          key: direction,
+                          'data-direction': direction,
+                          style: cornerStyle,
+                          onPointerDown: self.handleResizePointerDown,
+                          onDragStart: function (event) {
+                            event.preventDefault();
                           }
-
-                          if (isLeft) {
-                            cornerStyle.left = '-2px';
-                          } else {
-                            cornerStyle.right = '-2px';
-                          }
-
-                          var horizontalStyle = {
-                            position: 'absolute',
-                            width: '12px',
-                            height: '2px',
-                            background: '#fff',
-                            top: isTop ? '0' : 'auto',
-                            bottom: isTop ? 'auto' : '0',
-                            left: isLeft ? '0' : 'auto',
-                            right: isLeft ? 'auto' : '0',
-                            pointerEvents: 'none'
-                          };
-
-                          var verticalStyle = {
-                            position: 'absolute',
-                            width: '2px',
-                            height: '12px',
-                            background: '#fff',
-                            top: isTop ? '0' : 'auto',
-                            bottom: isTop ? 'auto' : '0',
-                            left: isLeft ? '0' : 'auto',
-                            right: isLeft ? 'auto' : '0',
-                            pointerEvents: 'none'
-                          };
-
-                          return h('div', {
-                            key: direction,
-                            'data-direction': direction,
-                            style: cornerStyle,
-                            onPointerDown: self.handleResizePointerDown,
-                            onDragStart: function (event) {
-                              event.preventDefault();
-                            }
-                          },
-                            h('div', { style: horizontalStyle }),
-                            h('div', { style: verticalStyle })
-                          );
-                        })
-                      ),
+                        },
+                          h('div', { style: horizontalStyle }),
+                          h('div', { style: verticalStyle })
+                        );
+                      }),
 
                       h('div', {
                         style: {
