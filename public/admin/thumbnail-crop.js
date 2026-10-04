@@ -194,11 +194,11 @@
       };
 
       var sizeForZoom = function (zoom) {
-        return 88 - ((zoom - 1) / 2) * 52;
+        return 54 - ((zoom - 1) / 2) * 18;
       };
 
       var zoomForSize = function (size) {
-        return 1 + ((88 - size) / 52) * 2;
+        return 1 + ((54 - size) / 18) * 2;
       };
 
       var onMove = function (moveEvent) {
@@ -288,7 +288,7 @@
         background: 'linear-gradient(rgba(0,0,0,.58), rgba(0,0,0,.58))'
       };
 
-      var cropSize = 88 - ((draft.zoom - 1) / 2) * 52;
+      var cropSize = 54 - ((draft.zoom - 1) / 2) * 18;
 
       var squareStyle = {
         position: 'absolute',
@@ -507,7 +507,7 @@
             style: buttonStyle
           }, 'Open Crop Editor'),
           h('span', { style: { color: '#666', fontSize: '12px' } },
-            'Crop ' + Math.round(88 - ((value.zoom - 1) / 2) * 52) + '% · X ' + Math.round(value.positionX) + ' · Y ' + Math.round(value.positionY)
+            'Crop ' + Math.round(54 - ((value.zoom - 1) / 2) * 18) + '% · X ' + Math.round(value.positionX) + ' · Y ' + Math.round(value.positionY)
           )
         ),
         modal
@@ -524,7 +524,7 @@
           color: '#666',
           fontSize: '12px'
         }
-      }, 'Crop ' + Math.round(88 - ((value.zoom - 1) / 2) * 52) + '% · Position ' + Math.round(value.positionX) + '% / ' + Math.round(value.positionY) + '%');
+      }, 'Crop ' + Math.round(54 - ((value.zoom - 1) / 2) * 18) + '% · Position ' + Math.round(value.positionX) + '% / ' + Math.round(value.positionY) + '%');
     }
   });
 
