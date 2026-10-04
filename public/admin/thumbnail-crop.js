@@ -27,6 +27,14 @@
     };
   }
 
+  function cropSizeForZoom(zoom) {
+    return 86 - ((zoom - 1) / 2) * 50;
+  }
+
+  function zoomForCropSize(size) {
+    return 1 + ((86 - size) / 50) * 2;
+  }
+
   function findImageUrl(controlId) {
     var control = document.getElementById(controlId);
     if (!control) return '';
@@ -122,7 +130,7 @@
       this.setState({ draft: normalizeValue(DEFAULTS) });
     },
 
-    handlePointerDown: function (event) {
+    handleImagePointerDown: function (event) {
       if (!this.state.imageUrl) return;
 
       event.preventDefault();
@@ -133,14 +141,15 @@
         if (selection) selection.removeAllRanges();
       }
 
+      var square = event.currentTarget;
+      var viewport = square.getBoundingClientRect();
+
       var start = {
         x: event.clientX,
         y: event.clientY,
         positionX: this.state.draft.positionX,
         positionY: this.state.draft.positionY
       };
-
-      var viewport = event.currentTarget.getBoundingClientRect();
 
       var onMove = function (moveEvent) {
         moveEvent.preventDefault();
@@ -186,19 +195,16 @@
         if (selection) selection.removeAllRanges();
       }
 
-      var viewport = event.currentTarget.parentElement.parentElement.getBoundingClientRect();
+      var handle = event.currentTarget;
+      var square = handle.parentElement;
+      var viewport = square.getBoundingClientRect();
+      var direction = handle.getAttribute('data-direction') || 'se';
+
       var start = {
         x: event.clientX,
         y: event.clientY,
-        zoom: this.state.draft.zoom
-      };
-
-      var sizeForZoom = function (zoom) {
-        return 86 - ((zoom - 1) / 2) * 50;
-      };
-
-      var zoomForSize = function (size) {
-        return 1 + ((86 - size) / 50) * 2;
+        zoom: this.state.draft.zoom,
+        size: cropSizeForZoom(this.state.draft.zoom)
       };
 
       var onMove = function (moveEvent) {
@@ -206,23 +212,22 @@
 
         var dx = moveEvent.clientX - start.x;
         var dy = moveEvent.clientY - start.y;
-        var direction = event.currentTarget.getAttribute('data-direction') || 'se';
-        var signedDistance;
+        var signedDistance = 0;
 
         if (direction === 'nw') signedDistance = (-dx - dy) / Math.sqrt(2);
         if (direction === 'ne') signedDistance = (dx - dy) / Math.sqrt(2);
         if (direction === 'sw') signedDistance = (-dx + dy) / Math.sqrt(2);
         if (direction === 'se') signedDistance = (dx + dy) / Math.sqrt(2);
 
-        var currentSize = sizeForZoom(start.zoom);
         var size = clamp(
-          currentSize + (signedDistance / viewport.width) * 100,
+          start.size + (signedDistance / viewport.width) * 100,
           36,
-          88
+          86
         );
 
         var next = normalizeValue(this.state.draft);
-        next.zoom = clamp(zoomForSize(size), 1, 3);
+        next.zoom = clamp(zoomForCropSize(size), 1, 3);
+
         this.setState({ draft: next });
 
         if (window.getSelection) {
@@ -245,6 +250,7 @@
       var value = normalizeValue(this.props.value);
       var draft = this.state.draft;
       var imageUrl = this.state.imageUrl;
+
       var buttonStyle = {
         display: 'inline-flex',
         alignItems: 'center',
@@ -262,13 +268,14 @@
       var previewStyle = {
         position: 'relative',
         width: '100%',
-        maxWidth: '360px',
+        maxWidth: '640px',
         aspectRatio: '1 / 1',
         overflow: 'hidden',
         background: '#111',
         borderRadius: '6px',
-        cursor: imageUrl ? 'grab' : 'default',
-        touchAction: 'none'
+        touchAction: 'none',
+        userSelect: 'none',
+        WebkitUserSelect: 'none'
       };
 
       var imageStyle = {
@@ -278,24 +285,33 @@
         objectPosition: draft.positionX + '% ' + draft.positionY + '%',
         transform: 'scale(' + draft.zoom + ')',
         transformOrigin: 'center',
-        pointerEvents: 'none'
+        pointerEvents: 'none',
+        userSelect: 'none',
+        WebkitUserSelect: 'none'
       };
 
-      var cropSize = 86 - ((draft.zoom - 1) / 2) * 50;
+      var cropSize = cropSizeForZoom(draft.zoom);
 
-      var squareStyle = {
+      var cropSquareStyle = {
         position: 'absolute',
         width: cropSize + '%',
         height: cropSize + '%',
         left: (50 - cropSize / 2) + '%',
         top: (50 - cropSize / 2) + '%',
         border: '2px solid #fff',
-        boxShadow: 'none',
+        boxSizing: 'border-box',
         overflow: 'visible',
         zIndex: '5',
-        pointerEvents: 'auto',
+        cursor: 'grab',
+        touchAction: 'none',
         userSelect: 'none',
         WebkitUserSelect: 'none'
+      };
+
+      var dimStyle = {
+        position: 'absolute',
+        background: 'rgba(0,0,0,.58)',
+        pointerEvents: 'none'
       };
 
       var modal = this.state.open
@@ -337,12 +353,16 @@
               },
                 h('div', {},
                   h('div', { style: { fontSize: '18px', fontWeight: '700' } }, 'Thumbnail Crop'),
-                  h('div', { style: { marginTop: '4px', color: '#a1a1aa', fontSize: '13px' } }, 'Drag the image to reposition it. Use zoom to tighten the crop.')
+                  h('div', { style: { marginTop: '4px', color: '#a1a1aa', fontSize: '13px' } }, 'Drag the image inside the crop square to reposition it. Drag a corner bracket to resize the crop.')
                 ),
                 h('button', {
                   type: 'button',
                   onClick: this.closeEditor,
-                  style: Object.assign({}, buttonStyle, { background: '#27272a', color: '#fff', borderColor: '#52525b' })
+                  style: Object.assign({}, buttonStyle, {
+                    background: '#27272a',
+                    color: '#fff',
+                    borderColor: '#52525b'
+                  })
                 }, 'Close')
               ),
 
@@ -356,12 +376,7 @@
                     }
                   },
                     h('div', {
-                      style: Object.assign({}, previewStyle, {
-                        maxWidth: '640px',
-                        userSelect: 'none',
-                        WebkitUserSelect: 'none'
-                      }),
-                      onPointerDown: this.handlePointerDown,
+                      style: previewStyle,
                       onDragStart: function (event) {
                         event.preventDefault();
                       },
@@ -369,7 +384,13 @@
                         event.preventDefault();
                       }
                     },
-                      h('img', { src: imageUrl, alt: 'Thumbnail crop preview', style: imageStyle, draggable: false }),
+                      h('img', {
+                        src: imageUrl,
+                        alt: 'Thumbnail crop preview',
+                        style: imageStyle,
+                        draggable: false
+                      }),
+
                       h('div', {
                         style: {
                           position: 'absolute',
@@ -377,55 +398,40 @@
                           pointerEvents: 'none'
                         }
                       },
-                        h('div', {
-                          style: {
-                            position: 'absolute',
-                            left: '0',
-                            right: '0',
-                            top: '0',
-                            height: 'calc(50% - ' + (cropSize / 2) + '%)',
-                            background: 'rgba(0,0,0,.58)'
-                          }
-                        }),
-                        h('div', {
-                          style: {
-                            position: 'absolute',
-                            left: '0',
-                            right: '0',
-                            bottom: '0',
-                            height: 'calc(50% - ' + (cropSize / 2) + '%)',
-                            background: 'rgba(0,0,0,.58)'
-                          }
-                        }),
-                        h('div', {
-                          style: {
-                            left: '0',
-                            top: 'calc(50% - ' + (cropSize / 2) + '%)',
-                            bottom: 'calc(50% - ' + (cropSize / 2) + '%)',
-                            width: 'calc(50% - ' + (cropSize / 2) + '%)',
-                            background: 'rgba(0,0,0,.58)',
-                            position: 'absolute'
-                          }
-                        }),
-                        h('div', {
-                          style: {
-                            right: '0',
-                            top: 'calc(50% - ' + (cropSize / 2) + '%)',
-                            bottom: 'calc(50% - ' + (cropSize / 2) + '%)',
-                            width: 'calc(50% - ' + (cropSize / 2) + '%)',
-                            background: 'rgba(0,0,0,.58)',
-                            position: 'absolute'
-                          }
-                        })
+                        h('div', Object.assign({}, dimStyle, {
+                          left: '0',
+                          right: '0',
+                          top: '0',
+                          height: 'calc(50% - ' + (cropSize / 2) + '%)'
+                        })),
+                        h('div', Object.assign({}, dimStyle, {
+                          left: '0',
+                          right: '0',
+                          bottom: '0',
+                          height: 'calc(50% - ' + (cropSize / 2) + '%)'
+                        })),
+                        h('div', Object.assign({}, dimStyle, {
+                          left: '0',
+                          top: 'calc(50% - ' + (cropSize / 2) + '%)',
+                          bottom: 'calc(50% - ' + (cropSize / 2) + '%)',
+                          width: 'calc(50% - ' + (cropSize / 2) + '%)'
+                        })),
+                        h('div', Object.assign({}, dimStyle, {
+                          right: '0',
+                          top: 'calc(50% - ' + (cropSize / 2) + '%)',
+                          bottom: 'calc(50% - ' + (cropSize / 2) + '%)',
+                          width: 'calc(50% - ' + (cropSize / 2) + '%)'
+                        }))
                       ),
-                      h('div', Object.assign({}, squareStyle, {
-                        onPointerDown: self.handlePointerDown
+
+                      h('div', Object.assign({}, cropSquareStyle, {
+                        onPointerDown: self.handleImagePointerDown
                       }),
                         ['nw', 'ne', 'sw', 'se'].map(function (direction) {
                           var isTop = direction.indexOf('n') !== -1;
                           var isLeft = direction.indexOf('w') !== -1;
 
-                          var cornerStyle = {
+                          var handleStyle = {
                             position: 'absolute',
                             width: '30px',
                             height: '30px',
@@ -433,20 +439,22 @@
                             touchAction: 'none',
                             userSelect: 'none',
                             WebkitUserSelect: 'none',
-                            cursor: direction === 'nw' || direction === 'se' ? 'nwse-resize' : 'nesw-resize',
+                            cursor: direction === 'nw' || direction === 'se'
+                              ? 'nwse-resize'
+                              : 'nesw-resize',
                             boxSizing: 'border-box'
                           };
 
                           if (isTop) {
-                            cornerStyle.top = '0';
+                            handleStyle.top = '0';
                           } else {
-                            cornerStyle.bottom = '0';
+                            handleStyle.bottom = '0';
                           }
 
                           if (isLeft) {
-                            cornerStyle.left = '0';
+                            handleStyle.left = '0';
                           } else {
-                            cornerStyle.right = '0';
+                            handleStyle.right = '0';
                           }
 
                           var horizontalStyle = {
@@ -476,7 +484,7 @@
                           return h('div', {
                             key: direction,
                             'data-direction': direction,
-                            style: cornerStyle,
+                            style: handleStyle,
                             onPointerDown: self.handleResizePointerDown,
                             onDragStart: function (event) {
                               event.preventDefault();
@@ -527,18 +535,30 @@
                 h('button', {
                   type: 'button',
                   onClick: this.reset,
-                  style: Object.assign({}, buttonStyle, { background: '#27272a', color: '#fff', borderColor: '#52525b' })
+                  style: Object.assign({}, buttonStyle, {
+                    background: '#27272a',
+                    color: '#fff',
+                    borderColor: '#52525b'
+                  })
                 }, 'Reset'),
                 h('div', { style: { display: 'flex', gap: '10px' } },
                   h('button', {
                     type: 'button',
                     onClick: this.closeEditor,
-                    style: Object.assign({}, buttonStyle, { background: 'transparent', color: '#fff', borderColor: '#52525b' })
+                    style: Object.assign({}, buttonStyle, {
+                      background: 'transparent',
+                      color: '#fff',
+                      borderColor: '#52525b'
+                    })
                   }, 'Cancel'),
                   h('button', {
                     type: 'button',
                     onClick: this.apply,
-                    style: Object.assign({}, buttonStyle, { background: '#e67300', color: '#fff', borderColor: '#e67300' })
+                    style: Object.assign({}, buttonStyle, {
+                      background: '#e67300',
+                      color: '#fff',
+                      borderColor: '#e67300'
+                    })
                   }, 'Apply Crop')
                 )
               )
@@ -564,8 +584,15 @@
             onClick: this.openEditor,
             style: buttonStyle
           }, 'Open Crop Editor'),
-          h('span', { style: { color: '#666', fontSize: '12px' } },
-            'Crop ' + Math.round(86 - ((value.zoom - 1) / 2) * 50) + '% · X ' + Math.round(value.positionX) + ' · Y ' + Math.round(value.positionY)
+          h('span', {
+            style: {
+              color: '#666',
+              fontSize: '12px'
+            }
+          },
+            'Crop ' + Math.round(cropSizeForZoom(value.zoom)) +
+            '% · X ' + Math.round(value.positionX) +
+            ' · Y ' + Math.round(value.positionY)
           )
         ),
         modal
@@ -582,7 +609,9 @@
           color: '#666',
           fontSize: '12px'
         }
-      }, 'Crop ' + Math.round(86 - ((value.zoom - 1) / 2) * 50) + '% · Position ' + Math.round(value.positionX) + '% / ' + Math.round(value.positionY) + '%');
+      }, 'Crop ' + Math.round(cropSizeForZoom(value.zoom)) +
+        '% · Position ' + Math.round(value.positionX) +
+        '% / ' + Math.round(value.positionY) + '%');
     }
   });
 
