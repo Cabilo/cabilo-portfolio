@@ -270,24 +270,28 @@
        * center travel is half the image's excess travel, minus half the
        * crop size.
        */
-      var imageTravelX = maxCropTravelX / 2;
-      var imageTravelY = maxCropTravelY / 2;
+      /*
+       * The image range is the distance required for the zoomed image
+       * to reach either edge of the frame. The crop square has its own
+       * independent range so it can never leave the white frame.
+       *
+       * The usable range is the intersection of those two ranges.
+       */
+      var imageMinCenterX = 50 - maxCropTravelX / 2;
+      var imageMaxCenterX = 50 + maxCropTravelX / 2;
+      var imageMinCenterY = 50 - maxCropTravelY / 2;
+      var imageMaxCenterY = 50 + maxCropTravelY / 2;
+
       var cropHalf = cropSize / 2;
-
-      var imageBoundMinX = 50 - imageTravelX / 2 - cropHalf / 2;
-      var imageBoundMaxX = 50 + imageTravelX / 2 - cropHalf / 2;
-      var imageBoundMinY = 50 - imageTravelY / 2 - cropHalf / 2;
-      var imageBoundMaxY = 50 + imageTravelY / 2 - cropHalf / 2;
-
       var frameMinX = cropHalf;
       var frameMaxX = 100 - cropHalf;
       var frameMinY = cropHalf;
       var frameMaxY = 100 - cropHalf;
 
-      var minCenter = clamp(imageBoundMinX, frameMinX, frameMaxX);
-      var maxCenter = clamp(imageBoundMaxX, frameMinX, frameMaxX);
-      var minCenterY = clamp(imageBoundMinY, frameMinY, frameMaxY);
-      var maxCenterY = clamp(imageBoundMaxY, frameMinY, frameMaxY);
+      var minCenter = Math.max(imageMinCenterX, frameMinX);
+      var maxCenter = Math.min(imageMaxCenterX, frameMaxX);
+      var minCenterY = Math.max(imageMinCenterY, frameMinY);
+      var maxCenterY = Math.min(imageMaxCenterY, frameMaxY);
 
       var onMove = function (moveEvent) {
         moveEvent.preventDefault();
