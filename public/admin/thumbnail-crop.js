@@ -213,6 +213,46 @@
 
       var frameRect = frame.getBoundingClientRect();
       var cropSize = cropSizeForZoom(this.state.draft.zoom);
+
+      /*
+       * The crop window must be able to travel far enough to match the
+       * full movement range of the zoomed image. At higher zoom levels
+       * the image extends beyond the frame, so the old frame-edge clamp
+       * stopped the crop window before the image could reach its edge.
+       *
+       * The crop window remains visually clipped by the outer frame, but
+       * its center follows the same reachable image range as the preview.
+       */
+      var imageElement = frame.querySelector('img');
+      var movementWidth = 0;
+      var movementHeight = 0;
+
+      if (imageElement && imageElement.naturalWidth && imageElement.naturalHeight) {
+        var baseScale = Math.max(
+          frameRect.width / imageElement.naturalWidth,
+          frameRect.height / imageElement.naturalHeight
+        );
+
+        movementWidth = Math.max(
+          0,
+          imageElement.naturalWidth * baseScale * this.state.draft.zoom -
+            frameRect.width
+        );
+
+        movementHeight = Math.max(
+          0,
+          imageElement.naturalHeight * baseScale * this.state.draft.zoom -
+            frameRect.height
+        );
+      }
+
+      var maxCropTravelX = movementWidth > 0
+        ? (movementWidth / frameRect.width) * 100
+        : 0;
+      var maxCropTravelY = movementHeight > 0
+        ? (movementHeight / frameRect.height) * 100
+        : 0;
+
       var start = {
         x: event.clientX,
         y: event.clientY,
@@ -220,8 +260,10 @@
         centerY: this.state.cropCenterY
       };
 
-      var minCenter = cropSize / 2;
-      var maxCenter = 100 - minCenter;
+      var minCenter = 50 - maxCropTravelX / 2;
+      var maxCenter = 50 + maxCropTravelX / 2;
+      var minCenterY = 50 - maxCropTravelY / 2;
+      var maxCenterY = 50 + maxCropTravelY / 2;
 
       var onMove = function (moveEvent) {
         moveEvent.preventDefault();
@@ -234,8 +276,8 @@
           ),
           cropCenterY: clamp(
             start.centerY + ((moveEvent.clientY - start.y) / frameRect.height) * 100,
-            minCenter,
-            maxCenter
+            minCenterY,
+            maxCenterY
           )
         });
 
