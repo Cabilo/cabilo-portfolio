@@ -141,8 +141,7 @@
         if (selection) selection.removeAllRanges();
       }
 
-      var square = event.currentTarget;
-      var viewport = square.getBoundingClientRect();
+      var viewport = event.currentTarget.getBoundingClientRect();
 
       var start = {
         x: event.clientX,
@@ -273,6 +272,8 @@
         overflow: 'hidden',
         background: '#111',
         borderRadius: '6px',
+        border: '2px solid #fff',
+        boxSizing: 'border-box',
         touchAction: 'none',
         userSelect: 'none',
         WebkitUserSelect: 'none'
@@ -302,7 +303,7 @@
         boxSizing: 'border-box',
         overflow: 'visible',
         zIndex: '5',
-        cursor: 'grab',
+        pointerEvents: 'none',
         touchAction: 'none',
         userSelect: 'none',
         WebkitUserSelect: 'none'
@@ -377,6 +378,7 @@
                   },
                     h('div', {
                       style: previewStyle,
+                      onPointerDown: self.handleImagePointerDown,
                       onDragStart: function (event) {
                         event.preventDefault();
                       },
@@ -424,9 +426,7 @@
                         }))
                       ),
 
-                      h('div', Object.assign({}, cropSquareStyle, {
-                        onPointerDown: self.handleImagePointerDown
-                      }),
+                      h('div', cropSquareStyle,
                         ['nw', 'ne', 'sw', 'se'].map(function (direction) {
                           var isTop = direction.indexOf('n') !== -1;
                           var isLeft = direction.indexOf('w') !== -1;
