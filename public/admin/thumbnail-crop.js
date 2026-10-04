@@ -151,55 +151,6 @@
       });
     },
 
-    handleCropPointerDown: function (event) {
-      if (!this.state.imageUrl) return;
-
-      event.preventDefault();
-      event.stopPropagation();
-      clearSelection();
-
-      var frame = event.currentTarget.closest('[data-crop-frame]');
-      if (!frame) return;
-
-      var frameRect = frame.getBoundingClientRect();
-
-      var start = {
-        x: event.clientX,
-        y: event.clientY,
-        positionX: this.state.draft.positionX,
-        positionY: this.state.draft.positionY
-      };
-
-      var onMove = function (moveEvent) {
-        moveEvent.preventDefault();
-
-        var next = normalizeValue(this.state.draft);
-
-        next.positionX = clamp(
-          start.positionX - ((moveEvent.clientX - start.x) / frameRect.width) * 100,
-          0,
-          100
-        );
-
-        next.positionY = clamp(
-          start.positionY - ((moveEvent.clientY - start.y) / frameRect.height) * 100,
-          0,
-          100
-        );
-
-        this.setState({ draft: next });
-        clearSelection();
-      }.bind(this);
-
-      var onUp = function () {
-        window.removeEventListener('pointermove', onMove);
-        window.removeEventListener('pointerup', onUp);
-      };
-
-      window.addEventListener('pointermove', onMove, { passive: false });
-      window.addEventListener('pointerup', onUp);
-    },
-
     handleImagePointerDown: function (event) {
       if (!this.state.imageUrl) return;
 
@@ -207,7 +158,10 @@
       event.stopPropagation();
       clearSelection();
 
-      var frame = event.currentTarget.getBoundingClientRect();
+      var frameElement = event.currentTarget.closest('[data-crop-frame]');
+      if (!frameElement) return;
+
+      var frame = frameElement.getBoundingClientRect();
 
       var start = {
         x: event.clientX,
@@ -329,7 +283,7 @@
        * FRAME
        * ├── IMAGE LAYER       -> only layer that moves the image
        * ├── DIM LAYER         -> visual only, never receives pointer events
-       * └── CROP LAYER        -> visual boundary, never moves the image
+       * └── CROP LAYER        -> visual boundary; center drag moves the image
        *     └── FOUR HANDLES   -> only elements that resize the crop
        */
 
@@ -598,10 +552,10 @@
                         })
                       ),
 
-                      // 3. CROP LAYER — boundary only; it does not drag the image
+                      // 3. CROP LAYER — boundary only; center drag moves the image
                       h('div', {
                         style: cropLayerStyle,
-                        onPointerDown: self.handleCropPointerDown,
+                        onPointerDown: self.handleImagePointerDown,
                         onDragStart: function (event) {
                           event.preventDefault();
                         },
