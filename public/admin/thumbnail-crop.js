@@ -438,15 +438,15 @@
                           };
 
                           if (isTop) {
-                            cornerStyle.top = '-2px';
+                            cornerStyle.top = '0';
                           } else {
-                            cornerStyle.bottom = '-2px';
+                            cornerStyle.bottom = '0';
                           }
 
                           if (isLeft) {
-                            cornerStyle.left = '-2px';
+                            cornerStyle.left = '0';
                           } else {
-                            cornerStyle.right = '-2px';
+                            cornerStyle.right = '0';
                           }
 
                           var horizontalStyle = {
