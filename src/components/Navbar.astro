@@ -29,7 +29,9 @@
         <button
           id="nav-learning"
           type="button"
-          class="nav-link flex items-center gap-1 uppercase font-medium transition-colors duration-300 cursor-default text-text-silver group-hover:text-brand-gold"
+          aria-expanded="false"
+          aria-haspopup="true"
+          class="nav-link flex items-center gap-1 uppercase font-medium transition-colors duration-300 cursor-pointer text-text-silver group-hover:text-brand-gold"
         >
           LEARNING
 
@@ -48,7 +50,11 @@
           </svg>
         </button>
 
-        <div class="absolute top-[80px] left-0 w-48 bg-cabilo-obsidian/95 backdrop-blur-md border border-cabilo-card rounded-md shadow-2xl opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-300 flex flex-col overflow-hidden z-50">
+        <div
+          id="learning-menu"
+          aria-hidden="true"
+          class="absolute top-[80px] left-0 w-48 bg-cabilo-obsidian/95 backdrop-blur-md border border-cabilo-card rounded-md shadow-2xl opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-300 flex flex-col overflow-hidden z-50"
+        >
 
           <a
             id="nav-tutorials"
@@ -259,6 +265,54 @@
     }
   };
 
+  const setupLearningMenu = () => {
+    const btn = document.getElementById('nav-learning');
+    const menu = document.getElementById('learning-menu');
+
+    if (!btn || !menu) return;
+
+    let isOpen = false;
+
+    const setOpen = (open) => {
+      isOpen = open;
+
+      if (isOpen) {
+        menu.classList.add('opacity-100', 'visible');
+        menu.classList.remove('opacity-0', 'invisible');
+        btn.setAttribute('aria-expanded', 'true');
+        menu.setAttribute('aria-hidden', 'false');
+      } else {
+        menu.classList.remove('opacity-100', 'visible');
+        menu.classList.add('opacity-0', 'invisible');
+        btn.setAttribute('aria-expanded', 'false');
+        menu.setAttribute('aria-hidden', 'true');
+      }
+    };
+
+    btn.addEventListener('click', (event) => {
+      event.preventDefault();
+      event.stopPropagation();
+      setOpen(!isOpen);
+    });
+
+    document.addEventListener('click', (event) => {
+      if (!isOpen) return;
+
+      const target = event.target;
+      if (target instanceof Node && !btn.contains(target) && !menu.contains(target)) {
+        setOpen(false);
+      }
+    });
+
+    document.addEventListener('keydown', (event) => {
+      if (event.key === 'Escape') setOpen(false);
+    });
+
+    menu.querySelectorAll('a').forEach((link) => {
+      link.addEventListener('click', () => setOpen(false));
+    });
+  };
+
   const setupMobileMenu = () => {
     const btn = document.getElementById('mobile-menu-btn');
     const menu = document.getElementById('mobile-menu');
@@ -336,6 +390,9 @@
 
   // Re-run the navigation state after Astro client-side navigation.
   document.addEventListener('astro:after-swap', updateActiveNav);
+
+  // Initialize the Learning dropdown for both hover and tap/pointer input.
+  document.addEventListener('astro:page-load', setupLearningMenu);
 
   // Initialize the mobile menu.
   document.addEventListener('astro:page-load', setupMobileMenu);
