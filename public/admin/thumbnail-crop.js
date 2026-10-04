@@ -37,6 +37,27 @@
     return 1 + ((100 - size) / 64) * 2;
   }
 
+  // The portfolio thumbnail output is 16:9. The orange guide fills
+  // the crop window horizontally, so its height is 56.25% of that window.
+  var THUMBNAIL_ASPECT_HEIGHT = (9 / 16) * 100;
+  var THUMBNAIL_ASPECT_MIN_CENTER = THUMBNAIL_ASPECT_HEIGHT / 2;
+  var THUMBNAIL_ASPECT_MAX_CENTER = 100 - THUMBNAIL_ASPECT_MIN_CENTER;
+
+  function thumbnailPositionToCenter(positionY) {
+    return THUMBNAIL_ASPECT_MIN_CENTER +
+      (clamp(numberOr(positionY, 50), 0, 100) / 100) *
+      (THUMBNAIL_ASPECT_MAX_CENTER - THUMBNAIL_ASPECT_MIN_CENTER);
+  }
+
+  function thumbnailCenterToPosition(centerY) {
+    return clamp(
+      ((centerY - THUMBNAIL_ASPECT_MIN_CENTER) /
+        (THUMBNAIL_ASPECT_MAX_CENTER - THUMBNAIL_ASPECT_MIN_CENTER)) * 100,
+      0,
+      100
+    );
+  }
+
   function findImageUrl(controlId) {
     var control = document.getElementById(controlId);
     if (!control) return '';
@@ -75,6 +96,9 @@
         imagePanY: 0,
         showRuleOfThirds: false,
         showThumbnailAspect: false,
+        thumbnailAspectCenterY: thumbnailPositionToCenter(
+          normalizeValue(this.props.value).positionY
+        ),
         imageUrl: ''
       };
     },
@@ -106,7 +130,10 @@
               imagePanX: 0,
               imagePanY: 0,
               showRuleOfThirds: false,
-              showThumbnailAspect: false
+              showThumbnailAspect: false,
+              thumbnailAspectCenterY: thumbnailPositionToCenter(
+                normalizeValue(self.props.value).positionY
+              )
             });
           }
         }, 300);
@@ -150,7 +177,10 @@
         imagePanX: 0,
         imagePanY: 0,
         showRuleOfThirds: false,
-        showThumbnailAspect: false
+        showThumbnailAspect: false,
+        thumbnailAspectCenterY: thumbnailPositionToCenter(
+          normalizeValue(this.props.value).positionY
+        )
       });
     },
 
@@ -205,13 +235,24 @@
               100
             )
           : 50;
+
+        /*
+         * The orange 16:9 guide is the final portfolio output crop.
+         * Its vertical position is authoritative when the guide is enabled.
+         */
+        if (this.state.showThumbnailAspect) {
+          next.positionY = thumbnailCenterToPosition(
+            this.state.thumbnailAspectCenterY
+          );
+        }
       }
 
       this.props.onChange(next);
       this.setState({
         open: false,
         cropCenterX: 50,
-        cropCenterY: 50
+        cropCenterY: 50,
+        thumbnailAspectCenterY: 50
       });
     },
 
@@ -219,7 +260,8 @@
       this.setState({
         draft: normalizeValue(DEFAULTS),
         cropCenterX: 50,
-        cropCenterY: 50
+        cropCenterY: 50,
+        thumbnailAspectCenterY: 50
       });
     },
 
@@ -433,6 +475,50 @@
       window.addEventListener('pointerup', onUp);
     },
 
+    handleThumbnailAspectPointerDown: function (event) {
+      if (!this.state.imageUrl || !this.state.showThumbnailAspect) return;
+
+      event.preventDefault();
+      event.stopPropagation();
+      clearSelection();
+
+      var overlay = event.currentTarget;
+      var cropLayer = overlay.parentElement;
+      if (!cropLayer) return;
+
+      var cropRect = cropLayer.getBoundingClientRect();
+
+      var start = {
+        y: event.clientY,
+        centerY: this.state.thumbnailAspectCenterY
+      };
+
+      var onMove = function (moveEvent) {
+        moveEvent.preventDefault();
+
+        var deltaY = ((moveEvent.clientY - start.y) / cropRect.height) * 100;
+        var nextCenterY = clamp(
+          start.centerY + deltaY,
+          THUMBNAIL_ASPECT_MIN_CENTER,
+          THUMBNAIL_ASPECT_MAX_CENTER
+        );
+
+        this.setState({
+          thumbnailAspectCenterY: nextCenterY
+        });
+
+        clearSelection();
+      }.bind(this);
+
+      var onUp = function () {
+        window.removeEventListener('pointermove', onMove);
+        window.removeEventListener('pointerup', onUp);
+      };
+
+      window.addEventListener('pointermove', onMove, { passive: false });
+      window.addEventListener('pointerup', onUp);
+    },
+
     handleResizePointerDown: function (event) {
       if (!this.state.imageUrl) return;
 
@@ -482,7 +568,12 @@
         this.setState({
           draft: next,
           cropCenterX: clamp(this.state.cropCenterX, minCenter, maxCenter),
-          cropCenterY: clamp(this.state.cropCenterY, minCenter, maxCenter)
+          cropCenterY: clamp(this.state.cropCenterY, minCenter, maxCenter),
+          thumbnailAspectCenterY: clamp(
+            this.state.thumbnailAspectCenterY,
+            THUMBNAIL_ASPECT_MIN_CENTER,
+            THUMBNAIL_ASPECT_MAX_CENTER
+          )
         });
         clearSelection();
       }.bind(this);
@@ -645,13 +736,17 @@
       var thumbnailAspectStyle = {
         position: 'absolute',
         left: '50%',
-        top: '50%',
+        top: (this.state.thumbnailAspectCenterY - THUMBNAIL_ASPECT_HEIGHT / 2) + '%',
         width: '100%',
-        aspectRatio: '16 / 9',
-        transform: 'translate(-50%, -50%)',
+        height: THUMBNAIL_ASPECT_HEIGHT + '%',
+        transform: 'translate(-50%, 0)',
         border: '2px solid rgba(230,115,0,.72)',
         boxSizing: 'border-box',
-        pointerEvents: 'none'
+        pointerEvents: 'auto',
+        cursor: 'ns-resize',
+        touchAction: 'none',
+        userSelect: 'none',
+        WebkitUserSelect: 'none'
       };
 
       function makeDimStyle(position) {
@@ -866,7 +961,16 @@
                             )
                           : null,
                         this.state.showThumbnailAspect
-                          ? h('div', { style: thumbnailAspectStyle })
+                          ? h('div', {
+                              style: thumbnailAspectStyle,
+                              onPointerDown: self.handleThumbnailAspectPointerDown,
+                              onDragStart: function (event) {
+                                event.preventDefault();
+                              },
+                              onSelectStart: function (event) {
+                                event.preventDefault();
+                              }
+                            })
                           : null
                       ),
 
