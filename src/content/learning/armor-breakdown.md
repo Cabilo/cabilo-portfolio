@@ -6,13 +6,18 @@ publishDate: 2024-11-01
 type: Breakdown
 tags:
   - Lookdev
+  - Lighting
 softwareUsed:
   - ZBrush
   - Substance Painter
+  - Houdini
 thumbnail: https://cdna.artstation.com/p/assets/images/images/021/496/060/large/lucas-cabilo-screenshot037.jpg?1571899681
+thumbnailCrop:
+  zoom: 1
+  positionX: 0
+  positionY: 0
 featured: false
 mediaBlocks:
-  - type: text_block
   - type: image
     image: https://www.sabornamesa.com.br/media/k2/items/cache/bc53d507c26770e8f294fcbf92ef0864_XL.jpg
   - type: video
