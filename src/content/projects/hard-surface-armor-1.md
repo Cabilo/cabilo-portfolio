@@ -3,9 +3,9 @@ title: Hard Surface Armor
 category: Cinematics
 thumbnail: https://ead.vivaarteonline.com.br/wp-content/uploads/thumb_zbrush_avancado_site.jpg
 thumbnailCrop:
-  zoom: 1.4833737762017414
+  zoom: 1.5006371253518038
   positionX: 0
-  positionY: 0
+  positionY: 13.624357972425724
 role: 3D Modeler & Lookdev
 client: Personal Project
 tags:
