@@ -194,11 +194,11 @@
       };
 
       var sizeForZoom = function (zoom) {
-        return 54 - ((zoom - 1) / 2) * 18;
+        return 86 - ((zoom - 1) / 2) * 50;
       };
 
       var zoomForSize = function (size) {
-        return 1 + ((54 - size) / 18) * 2;
+        return 1 + ((86 - size) / 50) * 2;
       };
 
       var onMove = function (moveEvent) {
@@ -263,7 +263,7 @@
         position: 'relative',
         width: '100%',
         maxWidth: '360px',
-        aspectRatio: '16 / 9',
+        aspectRatio: '1 / 1',
         overflow: 'hidden',
         background: '#111',
         borderRadius: '6px',
@@ -281,13 +281,13 @@
         pointerEvents: 'none'
       };
 
-      var cropSize = 54 - ((draft.zoom - 1) / 2) * 18;
+      var cropSize = 86 - ((draft.zoom - 1) / 2) * 50;
 
       var squareStyle = {
         position: 'absolute',
         width: cropSize + '%',
+        height: cropSize + '%',
         maxWidth: '560px',
-        aspectRatio: '1 / 1',
         left: '50%',
         top: '50%',
         transform: 'translate(-50%, -50%)',
@@ -565,7 +565,7 @@
             style: buttonStyle
           }, 'Open Crop Editor'),
           h('span', { style: { color: '#666', fontSize: '12px' } },
-            'Crop ' + Math.round(54 - ((value.zoom - 1) / 2) * 18) + '% · X ' + Math.round(value.positionX) + ' · Y ' + Math.round(value.positionY)
+            'Crop ' + Math.round(86 - ((value.zoom - 1) / 2) * 50) + '% · X ' + Math.round(value.positionX) + ' · Y ' + Math.round(value.positionY)
           )
         ),
         modal
@@ -582,7 +582,7 @@
           color: '#666',
           fontSize: '12px'
         }
-      }, 'Crop ' + Math.round(54 - ((value.zoom - 1) / 2) * 18) + '% · Position ' + Math.round(value.positionX) + '% / ' + Math.round(value.positionY) + '%');
+      }, 'Crop ' + Math.round(86 - ((value.zoom - 1) / 2) * 50) + '% · Position ' + Math.round(value.positionX) + '% / ' + Math.round(value.positionY) + '%');
     }
   });
 
