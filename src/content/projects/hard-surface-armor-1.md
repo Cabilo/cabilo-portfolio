@@ -1,9 +1,9 @@
 ---
 title: Hard Surface Armor
 category: Cinematics
-thumbnail: https://cdna.artstation.com/p/assets/images/images/021/496/060/large/lucas-cabilo-screenshot037.jpg?1571899681
+thumbnail: https://ead.vivaarteonline.com.br/wp-content/uploads/thumb_zbrush_avancado_site.jpg
 thumbnailCrop:
-  zoom: 1
+  zoom: 1.542069163311953
   positionX: 0
   positionY: 0
 role: 3D Modeler & Lookdev
