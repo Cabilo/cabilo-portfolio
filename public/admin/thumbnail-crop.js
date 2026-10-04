@@ -718,7 +718,11 @@
 
       var thirdsStyle = {
         position: 'absolute',
-        inset: '0',
+        left: '0',
+        top: (this.state.thumbnailAspectCenterY - THUMBNAIL_ASPECT_HEIGHT / 2) + '%',
+        width: '100%',
+        height: THUMBNAIL_ASPECT_HEIGHT + '%',
+        overflow: 'hidden',
         pointerEvents: 'none'
       };
 
