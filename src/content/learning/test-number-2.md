@@ -8,7 +8,7 @@ tags:
   - Lighting
   - Topology
 thumbnail: https://blog.lipsumhub.com/wp-content/uploads/2024/07/lorem-ipsum-meaning-in-english-lipsumhub.jpg
-featured: false
+featured: true
 ---
 ## Why do we use it?
 
