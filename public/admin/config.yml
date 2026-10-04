@@ -148,6 +148,19 @@ collections:
         display_fields:
           - "values.*.name"
 
+      - label: "Software Used"
+        name: "softwareUsed"
+        widget: "relation"
+        collection: "pools"
+        file: "software"
+        multiple: true
+        min: 1
+        search_fields:
+          - "values.*.name"
+        value_field: "values.*.name"
+        display_fields:
+          - "values.*.name"
+
       - label: "Media Blocks"
         name: "mediaBlocks"
         widget: "list"
