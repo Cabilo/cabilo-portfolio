@@ -69,6 +69,8 @@
       return {
         open: false,
         draft: normalizeValue(this.props.value),
+        cropCenterX: 50,
+        cropCenterY: 50,
         imageUrl: ''
       };
     },
@@ -94,7 +96,9 @@
           if (!previousImageUrl && nextImageUrl && !self.state.open) {
             self.setState({
               open: true,
-              draft: normalizeValue(self.props.value)
+              draft: normalizeValue(self.props.value),
+              cropCenterX: 50,
+              cropCenterY: 50
             });
           }
         }, 300);
@@ -132,7 +136,9 @@
 
       this.setState({
         open: true,
-        draft: normalizeValue(this.props.value)
+        draft: normalizeValue(this.props.value),
+        cropCenterX: 50,
+        cropCenterY: 50
       });
     },
 
@@ -141,14 +147,108 @@
     },
 
     apply: function () {
-      this.props.onChange(normalizeValue(this.state.draft));
-      this.setState({ open: false });
+      var next = normalizeValue(this.state.draft);
+      var frameElement = document.querySelector('[data-crop-frame]');
+      var imageElement = frameElement ? frameElement.querySelector('img') : null;
+
+      if (frameElement && imageElement && imageElement.naturalWidth && imageElement.naturalHeight) {
+        var frame = frameElement.getBoundingClientRect();
+        var baseScale = Math.max(
+          frame.width / imageElement.naturalWidth,
+          frame.height / imageElement.naturalHeight
+        );
+        var movementWidth = Math.max(
+          0,
+          imageElement.naturalWidth * baseScale * next.zoom - frame.width
+        );
+        var movementHeight = Math.max(
+          0,
+          imageElement.naturalHeight * baseScale * next.zoom - frame.height
+        );
+
+        next.positionX = movementWidth > 0
+          ? clamp(
+              next.positionX +
+                ((this.state.cropCenterX - 50) * frame.width / movementWidth) * 100,
+              0,
+              100
+            )
+          : 50;
+
+        next.positionY = movementHeight > 0
+          ? clamp(
+              next.positionY +
+                ((this.state.cropCenterY - 50) * frame.height / movementHeight) * 100,
+              0,
+              100
+            )
+          : 50;
+      }
+
+      this.props.onChange(next);
+      this.setState({
+        open: false,
+        cropCenterX: 50,
+        cropCenterY: 50
+      });
     },
 
     reset: function () {
       this.setState({
-        draft: normalizeValue(DEFAULTS)
+        draft: normalizeValue(DEFAULTS),
+        cropCenterX: 50,
+        cropCenterY: 50
       });
+    },
+
+    handleCropPointerDown: function (event) {
+      if (!this.state.imageUrl) return;
+
+      event.preventDefault();
+      event.stopPropagation();
+      clearSelection();
+
+      var frame = event.currentTarget.closest('[data-crop-frame]');
+      if (!frame) return;
+
+      var frameRect = frame.getBoundingClientRect();
+      var cropSize = cropSizeForZoom(this.state.draft.zoom);
+      var start = {
+        x: event.clientX,
+        y: event.clientY,
+        centerX: this.state.cropCenterX,
+        centerY: this.state.cropCenterY
+      };
+
+      var minCenter = cropSize / 2;
+      var maxCenter = 100 - minCenter;
+
+      var onMove = function (moveEvent) {
+        moveEvent.preventDefault();
+
+        this.setState({
+          cropCenterX: clamp(
+            start.centerX + ((moveEvent.clientX - start.x) / frameRect.width) * 100,
+            minCenter,
+            maxCenter
+          ),
+          cropCenterY: clamp(
+            start.centerY + ((moveEvent.clientY - start.y) / frameRect.height) * 100,
+            minCenter,
+            maxCenter
+          )
+        });
+
+        clearSelection();
+      }.bind(this);
+
+      var onUp = function () {
+        window.removeEventListener('pointermove', onMove);
+        window.removeEventListener('pointerup', onUp);
+      };
+
+      window.addEventListener('pointermove', onMove, { passive: false });
+      window.addEventListener('pointerup', onUp);
     },
 
     handleImagePointerDown: function (event) {
@@ -270,7 +370,15 @@
         var next = normalizeValue(this.state.draft);
         next.zoom = clamp(zoomForCropSize(nextSize), 1, 3);
 
-        this.setState({ draft: next });
+        var nextCropSize = cropSizeForZoom(next.zoom);
+        var minCenter = nextCropSize / 2;
+        var maxCenter = 100 - minCenter;
+
+        this.setState({
+          draft: next,
+          cropCenterX: clamp(this.state.cropCenterX, minCenter, maxCenter),
+          cropCenterY: clamp(this.state.cropCenterY, minCenter, maxCenter)
+        });
         clearSelection();
       }.bind(this);
 
@@ -289,6 +397,8 @@
       var draft = this.state.draft;
       var imageUrl = this.state.imageUrl;
       var cropSize = cropSizeForZoom(draft.zoom);
+      var cropLeft = this.state.cropCenterX - cropSize / 2;
+      var cropTop = this.state.cropCenterY - cropSize / 2;
 
       /*
        * The crop square stays centered inside the frame.
@@ -347,17 +457,33 @@
         WebkitUserSelect: 'none'
       };
 
+      var previewPositionX = clamp(
+        draft.positionX +
+          (this.state.cropCenterX - 50) *
+          (draft.zoom > 1 ? 1 / (draft.zoom - 1) : 0),
+        0,
+        100
+      );
+
+      var previewPositionY = clamp(
+        draft.positionY +
+          (this.state.cropCenterY - 50) *
+          (draft.zoom > 1 ? 1 / (draft.zoom - 1) : 0),
+        0,
+        100
+      );
+
       var imageStyle = {
         display: 'block',
         width: '100%',
         height: '100%',
         objectFit: 'cover',
-        objectPosition: draft.positionX + '% ' + draft.positionY + '%',
+        objectPosition: previewPositionX + '% ' + previewPositionY + '%',
         transform:
           'translate(calc(' +
-          ((50 - draft.positionX) * (draft.zoom - 1)) +
+          ((50 - previewPositionX) * (draft.zoom - 1)) +
           '%), calc(' +
-          ((50 - draft.positionY) * (draft.zoom - 1)) +
+          ((50 - previewPositionY) * (draft.zoom - 1)) +
           '%)) scale(' +
           draft.zoom +
           ')',
@@ -378,12 +504,10 @@
        * The crop square uses its own fixed center coordinate.
        * This keeps the crop geometry independent from image panning.
        */
-      var cropOffset = (100 - cropSize) / 2;
-
       var cropLayerStyle = {
         position: 'absolute',
-        left: cropOffset + '%',
-        top: cropOffset + '%',
+        left: cropLeft + '%',
+        top: cropTop + '%',
         width: cropSize + '%',
         height: cropSize + '%',
         zIndex: '3',
@@ -568,7 +692,7 @@
                             left: '0',
                             right: '0',
                             top: '0',
-                            height: cropOffset + '%'
+                            height: cropTop + '%'
                           })
                         }),
                         h('div', {
@@ -576,30 +700,30 @@
                             left: '0',
                             right: '0',
                             bottom: '0',
-                            height: cropOffset + '%'
+                            height: (100 - cropTop - cropSize) + '%'
                           })
                         }),
                         h('div', {
                           style: makeDimStyle({
                             left: '0',
-                            top: cropOffset + '%',
-                            bottom: cropOffset + '%',
-                            width: cropOffset + '%'
+                            top: cropTop + '%',
+                            bottom: (100 - cropTop - cropSize) + '%',
+                            width: cropLeft + '%'
                           })
                         }),
                         h('div', {
                           style: makeDimStyle({
                             right: '0',
-                            top: cropOffset + '%',
-                            bottom: cropOffset + '%',
-                            width: cropOffset + '%'
+                            top: cropTop + '%',
+                            bottom: (100 - cropTop - cropSize) + '%',
+                            width: (100 - cropLeft - cropSize) + '%'
                           })
                         })
                       ),
 
                       h('div', {
                         style: cropLayerStyle,
-                        onPointerDown: self.handleImagePointerDown,
+                        onPointerDown: self.handleCropPointerDown,
                         onDragStart: function (event) {
                           event.preventDefault();
                         },
