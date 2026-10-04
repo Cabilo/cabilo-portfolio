@@ -321,12 +321,12 @@
         var maxImagePanY = movementHeight / 2;
 
         var nextImagePanX = clamp(
-          start.imagePanX + excessPixelsX,
+          start.imagePanX - excessPixelsX,
           -maxImagePanX,
           maxImagePanX
         );
         var nextImagePanY = clamp(
-          start.imagePanY + excessPixelsY,
+          start.imagePanY - excessPixelsY,
           -maxImagePanY,
           maxImagePanY
         );
