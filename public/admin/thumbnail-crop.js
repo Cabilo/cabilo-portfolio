@@ -27,6 +27,7 @@
     };
   }
 
+  // zoom 1 = largest crop window; zoom 3 = smallest crop window.
   function cropSizeForZoom(zoom) {
     return 86 - ((zoom - 1) / 2) * 50;
   }
@@ -40,16 +41,26 @@
     if (!control) return '';
 
     var root = control.parentElement;
+
     while (root && root !== document.body) {
       var images = root.querySelectorAll('img');
+
       for (var i = 0; i < images.length; i += 1) {
         var src = images[i].currentSrc || images[i].src || '';
         if (src && !src.startsWith('data:image/svg+xml')) return src;
       }
+
       root = root.parentElement;
     }
 
     return '';
+  }
+
+  function clearSelection() {
+    if (!window.getSelection) return;
+
+    var selection = window.getSelection();
+    if (selection) selection.removeAllRanges();
   }
 
   var CropControl = createClass({
@@ -65,23 +76,25 @@
       this.refreshImage();
 
       var self = this;
+
       window.setTimeout(function () {
         self.lastObservedImageUrl = findImageUrl(self.props.forID);
 
         self.imageWatcher = window.setInterval(function () {
           var nextImageUrl = findImageUrl(self.props.forID);
 
-          if (nextImageUrl !== self.lastObservedImageUrl) {
-            var previousImageUrl = self.lastObservedImageUrl;
-            self.lastObservedImageUrl = nextImageUrl;
-            self.setState({ imageUrl: nextImageUrl });
+          if (nextImageUrl === self.lastObservedImageUrl) return;
 
-            if (!previousImageUrl && nextImageUrl && !self.state.open) {
-              self.setState({
-                open: true,
-                draft: normalizeValue(self.props.value)
-              });
-            }
+          var previousImageUrl = self.lastObservedImageUrl;
+          self.lastObservedImageUrl = nextImageUrl;
+
+          self.setState({ imageUrl: nextImageUrl });
+
+          if (!previousImageUrl && nextImageUrl && !self.state.open) {
+            self.setState({
+              open: true,
+              draft: normalizeValue(self.props.value)
+            });
           }
         }, 300);
       }, 600);
@@ -95,14 +108,18 @@
 
     componentDidUpdate: function (prevProps) {
       if (prevProps.value !== this.props.value && !this.state.open) {
-        this.setState({ draft: normalizeValue(this.props.value) });
+        this.setState({
+          draft: normalizeValue(this.props.value)
+        });
       }
     },
 
     refreshImage: function () {
       var self = this;
+
       window.setTimeout(function () {
         var imageUrl = findImageUrl(self.props.forID);
+
         if (imageUrl !== self.state.imageUrl) {
           self.setState({ imageUrl: imageUrl });
         }
@@ -111,6 +128,7 @@
 
     openEditor: function () {
       this.refreshImage();
+
       this.setState({
         open: true,
         draft: normalizeValue(this.props.value)
@@ -127,7 +145,9 @@
     },
 
     reset: function () {
-      this.setState({ draft: normalizeValue(DEFAULTS) });
+      this.setState({
+        draft: normalizeValue(DEFAULTS)
+      });
     },
 
     handleImagePointerDown: function (event) {
@@ -135,13 +155,9 @@
 
       event.preventDefault();
       event.stopPropagation();
+      clearSelection();
 
-      if (window.getSelection) {
-        var selection = window.getSelection();
-        if (selection) selection.removeAllRanges();
-      }
-
-      var viewport = event.currentTarget.getBoundingClientRect();
+      var frame = event.currentTarget.getBoundingClientRect();
 
       var start = {
         x: event.clientX,
@@ -156,22 +172,19 @@
         var next = normalizeValue(this.state.draft);
 
         next.positionX = clamp(
-          start.positionX - ((moveEvent.clientX - start.x) / viewport.width) * 100,
+          start.positionX - ((moveEvent.clientX - start.x) / frame.width) * 100,
           0,
           100
         );
+
         next.positionY = clamp(
-          start.positionY - ((moveEvent.clientY - start.y) / viewport.height) * 100,
+          start.positionY - ((moveEvent.clientY - start.y) / frame.height) * 100,
           0,
           100
         );
 
         this.setState({ draft: next });
-
-        if (window.getSelection) {
-          var selection = window.getSelection();
-          if (selection) selection.removeAllRanges();
-        }
+        clearSelection();
       }.bind(this);
 
       var onUp = function () {
@@ -188,21 +201,19 @@
 
       event.preventDefault();
       event.stopPropagation();
-
-      if (window.getSelection) {
-        var selection = window.getSelection();
-        if (selection) selection.removeAllRanges();
-      }
+      clearSelection();
 
       var handle = event.currentTarget;
-      var square = handle.parentElement;
-      var viewport = square.getBoundingClientRect();
+      var frame = handle.closest('[data-crop-frame]');
+
+      if (!frame) return;
+
+      var frameRect = frame.getBoundingClientRect();
       var direction = handle.getAttribute('data-direction') || 'se';
 
       var start = {
         x: event.clientX,
         y: event.clientY,
-        zoom: this.state.draft.zoom,
         size: cropSizeForZoom(this.state.draft.zoom)
       };
 
@@ -211,28 +222,24 @@
 
         var dx = moveEvent.clientX - start.x;
         var dy = moveEvent.clientY - start.y;
-        var signedDistance = 0;
+        var diagonal = 0;
 
-        if (direction === 'nw') signedDistance = (-dx - dy) / Math.sqrt(2);
-        if (direction === 'ne') signedDistance = (dx - dy) / Math.sqrt(2);
-        if (direction === 'sw') signedDistance = (-dx + dy) / Math.sqrt(2);
-        if (direction === 'se') signedDistance = (dx + dy) / Math.sqrt(2);
+        if (direction === 'nw') diagonal = (-dx - dy) / Math.sqrt(2);
+        if (direction === 'ne') diagonal = (dx - dy) / Math.sqrt(2);
+        if (direction === 'sw') diagonal = (-dx + dy) / Math.sqrt(2);
+        if (direction === 'se') diagonal = (dx + dy) / Math.sqrt(2);
 
-        var size = clamp(
-          start.size + (signedDistance / viewport.width) * 100,
+        var nextSize = clamp(
+          start.size + (diagonal / frameRect.width) * 100,
           36,
           86
         );
 
         var next = normalizeValue(this.state.draft);
-        next.zoom = clamp(zoomForCropSize(size), 1, 3);
+        next.zoom = clamp(zoomForCropSize(nextSize), 1, 3);
 
         this.setState({ draft: next });
-
-        if (window.getSelection) {
-          var selection = window.getSelection();
-          if (selection) selection.removeAllRanges();
-        }
+        clearSelection();
       }.bind(this);
 
       var onUp = function () {
@@ -249,6 +256,8 @@
       var value = normalizeValue(this.props.value);
       var draft = this.state.draft;
       var imageUrl = this.state.imageUrl;
+      var cropSize = cropSizeForZoom(draft.zoom);
+      var cropOffset = (100 - cropSize) / 2;
 
       var buttonStyle = {
         display: 'inline-flex',
@@ -264,15 +273,25 @@
         cursor: 'pointer'
       };
 
-      var previewStyle = {
+      /*
+       * Interaction model:
+       *
+       * FRAME
+       * ├── IMAGE LAYER       -> only layer that moves the image
+       * ├── DIM LAYER         -> visual only, never receives pointer events
+       * └── CROP LAYER        -> visual boundary, never moves the image
+       *     └── FOUR HANDLES   -> only elements that resize the crop
+       */
+
+      var frameStyle = {
         position: 'relative',
-        width: '100%',
-        maxWidth: '640px',
+        width: 'min(640px, 80vh)',
+        maxWidth: '100%',
         aspectRatio: '1 / 1',
         overflow: 'hidden',
         background: '#111',
-        borderRadius: '6px',
         border: '2px solid #fff',
+        borderRadius: '6px',
         boxSizing: 'border-box',
         touchAction: 'none',
         userSelect: 'none',
@@ -282,14 +301,16 @@
       var imageLayerStyle = {
         position: 'absolute',
         inset: '0',
-        overflow: 'hidden',
         zIndex: '1',
+        overflow: 'hidden',
+        cursor: 'grab',
         touchAction: 'none',
         userSelect: 'none',
         WebkitUserSelect: 'none'
       };
 
       var imageStyle = {
+        display: 'block',
         width: '100%',
         height: '100%',
         objectFit: 'cover',
@@ -301,29 +322,97 @@
         WebkitUserSelect: 'none'
       };
 
-      var cropSize = cropSizeForZoom(draft.zoom);
-
-      var cropSquareStyle = {
+      var dimLayerStyle = {
         position: 'absolute',
+        inset: '0',
+        zIndex: '2',
+        pointerEvents: 'none'
+      };
+
+      var cropLayerStyle = {
+        position: 'absolute',
+        left: cropOffset + '%',
+        top: cropOffset + '%',
         width: cropSize + '%',
         height: cropSize + '%',
-        left: (50 - cropSize / 2) + '%',
-        top: (50 - cropSize / 2) + '%',
+        zIndex: '3',
         border: '2px solid #fff',
         boxSizing: 'border-box',
         overflow: 'visible',
-        zIndex: '5',
         pointerEvents: 'none',
         touchAction: 'none',
         userSelect: 'none',
         WebkitUserSelect: 'none'
       };
 
-      var dimStyle = {
-        position: 'absolute',
-        background: 'rgba(0,0,0,.58)',
-        pointerEvents: 'none'
-      };
+      function makeDimStyle(position) {
+        return Object.assign({
+          position: 'absolute',
+          background: 'rgba(0,0,0,.58)',
+          pointerEvents: 'none'
+        }, position);
+      }
+
+      function makeHandle(direction) {
+        var isTop = direction.indexOf('n') !== -1;
+        var isLeft = direction.indexOf('w') !== -1;
+
+        var handleStyle = {
+          position: 'absolute',
+          width: '32px',
+          height: '32px',
+          zIndex: '4',
+          pointerEvents: 'auto',
+          touchAction: 'none',
+          userSelect: 'none',
+          WebkitUserSelect: 'none',
+          cursor: direction === 'nw' || direction === 'se'
+            ? 'nwse-resize'
+            : 'nesw-resize'
+        };
+
+        handleStyle.top = isTop ? '-16px' : 'auto';
+        handleStyle.bottom = isTop ? 'auto' : '-16px';
+        handleStyle.left = isLeft ? '-16px' : 'auto';
+        handleStyle.right = isLeft ? 'auto' : '-16px';
+
+        var horizontalStyle = {
+          position: 'absolute',
+          width: '18px',
+          height: '3px',
+          background: '#fff',
+          top: isTop ? '15px' : 'auto',
+          bottom: isTop ? 'auto' : '15px',
+          left: isLeft ? '15px' : 'auto',
+          right: isLeft ? 'auto' : '15px',
+          pointerEvents: 'none'
+        };
+
+        var verticalStyle = {
+          position: 'absolute',
+          width: '3px',
+          height: '18px',
+          background: '#fff',
+          top: isTop ? '15px' : 'auto',
+          bottom: isTop ? 'auto' : '15px',
+          left: isLeft ? '15px' : 'auto',
+          right: isLeft ? 'auto' : '15px',
+          pointerEvents: 'none'
+        };
+
+        return h('div', {
+          key: direction,
+          'data-direction': direction,
+          style: handleStyle,
+          onPointerDown: self.handleResizePointerDown,
+          onDragStart: function (event) {
+            event.preventDefault();
+          }
+        },
+          h('div', { style: horizontalStyle }),
+          h('div', { style: verticalStyle })
+        );
+      }
 
       var modal = this.state.open
         ? h('div', {
@@ -363,8 +452,19 @@
                 }
               },
                 h('div', {},
-                  h('div', { style: { fontSize: '18px', fontWeight: '700' } }, 'Thumbnail Crop'),
-                  h('div', { style: { marginTop: '4px', color: '#a1a1aa', fontSize: '13px' } }, 'Drag the image inside the crop square to reposition it. Drag a corner bracket to resize the crop.')
+                  h('div', {
+                    style: {
+                      fontSize: '18px',
+                      fontWeight: '700'
+                    }
+                  }, 'Thumbnail Crop'),
+                  h('div', {
+                    style: {
+                      marginTop: '4px',
+                      color: '#a1a1aa',
+                      fontSize: '13px'
+                    }
+                  }, 'Drag the image to reposition it. Drag a corner bracket to resize the crop window.')
                 ),
                 h('button', {
                   type: 'button',
@@ -380,15 +480,17 @@
               imageUrl
                 ? h('div', {
                     style: {
-                      position: 'relative',
                       display: 'flex',
                       justifyContent: 'center',
                       padding: '10px 0 22px'
                     }
                   },
                     h('div', {
-                      style: previewStyle
+                      'data-crop-frame': 'true',
+                      style: frameStyle
                     },
+
+                      // 1. IMAGE / DRAG LAYER
                       h('div', {
                         style: imageLayerStyle,
                         onPointerDown: self.handleImagePointerDown,
@@ -407,108 +509,52 @@
                         })
                       ),
 
+                      // 2. DIMMING — four panels around the crop, never interactive
                       h('div', {
-                        style: {
-                          position: 'absolute',
-                          inset: '0',
-                          zIndex: '4',
-                          pointerEvents: 'none'
-                        }
+                        style: dimLayerStyle
                       },
-                        h('div', Object.assign({}, dimStyle, {
-                          left: '0',
-                          right: '0',
-                          top: '0',
-                          height: 'calc(50% - ' + (cropSize / 2) + '%)'
-                        })),
-                        h('div', Object.assign({}, dimStyle, {
-                          left: '0',
-                          right: '0',
-                          bottom: '0',
-                          height: 'calc(50% - ' + (cropSize / 2) + '%)'
-                        })),
-                        h('div', Object.assign({}, dimStyle, {
-                          left: '0',
-                          top: 'calc(50% - ' + (cropSize / 2) + '%)',
-                          bottom: 'calc(50% - ' + (cropSize / 2) + '%)',
-                          width: 'calc(50% - ' + (cropSize / 2) + '%)'
-                        })),
-                        h('div', Object.assign({}, dimStyle, {
-                          right: '0',
-                          top: 'calc(50% - ' + (cropSize / 2) + '%)',
-                          bottom: 'calc(50% - ' + (cropSize / 2) + '%)',
-                          width: 'calc(50% - ' + (cropSize / 2) + '%)'
-                        }))
+                        h('div', {
+                          style: makeDimStyle({
+                            left: '0',
+                            right: '0',
+                            top: '0',
+                            height: cropOffset + '%'
+                          })
+                        }),
+                        h('div', {
+                          style: makeDimStyle({
+                            left: '0',
+                            right: '0',
+                            bottom: '0',
+                            height: cropOffset + '%'
+                          })
+                        }),
+                        h('div', {
+                          style: makeDimStyle({
+                            left: '0',
+                            top: cropOffset + '%',
+                            bottom: cropOffset + '%',
+                            width: cropOffset + '%'
+                          })
+                        }),
+                        h('div', {
+                          style: makeDimStyle({
+                            right: '0',
+                            top: cropOffset + '%',
+                            bottom: cropOffset + '%',
+                            width: cropOffset + '%'
+                          })
+                        })
                       ),
 
-                      h('div', cropSquareStyle,
-                        ['nw', 'ne', 'sw', 'se'].map(function (direction) {
-                          var isTop = direction.indexOf('n') !== -1;
-                          var isLeft = direction.indexOf('w') !== -1;
-
-                          var handleStyle = {
-                            position: 'absolute',
-                            width: '30px',
-                            height: '30px',
-                            pointerEvents: 'auto',
-                            touchAction: 'none',
-                            userSelect: 'none',
-                            WebkitUserSelect: 'none',
-                            cursor: direction === 'nw' || direction === 'se'
-                              ? 'nwse-resize'
-                              : 'nesw-resize',
-                            boxSizing: 'border-box'
-                          };
-
-                          if (isTop) {
-                            handleStyle.top = '0';
-                          } else {
-                            handleStyle.bottom = '0';
-                          }
-
-                          if (isLeft) {
-                            handleStyle.left = '0';
-                          } else {
-                            handleStyle.right = '0';
-                          }
-
-                          var horizontalStyle = {
-                            position: 'absolute',
-                            width: '18px',
-                            height: '3px',
-                            background: '#fff',
-                            top: isTop ? '0' : 'auto',
-                            bottom: isTop ? 'auto' : '0',
-                            left: isLeft ? '0' : 'auto',
-                            right: isLeft ? 'auto' : '0',
-                            pointerEvents: 'none'
-                          };
-
-                          var verticalStyle = {
-                            position: 'absolute',
-                            width: '3px',
-                            height: '18px',
-                            background: '#fff',
-                            top: isTop ? '0' : 'auto',
-                            bottom: isTop ? 'auto' : '0',
-                            left: isLeft ? '0' : 'auto',
-                            right: isLeft ? 'auto' : '0',
-                            pointerEvents: 'none'
-                          };
-
-                          return h('div', {
-                            key: direction,
-                            'data-direction': direction,
-                            style: handleStyle,
-                            onPointerDown: self.handleResizePointerDown,
-                            onDragStart: function (event) {
-                              event.preventDefault();
-                            }
-                          },
-                            h('div', { style: horizontalStyle }),
-                            h('div', { style: verticalStyle })
-                          );
-                        })
+                      // 3. CROP LAYER — boundary only; it does not drag the image
+                      h('div', {
+                        style: cropLayerStyle
+                      },
+                        makeHandle('nw'),
+                        makeHandle('ne'),
+                        makeHandle('sw'),
+                        makeHandle('se')
                       ),
 
                       h('div', {
@@ -517,6 +563,7 @@
                           left: '50%',
                           bottom: '10px',
                           transform: 'translateX(-50%)',
+                          zIndex: '5',
                           padding: '5px 9px',
                           borderRadius: '999px',
                           background: 'rgba(0,0,0,.72)',
@@ -525,7 +572,7 @@
                           pointerEvents: 'none',
                           userSelect: 'none',
                           WebkitUserSelect: 'none',
-                          zIndex: '6'
+                          whiteSpace: 'nowrap'
                         }
                       }, 'Drag image · Drag a corner to resize crop')
                     )
@@ -557,7 +604,12 @@
                     borderColor: '#52525b'
                   })
                 }, 'Reset'),
-                h('div', { style: { display: 'flex', gap: '10px' } },
+                h('div', {
+                  style: {
+                    display: 'flex',
+                    gap: '10px'
+                  }
+                },
                   h('button', {
                     type: 'button',
                     onClick: this.closeEditor,
@@ -585,7 +637,10 @@
       return h('div', {
         id: this.props.forID,
         className: this.props.classNameWrapper,
-        style: { display: 'grid', gap: '10px' }
+        style: {
+          display: 'grid',
+          gap: '10px'
+        }
       },
         h('div', {
           style: {
@@ -619,15 +674,18 @@
   var CropPreview = createClass({
     render: function () {
       var value = normalizeValue(this.props.value);
+
       return h('div', {
         style: {
           padding: '8px 0',
           color: '#666',
           fontSize: '12px'
         }
-      }, 'Crop ' + Math.round(cropSizeForZoom(value.zoom)) +
+      },
+        'Crop ' + Math.round(cropSizeForZoom(value.zoom)) +
         '% · Position ' + Math.round(value.positionX) +
-        '% / ' + Math.round(value.positionY) + '%');
+        '% / ' + Math.round(value.positionY) + '%'
+      );
     }
   });
 
