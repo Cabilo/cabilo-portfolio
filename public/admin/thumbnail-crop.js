@@ -287,12 +287,12 @@
         position: 'absolute',
         width: cropSize + '%',
         height: cropSize + '%',
-        maxWidth: '560px',
-        left: '50%',
-        top: '50%',
-        transform: 'translate(-50%, -50%)',
+        left: (50 - cropSize / 2) + '%',
+        top: (50 - cropSize / 2) + '%',
         border: '2px solid #fff',
-        boxShadow: '0 0 0 9999px rgba(0,0,0,.58)',
+        boxShadow: 'none',
+        overflow: 'visible',
+        zIndex: '5',
         pointerEvents: 'auto',
         userSelect: 'none',
         WebkitUserSelect: 'none'
@@ -427,8 +427,8 @@
 
                           var cornerStyle = {
                             position: 'absolute',
-                            width: '28px',
-                            height: '28px',
+                            width: '30px',
+                            height: '30px',
                             pointerEvents: 'auto',
                             touchAction: 'none',
                             userSelect: 'none',
@@ -451,7 +451,7 @@
 
                           var horizontalStyle = {
                             position: 'absolute',
-                            width: '16px',
+                            width: '18px',
                             height: '3px',
                             background: '#fff',
                             top: isTop ? '0' : 'auto',
@@ -464,7 +464,7 @@
                           var verticalStyle = {
                             position: 'absolute',
                             width: '3px',
-                            height: '16px',
+                            height: '18px',
                             background: '#fff',
                             top: isTop ? '0' : 'auto',
                             bottom: isTop ? 'auto' : '0',
