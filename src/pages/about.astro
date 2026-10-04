@@ -1,13 +1,13 @@
 ---
-import { getEntry, render } from 'astro:content';
+import { getCollection, getEntry, render } from 'astro:content';
 import Layout from '../layouts/Layout.astro';
+import { slugifyTaxonomyValue } from '../lib/taxonomy';
 
 // Fetch the data from src/content/pages/about.md
 const aboutPage = await getEntry('pages', 'about');
 const { Content } = await render(aboutPage);
 
-// Fallback just in case the CMS array is empty!
-const softwareList = aboutPage.data.softwareArsenal || ["Unreal Engine 5", "Maya", "Nuke", "ZBrush"];
+const softwareList = await getCollection('software');
 ---
 
 <Layout>
@@ -39,7 +39,7 @@ const softwareList = aboutPage.data.softwareArsenal || ["Unreal Engine 5", "Maya
           </h3>
           <div class="flex flex-wrap gap-3">
             {softwareList.map((software) => {
-              const link = software.toLowerCase().replace(/\s+/g, '-').replace(/[^\w-]+/g, '');
+              const link = slugifyTaxonomyValue(software.data.name);
               return (
                 <a href={`/tags/${link}`} class="px-5 py-2.5 border border-cabilo-card rounded-md text-sm font-medium text-text-silver bg-cabilo-obsidian hover:border-brand-amber hover:text-text-white transition-all shadow-md">
                   {software}

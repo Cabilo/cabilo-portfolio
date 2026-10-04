@@ -143,7 +143,6 @@ const pagesCollection = defineCollection({
     headline: z.string().optional(),
     subheadline: z.string().optional(),
     showreelUrl: z.string().optional(),
-    softwareArsenal: z.array(z.string()).optional(),
 
     // NEW: Global SEO pulled from Homepage
     globalSeoTitle: z.string().optional(),
