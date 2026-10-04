@@ -19,7 +19,7 @@
       <a
         id="nav-work"
         href="/"
-        class="nav-link transition-colors duration-300 text-text-silver hover:text-brand-gold"
+        class="nav-link desktop-nav-hover transition-colors duration-300 text-text-silver hover:text-brand-gold"
       >
         Work
       </a>
@@ -31,7 +31,7 @@
           type="button"
           aria-expanded="false"
           aria-haspopup="true"
-          class="nav-link flex items-center gap-1 uppercase font-medium transition-colors duration-300 cursor-pointer text-text-silver group-hover:text-brand-gold"
+          class="nav-link desktop-nav-hover flex items-center gap-1 uppercase font-medium transition-colors duration-300 cursor-pointer text-text-silver group-hover:text-brand-gold"
         >
           LEARNING
 
@@ -313,6 +313,24 @@
     });
   };
 
+  const setupDesktopPointerHover = () => {
+    const navItems = document.querySelectorAll('.desktop-nav-hover');
+
+    navItems.forEach((item) => {
+      item.addEventListener('pointerenter', (event) => {
+        if (event.pointerType === 'mouse') {
+          item.classList.add('!text-brand-gold');
+        }
+      });
+
+      item.addEventListener('pointerleave', (event) => {
+        if (event.pointerType === 'mouse') {
+          item.classList.remove('!text-brand-gold');
+        }
+      });
+    });
+  };
+
   const setupMobileMenu = () => {
     const btn = document.getElementById('mobile-menu-btn');
     const menu = document.getElementById('mobile-menu');
@@ -393,6 +411,9 @@
 
   // Initialize the Learning dropdown for both hover and tap/pointer input.
   document.addEventListener('astro:page-load', setupLearningMenu);
+
+  // Initialize mouse hover behavior for desktop and iPad pointer input.
+  document.addEventListener('astro:page-load', setupDesktopPointerHover);
 
   // Initialize the mobile menu.
   document.addEventListener('astro:page-load', setupMobileMenu);
