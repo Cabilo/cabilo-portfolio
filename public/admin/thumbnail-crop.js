@@ -457,21 +457,49 @@
         WebkitUserSelect: 'none'
       };
 
-      var previewPositionX = clamp(
-        draft.positionX +
-          (this.state.cropCenterX - 50) *
-          (draft.zoom > 1 ? 1 / (draft.zoom - 1) : 0),
-        0,
-        100
-      );
+      var previewPositionX = draft.positionX;
+      var previewPositionY = draft.positionY;
+      var previewFrame = document.querySelector('[data-crop-frame]');
+      var previewImage = previewFrame ? previewFrame.querySelector('img') : null;
 
-      var previewPositionY = clamp(
-        draft.positionY +
-          (this.state.cropCenterY - 50) *
-          (draft.zoom > 1 ? 1 / (draft.zoom - 1) : 0),
-        0,
-        100
-      );
+      if (
+        previewFrame &&
+        previewImage &&
+        previewImage.naturalWidth &&
+        previewImage.naturalHeight
+      ) {
+        var previewRect = previewFrame.getBoundingClientRect();
+        var previewScale = Math.max(
+          previewRect.width / previewImage.naturalWidth,
+          previewRect.height / previewImage.naturalHeight
+        );
+        var previewMovementWidth = Math.max(
+          0,
+          previewImage.naturalWidth * previewScale * draft.zoom - previewRect.width
+        );
+        var previewMovementHeight = Math.max(
+          0,
+          previewImage.naturalHeight * previewScale * draft.zoom - previewRect.height
+        );
+
+        previewPositionX = previewMovementWidth > 0
+          ? clamp(
+              draft.positionX +
+                ((this.state.cropCenterX - 50) * previewRect.width / previewMovementWidth) * 100,
+              0,
+              100
+            )
+          : 50;
+
+        previewPositionY = previewMovementHeight > 0
+          ? clamp(
+              draft.positionY +
+                ((this.state.cropCenterY - 50) * previewRect.height / previewMovementHeight) * 100,
+              0,
+              100
+            )
+          : 50;
+      }
 
       var imageStyle = {
         display: 'block',
