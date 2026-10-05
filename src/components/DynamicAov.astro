@@ -283,6 +283,19 @@ const defaultB = passes.length > 1 ? passes[1] : passes[0];
       imgB.addEventListener('load', fitImageToViewport);
       window.addEventListener('resize', fitImageToViewport);
 
+      /*
+       * Layout Blocks can resize the AOV container without resizing the
+       * browser window. When that happens, the AOV images need to be
+       * recalculated against the new container dimensions.
+       */
+      const containerResizeObserver = !fitViewport && typeof ResizeObserver !== 'undefined'
+        ? new ResizeObserver(() => {
+            fitImageToViewport();
+          })
+        : null;
+
+      containerResizeObserver?.observe(container);
+
       fitImageToViewport();
 
       const updateSlider = (clientX: number) => {
