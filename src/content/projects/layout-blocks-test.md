@@ -75,9 +75,9 @@ layoutBlocks:
 
   - id: layout-aov-test
     type: aov
-    x: 4
-    y: 4
-    w: 6
+    x: 0
+    y: 10
+    w: 10
     h: 6
     snap: grid
     title: AOV Comparison
