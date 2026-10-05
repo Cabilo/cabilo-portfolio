@@ -677,16 +677,20 @@
             }.bind(this),
           })),
           this.renderField(
-            selected.matchHeightToWidth ? 'Match height to width' : 'Match width to height',
-            h('input', {
-              type: 'checkbox',
-              checked: selected.matchHeightToWidth,
+            'Asset sizing direction',
+            h('button', {
+              type: 'button',
+              className: 'cabilo-layout-button',
               disabled: !selected.matchAspectRatio,
-              onChange: function (event) {
+              onMouseDown: function (event) {
                 event.stopPropagation();
-                this.updateSelectedField('matchHeightToWidth', event.target.checked);
+              },
+              onClick: function (event) {
+                event.preventDefault();
+                event.stopPropagation();
+                this.updateSelectedField('matchHeightToWidth', !selected.matchHeightToWidth);
               }.bind(this),
-            })
+            }, selected.matchHeightToWidth ? 'Width → Height' : 'Height → Width')
           ),
           this.renderField('Snap mode', h('select', {
             value: selected.snap,
