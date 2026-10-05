@@ -123,6 +123,55 @@ It is intentionally not featured. It can be removed after the layout system has 
 
 ---
 
+# Experimental Layout Blocks
+
+CABILO now has an experimental **Layout Blocks** system alongside the existing Media Blocks system.
+
+This is intentionally additive while it is being tested.
+
+## Layout Blocks mental model
+
+> **Media Blocks describe what the content is. Layout Blocks describe where and how that content occupies space.**
+
+The experimental layout editor uses a conceptual matrix of:
+
+**∞ rows × 5 columns**
+
+The current practical editor limit is 50 rows.
+
+Internally, each column and row can be divided into half-units. This allows compositions such as:
+
+- 1.5 columns + 3.5 columns
+- 2 columns + 3 columns
+- half-row offsets and heights
+
+The grid itself is invisible to the public website. It is a composition system, not visible page decoration.
+
+## Layout Block snapping
+
+Each block has a snapping mode:
+
+- **Constrained:** edges snap to the full ∞ × 5 grid units.
+- **Free:** edges snap to half-column and half-row units.
+
+Both modes allow blocks to be dragged and resized. The difference is only the snapping resolution.
+
+This gives the editor freedom without falling back to arbitrary pixel positioning.
+
+## CMS implementation
+
+The experimental Decap widget lives in:
+
+`public/admin/layout-blocks.js`
+
+The public renderer lives in:
+
+`src/components/LayoutBlocksRenderer.astro`
+
+Projects and Learning expose the optional `layoutBlocks` field, while the existing `mediaBlocks` field remains unchanged.
+
+This system is experimental. It should be evaluated for authoring experience, responsive behavior, collision/spacing rules, and media-library integration before it replaces or absorbs any part of the existing Media Block architecture.
+
 # Responsive Width System
 
 CABILO uses **semantic content widths** instead of one universal page container.
