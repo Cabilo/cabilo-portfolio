@@ -93,6 +93,11 @@ collections:
         name: "showreelUrl"
         widget: "string"
         required: false
+      - label: "Fit showreel to viewport"
+        name: "showreelFitToViewport"
+        widget: "boolean"
+        required: false
+        default: true
 
       - label: "Role"
         name: "role"
@@ -261,6 +266,11 @@ collections:
                       - label: "Video URL"
                         name: "videoUrl"
                         widget: "string"
+                      - label: "Fit to viewport"
+                        name: "fitToViewport"
+                        widget: "boolean"
+                        required: false
+                        default: true
 
                       - label: "Comment"
                         name: "comment"
@@ -468,6 +478,11 @@ collections:
               - label: "Video URL"
                 name: "videoUrl"
                 widget: "string"
+              - label: "Fit to viewport"
+                name: "fitToViewport"
+                widget: "boolean"
+                required: false
+                default: true
 
               - label: "Comment"
                 name: "comment"
@@ -661,6 +676,11 @@ collections:
         name: "videoUrl"
         widget: "string"
         required: false
+      - label: "Fit to viewport"
+        name: "fitToViewport"
+        widget: "boolean"
+        required: false
+        default: true
 
       - label: "Featured"
         name: "featured"
@@ -782,6 +802,11 @@ collections:
                       - label: "Video URL"
                         name: "videoUrl"
                         widget: "string"
+                      - label: "Fit to viewport"
+                        name: "fitToViewport"
+                        widget: "boolean"
+                        required: false
+                        default: true
 
                       - label: "Comment"
                         name: "comment"
