@@ -217,29 +217,29 @@ const maxBottom = Math.max(
     overflow: visible;
   }
 
+  /*
+   * The Layout Block itself is always the authored grid slot.
+   * Aspect matching only sizes the asset inside that slot.
+   *
+   * This intentionally follows the same container-first model used by
+   * DynamicAov/TurntableScrubber when fitToViewport=false:
+   * measure the available container, then calculate the media dimensions.
+   */
   .cabilo-layout-asset-frame {
     position: relative;
     width: 100%;
     height: 100%;
+    min-width: 0;
+    min-height: 0;
     display: flex;
     align-items: center;
     justify-content: center;
   }
 
-  .cabilo-layout-frame[data-match-aspect="true"] .cabilo-layout-asset-frame {
-    width: 100%;
-    height: auto;
-    aspect-ratio: var(--asset-aspect-ratio, 1 / 1);
-  }
-
-  .cabilo-layout-frame[data-match-aspect="true"][data-match-height-to-width="false"] .cabilo-layout-asset-frame {
-    width: auto;
-    height: 100%;
-    aspect-ratio: var(--asset-aspect-ratio, 1 / 1);
-  }
-
   .cabilo-layout-frame[data-match-aspect="true"] .cabilo-layout-asset-frame > * {
     flex: 0 0 auto;
+    max-width: 100%;
+    max-height: 100%;
   }
 
   .cabilo-layout-media,
@@ -422,19 +422,99 @@ const maxBottom = Math.max(
 <script>
   const layoutSections = document.querySelectorAll('.cabilo-layout-blocks');
 
+  const parseAspectRatio = (frame) => {
+    const value = frame.style.getPropertyValue('--asset-aspect-ratio').trim();
+    if (!value) return 0;
+
+    const parts = value.split('/').map((part) => Number(part.trim()));
+    if (parts.length !== 2 || !parts[0] || !parts[1]) return 0;
+
+    const ratio = parts[0] / parts[1];
+    return Number.isFinite(ratio) && ratio > 0 ? ratio : 0;
+  };
+
+  const sizeAspectAsset = (frame) => {
+    if (frame.dataset.matchAspect !== 'true') return;
+
+    const assetFrame = frame.querySelector('.cabilo-layout-asset-frame');
+    const asset = assetFrame?.firstElementChild;
+
+    if (!(assetFrame instanceof HTMLElement) || !(asset instanceof HTMLElement)) {
+      return;
+    }
+
+    const ratio = parseAspectRatio(frame);
+
+    if (!ratio) {
+      asset.style.width = '';
+      asset.style.height = '';
+      return;
+    }
+
+    const availableWidth = assetFrame.clientWidth;
+    const availableHeight = assetFrame.clientHeight;
+
+    if (!availableWidth || !availableHeight) return;
+
+    const heightFromWidth = availableWidth / ratio;
+    const widthFromHeight = availableHeight * ratio;
+
+    let width;
+    let height;
+
+    if (frame.dataset.matchHeightToWidth !== 'false') {
+      /*
+       * Width → Height:
+       * start from the full available width, then clamp to the
+       * available height if the requested aspect ratio is too tall.
+       */
+      width = availableWidth;
+      height = heightFromWidth;
+
+      if (height > availableHeight) {
+        height = availableHeight;
+        width = widthFromHeight;
+      }
+    } else {
+      /*
+       * Height → Width:
+       * start from the full available height, then clamp to the
+       * available width if the requested aspect ratio is too wide.
+       */
+      height = availableHeight;
+      width = widthFromHeight;
+
+      if (width > availableWidth) {
+        width = availableWidth;
+        height = heightFromWidth;
+      }
+    }
+
+    asset.style.width = `${width}px`;
+    asset.style.height = `${height}px`;
+  };
+
   const loadLayoutAssetRatio = (frame) => {
     if (frame.dataset.matchAspect !== 'true') return;
 
-    const fallback = frame.style.getPropertyValue('--asset-aspect-ratio').trim();
     const applyRatio = (width, height) => {
       if (!width || !height) return;
-      frame.style.setProperty('--asset-aspect-ratio', `${width} / ${height}`);
+
+      frame.style.setProperty(
+        '--asset-aspect-ratio',
+        `${width} / ${height}`,
+      );
+
+      requestAnimationFrame(() => {
+        sizeAspectAsset(frame);
+      });
     };
 
     const type = frame.dataset.assetType;
 
     if (type === 'image') {
       const image = frame.querySelector('[data-layout-asset]');
+
       if (image instanceof HTMLImageElement) {
         if (image.naturalWidth && image.naturalHeight) {
           applyRatio(image.naturalWidth, image.naturalHeight);
@@ -444,11 +524,13 @@ const maxBottom = Math.max(
           }, { once: true });
         }
       }
+
       return;
     }
 
     if (type === 'video') {
       const video = frame.querySelector('[data-layout-asset]');
+
       if (video instanceof HTMLVideoElement) {
         if (video.videoWidth && video.videoHeight) {
           applyRatio(video.videoWidth, video.videoHeight);
@@ -458,35 +540,63 @@ const maxBottom = Math.max(
           }, { once: true });
         }
       } else {
-        const ratio = frame.querySelector('.cabilo-layout-video')?.getAttribute('data-layout-video-ratio');
-        if (ratio) frame.style.setProperty('--asset-aspect-ratio', ratio);
+        const ratio = frame
+          .querySelector('.cabilo-layout-video')
+          ?.getAttribute('data-layout-video-ratio');
+
+        if (ratio) {
+          frame.style.setProperty('--asset-aspect-ratio', ratio);
+          requestAnimationFrame(() => {
+            sizeAspectAsset(frame);
+          });
+        }
       }
+
       return;
     }
 
     if (type === 'aov' || type === 'turntable') {
-      const source = frame.querySelector('[data-layout-asset-src]')?.getAttribute('data-layout-asset-src');
+      const source = frame
+        .querySelector('[data-layout-asset-src]')
+        ?.getAttribute('data-layout-asset-src');
+
       if (!source) return;
 
       const image = new Image();
-      image.onload = () => applyRatio(image.naturalWidth, image.naturalHeight);
-      image.src = source;
-      return;
-    }
 
-    if (fallback) {
-      frame.style.setProperty('--asset-aspect-ratio', fallback);
+      image.onload = () => {
+        applyRatio(image.naturalWidth, image.naturalHeight);
+      };
+
+      image.src = source;
     }
   };
 
   layoutSections.forEach((section) => {
-    section.querySelectorAll('.cabilo-layout-frame[data-match-aspect="true"]').forEach((frame) => {
+    const aspectFrames = section.querySelectorAll(
+      '.cabilo-layout-frame[data-match-aspect="true"]',
+    );
+
+    aspectFrames.forEach((frame) => {
       loadLayoutAssetRatio(frame);
     });
+
+    const updateAspectSizes = () => {
+      if (window.matchMedia('(max-width: 767px)').matches) {
+        aspectFrames.forEach((frame) => {
+          sizeAspectAsset(frame);
+        });
+      } else {
+        aspectFrames.forEach((frame) => {
+          sizeAspectAsset(frame);
+        });
+      }
+    };
 
     const updateHeight = () => {
       if (window.matchMedia('(max-width: 767px)').matches) {
         section.style.height = '';
+        updateAspectSizes();
         return;
       }
 
@@ -501,11 +611,15 @@ const maxBottom = Math.max(
       });
 
       section.style.height = requiredHeight + 'px';
+      updateAspectSizes();
     };
 
     updateHeight();
 
-    const observer = new ResizeObserver(updateHeight);
+    const observer = new ResizeObserver(() => {
+      requestAnimationFrame(updateHeight);
+    });
+
     section.querySelectorAll('.cabilo-layout-frame').forEach((frame) => {
       observer.observe(frame);
     });
