@@ -72,3 +72,17 @@ layoutBlocks:
     videoUrl: https://www.youtube.com/watch?v=FjSAVJJ0w3I
     folder: ""
 ---
+
+  - id: layout-aov-test
+    type: aov
+    x: 4
+    y: 4
+    w: 6
+    h: 6
+    snap: grid
+    title: AOV Comparison
+    aovPasses:
+      - name: Viewport
+        image: https://cdna.artstation.com/p/assets/images/images/046/500/860/large/lucas-cabilo-xgen.jpg?1645267427
+      - name: Wireframe
+        image: https://cdnb.artstation.com/p/assets/images/images/031/216/037/large/lucas-cabilo-highresscreenshot00012.jpg?1602954475
