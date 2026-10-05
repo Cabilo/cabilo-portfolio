@@ -7,9 +7,13 @@
     <!-- We add ?v=999 to guarantee the browser downloads the fixed file! -->
     <link href="/admin/config.yml?v=999" type="text/yaml" rel="cms-config-url">
     <style>
-      body { margin: 0; background-color: #09090b; }
-      html { filter: invert(95%) hue-rotate(180deg); }
-      img, video, iframe, picture, [style*="background-image"] { filter: invert(100%) hue-rotate(180deg); }
+      html,
+      body,
+      #nc-root {
+        margin: 0;
+        min-height: 100%;
+        background: #050506;
+      }
     </style>
   </head>
   <body>
