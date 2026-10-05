@@ -20,5 +20,5 @@ layoutBlocks:
     content: ""
     image: ""
     videoUrl: ""
-    folder: turntables/test
+    folder: turntables\test
 ---
