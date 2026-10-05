@@ -21,6 +21,7 @@ layoutBlocks:
     image: ""
     videoUrl: ""
     folder: turntables\test
+    aovPasses: []
   - id: layout-muvf4b6r-l9qqz
     type: text
     x: 4
@@ -47,6 +48,7 @@ layoutBlocks:
     image: ""
     videoUrl: ""
     folder: ""
+    aovPasses: []
   - id: layout-muvf598p-o5fq3
     type: image
     x: 6
@@ -59,6 +61,7 @@ layoutBlocks:
     image: https://cdnb.artstation.com/p/media_assets/images/images/001/392/567/large/Wildcat%E2%80%99s_Gilded_Jade_1.jpg?1790720806
     videoUrl: ""
     folder: ""
+    aovPasses: []
   - id: layout-muvfal5z-czi2e
     type: video
     x: 0
@@ -71,6 +74,24 @@ layoutBlocks:
     image: ""
     videoUrl: https://www.youtube.com/watch?v=FjSAVJJ0w3I
     folder: ""
+    aovPasses: []
+  - id: layout-muvfzaop-s6ags
+    type: aov
+    x: 6
+    y: 4
+    w: 4
+    h: 6
+    snap: grid
+    title: Aov
+    content: ""
+    image: ""
+    videoUrl: ""
+    folder: ""
+    aovPasses:
+      - name: dasasfasf
+        image: https://cdna.artstation.com/p/media_assets/images/images/001/392/568/large/Wildcat%27s_Gilded_Jade_-_1_1.jpg?1790720808
+      - name: Passfasf
+        image: https://cdnb.artstation.com/p/media_assets/images/images/001/392/567/large/Wildcat’s_Gilded_Jade_1.jpg?1790720806
 ---
 
   - id: layout-aov-test
