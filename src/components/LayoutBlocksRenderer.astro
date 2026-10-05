@@ -341,19 +341,14 @@ const maxBottom = Math.max(
       padding: 0;
     }
 
+    /*
+     * Keep the asset frame as the full mobile block container too.
+     * The client-side aspect sizing code controls only the media child.
+     */
     .cabilo-layout-frame[data-match-aspect="true"] .cabilo-layout-asset-frame {
       width: 100%;
-      height: auto;
-      min-height: 0;
-      aspect-ratio: var(--asset-aspect-ratio, 1 / 1);
-    }
-
-    .cabilo-layout-frame[data-match-aspect="true"][data-match-height-to-width="false"] .cabilo-layout-asset-frame {
-      width: auto;
       height: 100%;
-      max-width: 100%;
       min-height: 0;
-      aspect-ratio: var(--asset-aspect-ratio, 1 / 1);
     }
 
     .cabilo-layout-frame-image,
