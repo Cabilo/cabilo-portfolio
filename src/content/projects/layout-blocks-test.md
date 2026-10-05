@@ -78,9 +78,9 @@ layoutBlocks:
   - id: layout-muvfzaop-s6ags
     type: aov
     x: 6
-    y: 4
+    y: 6
     w: 4
-    h: 6
+    h: 4
     snap: grid
     title: Aov
     content: ""
