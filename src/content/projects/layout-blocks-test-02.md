@@ -54,7 +54,7 @@ layoutBlocks:
     x: 0
     y: 5
     w: 7
-    h: 4
+    h: 3
     snap: free
     title: Wide Image
     matchAspectRatio: false
@@ -82,13 +82,13 @@ layoutBlocks:
   - id: layout-test-02-aov
     type: aov
     x: 2
-    y: 9
+    y: 8
     w: 6
-    h: 3
+    h: 5
     snap: free
     title: AOV Comparison
     matchAspectRatio: true
-    matchHeightToWidth: true
+    matchHeightToWidth: false
     content: ""
     image: ""
     videoUrl: ""
