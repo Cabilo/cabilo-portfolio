@@ -533,7 +533,7 @@
       this.updateBlocks(blocks);
     },
 
-    setAspectRatioEnabled: function (enabled) {
+    updateSelectedBlock: function (updater) {
       var blocks = this.getBlocks();
       var selectedId = this.state.selectedId;
       var index = blocks.findIndex(function (block) {
@@ -542,13 +542,23 @@
 
       if (index === -1) return;
 
-      blocks[index].matchAspectRatio = Boolean(enabled);
-
-      if (!enabled) {
-        blocks[index].matchHeightToWidth = true;
-      }
-
+      var nextBlock = updater(clone(blocks[index]));
+      blocks[index] = normalizeBlock(nextBlock);
       this.updateBlocks(blocks);
+    },
+
+    setAspectRatioEnabled: function (enabled) {
+      this.updateSelectedBlock(function (block) {
+        block.matchAspectRatio = Boolean(enabled);
+        return block;
+      });
+    },
+
+    toggleAspectDirection: function () {
+      this.updateSelectedBlock(function (block) {
+        block.matchHeightToWidth = !Boolean(block.matchHeightToWidth);
+        return block;
+      });
     },
 
     renderHandle: function (id, handle) {
@@ -695,7 +705,7 @@
             type: 'checkbox',
             checked: Boolean(selected.matchAspectRatio),
             onChange: function (event) {
-              this.setAspectRatioEnabled(event.target.checked);
+              this.setAspectRatioEnabled(event.currentTarget.checked);
             }.bind(this),
           })),
           this.renderField(
@@ -713,10 +723,7 @@
               onClick: function (event) {
                 event.preventDefault();
                 event.stopPropagation();
-                this.updateSelectedField(
-                  'matchHeightToWidth',
-                  !Boolean(selected.matchHeightToWidth),
-                );
+                this.toggleAspectDirection();
               }.bind(this),
             }, selected.matchHeightToWidth ? 'Width → Height' : 'Height → Width')
           ),
