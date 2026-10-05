@@ -34,15 +34,15 @@ const defaultB = passes.length > 1 ? passes[1] : passes[0];
 ---
 
 <dynamic-aov
-  class:list={['block w-full', !fitToViewport && 'h-full']}
+  class:list={['block w-full', !fitToViewport && 'h-full min-h-0']}
   data-fit-viewport={fitToViewport ? 'true' : 'false'}
 >
-  <div class:list={['flex flex-col gap-6', !fitToViewport && 'h-full']}>
+  <div class:list={['flex flex-col gap-6', !fitToViewport && 'h-full min-h-0']}>
 
     <div
       class:list={[
         'aov-container relative overflow-hidden max-w-full mx-auto bg-cabilo-obsidian',
-        !fitToViewport && 'h-full',
+        !fitToViewport && 'flex-1 min-h-0',
       ]}
       style="touch-action: pan-y;"
     >
@@ -120,7 +120,7 @@ const defaultB = passes.length > 1 ? passes[1] : passes[0];
     </div>
 
     <!-- AOV PASS SELECTORS -->
-    <div class="grid grid-cols-1 md:grid-cols-2 gap-8 bg-cabilo-dark p-6 rounded-md border border-cabilo-card">
+    <div class="flex-none grid grid-cols-1 md:grid-cols-2 gap-8 bg-cabilo-dark p-6 rounded-md border border-cabilo-card">
 
       <div>
         <h4 class="text-text-silver text-xs tracking-widest uppercase mb-3">
@@ -240,8 +240,8 @@ const defaultB = passes.length > 1 ? passes[1] : passes[0];
         if (!availableWidth) return;
 
         if (!fitViewport) {
-          const width = this.clientWidth;
-          const height = this.clientHeight;
+          const width = container.clientWidth;
+          const height = container.clientHeight;
 
           if (!width || !height) return;
 
