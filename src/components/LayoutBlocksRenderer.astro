@@ -577,16 +577,49 @@ const maxBottom = Math.max(
     });
 
     const updateAspectSizes = () => {
-      if (window.matchMedia('(max-width: 767px)').matches) {
-        aspectFrames.forEach((frame) => {
-          sizeAspectAsset(frame);
-        });
-      } else {
-        aspectFrames.forEach((frame) => {
-          sizeAspectAsset(frame);
-        });
-      }
+      aspectFrames.forEach((frame) => {
+        sizeAspectAsset(frame);
+      });
     };
+
+    /*
+     * The CMS controls change data attributes, not the frame's geometry.
+     * ResizeObserver therefore cannot see a direction toggle by itself.
+     * Watch the two aspect-control attributes explicitly so the renderer
+     * recalculates immediately when either control changes.
+     */
+    const aspectAttributeObserver = new MutationObserver((mutations) => {
+      mutations.forEach((mutation) => {
+        if (
+          mutation.type !== 'attributes' ||
+          !mutation.target ||
+          !(mutation.target instanceof HTMLElement)
+        ) {
+          return;
+        }
+
+        const frame = mutation.target;
+
+        if (frame.dataset.matchAspect === 'true') {
+          loadLayoutAssetRatio(frame);
+        } else {
+          const assetFrame = frame.querySelector('.cabilo-layout-asset-frame');
+          const asset = assetFrame?.firstElementChild;
+
+          if (asset instanceof HTMLElement) {
+            asset.style.width = '';
+            asset.style.height = '';
+          }
+        }
+      });
+    });
+
+    aspectFrames.forEach((frame) => {
+      aspectAttributeObserver.observe(frame, {
+        attributes: true,
+        attributeFilter: ['data-match-aspect', 'data-match-height-to-width'],
+      });
+    });
 
     const updateHeight = () => {
       if (window.matchMedia('(max-width: 767px)').matches) {
