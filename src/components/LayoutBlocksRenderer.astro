@@ -29,7 +29,7 @@ const getTurntableFrames = (folder: string) => {
     .filter(file => /\.(jpg|jpeg|png|webp)$/i.test(file))
     .sort((a, b) => a.localeCompare(b, undefined, { numeric: true }));
 
-  return files.map(file => \`/${normalizedFolder}/${file}\`.replace('/${normalizedFolder}/', \`/\${normalizedFolder}/\`));
+  return files.map(file => `/${normalizedFolder}/${file}`);
 };
 
 const normalizedBlocks = blocks.map((block) => ({
@@ -49,16 +49,16 @@ const maxBottom = Math.max(
 {normalizedBlocks.length > 0 && (
   <section
     class="cabilo-layout-blocks"
-    style={\`--cabilo-layout-rows: ${Math.ceil(maxBottom / 2)};\`}
+    style={`--cabilo-layout-rows: ${Math.ceil(maxBottom / 2)};`}
     aria-label="Layout content"
   >
     {normalizedBlocks.map((block) => {
-      const frameStyle = \`
+      const frameStyle = `
         --layout-x: ${block.x};
         --layout-y: ${block.y};
         --layout-w: ${block.w};
         --layout-h: ${block.h};
-      \`;
+      `;
 
       const renderContent = () => {
         if (block.type === 'text') {
@@ -166,7 +166,7 @@ const maxBottom = Math.max(
         <article
           class:list={[
             'cabilo-layout-frame',
-            \`cabilo-layout-frame-${block.type}\`,
+            `cabilo-layout-frame-${block.type}`,
           ]}
           style={frameStyle}
         >
