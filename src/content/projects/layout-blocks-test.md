@@ -1,11 +1,16 @@
 ---
 title: Layout Blocks Test
-category: Experimental
+category: 3D Modeler & Lookdev
+publishDate: 2026-10-05T18:08:00.000-03:00
 thumbnail: https://cdnb.artstation.com/p/assets/images/images/031/216/037/large/lucas-cabilo-highresscreenshot00012.jpg?1602954475
-role: Layout System Test
-client: CABILO
+thumbnailCrop:
+  zoom: 1.252044897590908
+  positionX: 24.762566134853145
+  positionY: 50
+role: Lead 3D Artist
+client: Lighting
 tags:
-  - Layout
+  - Lookdev
 softwareUsed:
   - Maya
 layoutBlocks:
