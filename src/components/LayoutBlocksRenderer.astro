@@ -13,8 +13,15 @@ export interface Props {
 
 const { blocks } = Astro.props;
 
+const normalizeFolder = (folder: string) =>
+  folder
+    .replace(/\\/g, '/')
+    .replace(/^\/+/, '')
+    .replace(/^public\//i, '');
+
 const getTurntableFrames = (folder: string) => {
-  const folderPath = path.join(process.cwd(), 'public', folder);
+  const normalizedFolder = normalizeFolder(folder);
+  const folderPath = path.join(process.cwd(), 'public', normalizedFolder);
 
   if (!fs.existsSync(folderPath)) return [];
 
@@ -22,7 +29,7 @@ const getTurntableFrames = (folder: string) => {
     .filter(file => /\.(jpg|jpeg|png|webp)$/i.test(file))
     .sort((a, b) => a.localeCompare(b, undefined, { numeric: true }));
 
-  return files.map(file => `/${folder}/${file}`);
+  return files.map(file => \`/${normalizedFolder}/${file}\`.replace('/${normalizedFolder}/', \`/\${normalizedFolder}/\`));
 };
 
 const normalizedBlocks = blocks.map((block) => ({
@@ -42,16 +49,16 @@ const maxBottom = Math.max(
 {normalizedBlocks.length > 0 && (
   <section
     class="cabilo-layout-blocks"
-    style={`--cabilo-layout-rows: ${Math.ceil(maxBottom / 2)};`}
+    style={\`--cabilo-layout-rows: ${Math.ceil(maxBottom / 2)};\`}
     aria-label="Layout content"
   >
     {normalizedBlocks.map((block) => {
-      const frameStyle = `
+      const frameStyle = \`
         --layout-x: ${block.x};
         --layout-y: ${block.y};
         --layout-w: ${block.w};
         --layout-h: ${block.h};
-      `;
+      \`;
 
       const renderContent = () => {
         if (block.type === 'text') {
@@ -159,7 +166,7 @@ const maxBottom = Math.max(
         <article
           class:list={[
             'cabilo-layout-frame',
-            `cabilo-layout-frame-${block.type}`,
+            \`cabilo-layout-frame-${block.type}\`,
           ]}
           style={frameStyle}
         >
@@ -237,11 +244,33 @@ const maxBottom = Math.max(
     height: 100%;
   }
 
-  .cabilo-layout-placeholder,
   .cabilo-layout-turntable {
+    display: flex;
+    align-items: stretch;
+    justify-content: center;
+    padding: 0;
+    box-sizing: border-box;
+  }
+
+  .cabilo-layout-turntable :global(turntable-scrubber) {
+    height: 100%;
+    min-height: 0;
+    min-width: 0;
+  }
+
+  .cabilo-layout-turntable :global(#tt-container) {
+    flex: 1 1 auto;
+    min-height: 0;
+    height: auto !important;
+  }
+
+  .cabilo-layout-placeholder {
     display: flex;
     align-items: center;
     justify-content: center;
+    width: 100%;
+    height: 100%;
+    min-height: 0;
     padding: 1.5rem;
     box-sizing: border-box;
   }
@@ -252,14 +281,18 @@ const maxBottom = Math.max(
       flex-direction: column;
       gap: 1rem;
       min-height: 0;
+      height: auto;
     }
 
     .cabilo-layout-frame {
       position: relative;
       inset: auto;
+      left: auto;
+      top: auto;
       width: 100%;
       height: auto;
-      min-height: 240px;
+      min-height: 0;
+      flex: 0 0 auto;
       padding: 0;
     }
 
@@ -272,6 +305,7 @@ const maxBottom = Math.max(
 
     .cabilo-layout-frame-text {
       min-height: clamp(240px, calc(var(--layout-h) * 18vw), 520px);
+      height: auto;
     }
 
     .cabilo-layout-frame-aov {
@@ -285,10 +319,12 @@ const maxBottom = Math.max(
 
     .cabilo-layout-frame-aov .cabilo-layout-aov :global(dynamic-aov) {
       height: auto !important;
+      min-height: 0 !important;
     }
 
     .cabilo-layout-frame-aov .cabilo-layout-aov :global(dynamic-aov > div) {
       height: auto !important;
+      min-height: 0 !important;
     }
 
     .cabilo-layout-frame-aov .cabilo-layout-aov :global(.aov-container) {
@@ -300,7 +336,25 @@ const maxBottom = Math.max(
 
     .cabilo-layout-text {
       height: auto;
+      min-height: inherit;
       overflow: visible;
+    }
+
+    .cabilo-layout-media,
+    .cabilo-layout-video,
+    .cabilo-layout-turntable {
+      height: 100%;
+      min-height: 0;
+    }
+
+    .cabilo-layout-turntable :global(turntable-scrubber) {
+      height: 100%;
+      min-height: 0;
+    }
+
+    .cabilo-layout-turntable :global(#tt-container) {
+      min-height: 0;
+      height: auto !important;
     }
   }
 </style>
@@ -338,4 +392,3 @@ const maxBottom = Math.max(
     window.addEventListener('resize', updateHeight);
   });
 </script>
-
