@@ -59,4 +59,16 @@ layoutBlocks:
     image: https://cdnb.artstation.com/p/media_assets/images/images/001/392/567/large/Wildcat%E2%80%99s_Gilded_Jade_1.jpg?1790720806
     videoUrl: ""
     folder: ""
+  - id: layout-muvfal5z-czi2e
+    type: video
+    x: 0
+    y: 4
+    w: 4
+    h: 4
+    snap: grid
+    title: Video
+    content: ""
+    image: ""
+    videoUrl: https://www.youtube.com/watch?v=FjSAVJJ0w3I
+    folder: ""
 ---
