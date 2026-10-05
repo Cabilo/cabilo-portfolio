@@ -97,7 +97,7 @@ layoutBlocks:
   - id: layout-aov-test
     type: aov
     x: 0
-    y: 10
+    y: 19
     w: 10
     h: 6
     snap: grid
@@ -107,3 +107,14 @@ layoutBlocks:
         image: https://cdna.artstation.com/p/assets/images/images/046/500/860/large/lucas-cabilo-xgen.jpg?1645267427
       - name: Wireframe
         image: https://cdnb.artstation.com/p/assets/images/images/031/216/037/large/lucas-cabilo-highresscreenshot00012.jpg?1602954475
+
+
+  - id: layout-turntable-test
+    type: turntable
+    x: 0
+    y: 25
+    w: 10
+    h: 6
+    snap: grid
+    title: Turntable Test
+    folder: turntables/test
