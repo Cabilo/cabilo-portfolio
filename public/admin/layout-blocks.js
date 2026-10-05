@@ -391,9 +391,7 @@
       var block = this.getBlocks().find(function (item) { return item.id === id; });
       this.setState({ selectedId: id });
 
-      if (block && block.matchAspectRatio) {
-        this.loadAspectRatio(block);
-      }
+
     },
 
     getAspectRatio: function (block) {
@@ -599,51 +597,6 @@
           current.h = clamp(original.h + sy, step, MAX_ROWS * 2 - original.y);
         }
 
-        if (original.matchAspectRatio && interaction.aspectRatio) {
-          var ratio = interaction.aspectRatio;
-          var horizontalResize = handle.indexOf('w') !== -1 || handle.indexOf('e') !== -1;
-          var verticalResize = handle.indexOf('n') !== -1 || handle.indexOf('s') !== -1;
-
-          if (horizontalResize && !verticalResize) {
-            current.h = clamp(
-              snap(current.w / ratio, step),
-              step,
-              MAX_ROWS * 2 - original.y
-            );
-          } else if (verticalResize && !horizontalResize) {
-            current.w = clamp(
-              snap(current.h * ratio, step),
-              step,
-              HALF_COLUMNS - original.x
-            );
-          } else if (horizontalResize && verticalResize) {
-            var widthDrivenHeight = snap(current.w / ratio, step);
-            var heightDrivenWidth = snap(current.h * ratio, step);
-            var widthDelta = Math.abs(current.w - original.w);
-            var heightDelta = Math.abs(current.h - original.h);
-
-            if (widthDelta >= heightDelta * ratio) {
-              current.h = clamp(widthDrivenHeight, step, MAX_ROWS * 2 - original.y);
-            } else {
-              current.w = clamp(heightDrivenWidth, step, HALF_COLUMNS - original.x);
-            }
-          }
-
-          if (handle.indexOf('w') !== -1) {
-            current.x = clamp(
-              original.x + original.w - current.w,
-              0,
-              HALF_COLUMNS - current.w
-            );
-          }
-
-          if (handle.indexOf('n') !== -1) {
-            current.y = clamp(
-              original.y + original.h - current.h,
-              0,
-              MAX_ROWS * 2 - current.h
-            );
-          }
         }
       }
 
@@ -729,10 +682,6 @@
         block.w = clamp(halfUnits, step, HALF_COLUMNS - block.x);
       } else {
         block.h = clamp(halfUnits, step, MAX_ROWS * 2 - block.y);
-      }
-
-      if (block.matchAspectRatio) {
-        block = this.applyAspectRatio(block, this.getAspectRatio(block));
       }
 
       blocks[index] = block;
@@ -888,12 +837,15 @@
           })),
           this.renderField(
             selected.matchHeightToWidth ? 'Match height to width' : 'Match width to height',
-            h('button', {
-              type: 'button',
-              className: 'cabilo-layout-button',
+            h('input', {
+              type: 'checkbox',
+              checked: selected.matchHeightToWidth,
               disabled: !selected.matchAspectRatio,
-              onClick: this.setAspectRatioDirection,
-            }, selected.matchHeightToWidth ? 'Width → Height' : 'Height → Width')
+              onChange: function (event) {
+                event.stopPropagation();
+                this.updateSelectedField('matchHeightToWidth', event.target.checked);
+              }.bind(this),
+            })
           ),
           this.renderField('Snap mode', h('select', {
             value: selected.snap,
@@ -932,7 +884,7 @@
             max: HALF_COLUMNS / 2,
             step: selected.snap === 'free' ? 0.5 : 1,
             onChange: function (event) {
-              this.updateSelectedDimension('w', event.target.value);
+              this.updateSelectedField('w', Number(event.target.value) * 2);
             }.bind(this),
           })),
           this.renderField('Height', h('input', {
@@ -941,7 +893,7 @@
             min: 0.5,
             step: selected.snap === 'free' ? 0.5 : 1,
             onChange: function (event) {
-              this.updateSelectedDimension('h', event.target.value);
+              this.updateSelectedField('h', Number(event.target.value) * 2);
             }.bind(this),
           }))
         ),
