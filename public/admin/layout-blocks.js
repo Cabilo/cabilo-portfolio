@@ -79,14 +79,13 @@
     .cabilo-layout-grid {
       position: relative;
       width: 100%;
-      height: 0;
-      padding-bottom: calc(var(--layout-visible-rows) * 10%);
+      aspect-ratio: 5 / var(--layout-visible-rows);
       background-color: #07070a;
       background-image:
         repeating-linear-gradient(to right, rgba(212,212,216,.20) 0 1px, transparent 1px 10%),
-        repeating-linear-gradient(to bottom, rgba(212,212,216,.20) 0 1px, transparent 1px 10%),
+        repeating-linear-gradient(to bottom, rgba(212,212,216,.20) 0 1px, transparent 1px calc(100% / (2 * var(--layout-visible-rows)))),
         repeating-linear-gradient(to right, rgba(244,244,245,.58) 0 2px, transparent 2px 20%),
-        repeating-linear-gradient(to bottom, rgba(244,244,245,.58) 0 2px, transparent 2px 20%);
+        repeating-linear-gradient(to bottom, rgba(244,244,245,.58) 0 2px, transparent 2px calc(100% / var(--layout-visible-rows)));
     }
 
     .cabilo-layout-block {
@@ -469,9 +468,9 @@
       var selected = block.id === this.state.selectedId;
       var style = {
         left: (block.x * 10) + '%',
-        top: (block.y * 10) + '%',
+        top: (block.y / (2 * this.getVisibleRows()) * 100) + '%',
         width: (block.w * 10) + '%',
-        height: (block.h * 10) + '%',
+        height: (block.h / (2 * this.getVisibleRows()) * 100) + '%',
       };
 
       var label = block.title || block.type;
