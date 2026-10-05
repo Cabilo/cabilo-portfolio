@@ -711,6 +711,34 @@
       this.updateBlocks(blocks);
     },
 
+    updateSelectedDimension: function (field, value) {
+      var blocks = this.getBlocks();
+      var selectedId = this.state.selectedId;
+      var index = blocks.findIndex(function (block) {
+        return block.id === selectedId;
+      });
+
+      if (index === -1) return;
+
+      var block = blocks[index];
+      var step = block.snap === 'free' ? 1 : 2;
+      var units = Math.max(0.5, Number(value) || 0.5);
+      var halfUnits = Math.max(step, snap(units * 2, step));
+
+      if (field === 'w') {
+        block.w = clamp(halfUnits, step, HALF_COLUMNS - block.x);
+      } else {
+        block.h = clamp(halfUnits, step, MAX_ROWS * 2 - block.y);
+      }
+
+      if (block.matchAspectRatio) {
+        block = this.applyAspectRatio(block, this.getAspectRatio(block));
+      }
+
+      blocks[index] = block;
+      this.updateBlocks(blocks);
+    },
+
     renderHandle: function (id, handle) {
       return h('span', {
         key: handle,
@@ -904,7 +932,7 @@
             max: HALF_COLUMNS / 2,
             step: selected.snap === 'free' ? 0.5 : 1,
             onChange: function (event) {
-              this.updateSelectedField('w', Number(event.target.value) * 2);
+              this.updateSelectedDimension('w', event.target.value);
             }.bind(this),
           })),
           this.renderField('Height', h('input', {
@@ -913,7 +941,7 @@
             min: 0.5,
             step: selected.snap === 'free' ? 0.5 : 1,
             onChange: function (event) {
-              this.updateSelectedField('h', Number(event.target.value) * 2);
+              this.updateSelectedDimension('h', event.target.value);
             }.bind(this),
           }))
         ),
