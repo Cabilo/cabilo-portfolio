@@ -200,6 +200,30 @@
       color: #fecaca;
     }
 
+    .cabilo-layout-aov-editor {
+      margin-top: 10px;
+    }
+
+    .cabilo-layout-aov-pass {
+      display: grid;
+      grid-template-columns: minmax(100px, .5fr) minmax(180px, 1fr) auto;
+      gap: 8px;
+      align-items: center;
+      margin-bottom: 8px;
+    }
+
+    .cabilo-layout-aov-pass input {
+      width: 100%;
+      box-sizing: border-box;
+      border: 1px solid #3f3f46;
+      border-radius: 4px;
+      background: #09090b;
+      color: #f4f4f5;
+      padding: 7px 8px;
+      font: inherit;
+      font-size: 12px;
+    }
+
     .cabilo-layout-status {
       color: #a1a1aa;
       font-size: 11px;
@@ -216,6 +240,13 @@
 
   function clone(value) {
     return JSON.parse(JSON.stringify(value || []));
+  }
+
+  function toPlainValue(value) {
+    if (Array.isArray(value)) return clone(value);
+    if (value && typeof value.toJS === 'function') return clone(value.toJS());
+    if (value && typeof value.toArray === 'function') return clone(value.toArray());
+    return [];
   }
 
   function uid() {
@@ -245,6 +276,7 @@
       image: block.image || '',
       videoUrl: block.videoUrl || '',
       folder: block.folder || '',
+      aovPasses: Array.isArray(block.aovPasses) ? clone(block.aovPasses) : [],
     };
 
     defaults.x = clamp(defaults.x, 0, HALF_COLUMNS - 1);
@@ -278,7 +310,7 @@
     },
 
     getBlocks: function () {
-      return (Array.isArray(this.props.value) ? this.props.value : []).map(normalizeBlock);
+      return toPlainValue(this.props.value).map(normalizeBlock);
     },
 
     updateBlocks: function (blocks) {
@@ -441,6 +473,47 @@
       }
     },
 
+    addAovPass: function () {
+      var blocks = this.getBlocks();
+      var selectedId = this.state.selectedId;
+      var index = blocks.findIndex(function (block) { return block.id === selectedId; });
+
+      if (index === -1) return;
+
+      blocks[index].aovPasses = (blocks[index].aovPasses || []).concat([{
+        name: 'Pass',
+        image: '',
+      }]);
+      this.updateBlocks(blocks);
+    },
+
+    updateAovPass: function (passIndex, field, value) {
+      var blocks = this.getBlocks();
+      var selectedId = this.state.selectedId;
+      var index = blocks.findIndex(function (block) { return block.id === selectedId; });
+
+      if (index === -1) return;
+
+      var passes = clone(blocks[index].aovPasses || []);
+      if (!passes[passIndex]) return;
+      passes[passIndex][field] = value;
+      blocks[index].aovPasses = passes;
+      this.updateBlocks(blocks);
+    },
+
+    removeAovPass: function (passIndex) {
+      var blocks = this.getBlocks();
+      var selectedId = this.state.selectedId;
+      var index = blocks.findIndex(function (block) { return block.id === selectedId; });
+
+      if (index === -1) return;
+
+      blocks[index].aovPasses = (blocks[index].aovPasses || []).filter(function (_, i) {
+        return i !== passIndex;
+      });
+      this.updateBlocks(blocks);
+    },
+
     updateSelectedField: function (field, value) {
       var blocks = this.getBlocks();
       var selectedId = this.state.selectedId;
@@ -543,6 +616,43 @@
         contentControl = this.renderField('Video URL', input('videoUrl', 'YouTube, Vimeo, or MP4 URL'));
       } else if (selected.type === 'turntable') {
         contentControl = this.renderField('Turntable folder', input('folder', 'turntables/example'));
+      } else if (selected.type === 'aov') {
+        var passes = selected.aovPasses || [];
+        contentControl = h('div', { className: 'cabilo-layout-aov-editor' },
+          this.renderField('AOV Passes', h('div', null,
+            passes.map(function (pass, index) {
+              return h('div', {
+                key: index,
+                className: 'cabilo-layout-aov-pass',
+              },
+                h('input', {
+                  value: pass.name || '',
+                  placeholder: 'Pass name',
+                  onChange: function (event) {
+                    this.updateAovPass(index, 'name', event.target.value);
+                  }.bind(this),
+                }),
+                h('input', {
+                  value: pass.image || '',
+                  placeholder: 'Image URL / path',
+                  onChange: function (event) {
+                    this.updateAovPass(index, 'image', event.target.value);
+                  }.bind(this),
+                }),
+                h('button', {
+                  type: 'button',
+                  className: 'cabilo-layout-button cabilo-layout-danger',
+                  onClick: function () { this.removeAovPass(index); }.bind(this),
+                }, 'Remove')
+              );
+            }.bind(this)),
+            h('button', {
+              type: 'button',
+              className: 'cabilo-layout-button',
+              onClick: this.addAovPass,
+            }, '+ Add AOV Pass')
+          ))
+        );
       }
 
       return h('div', { className: 'cabilo-layout-inspector' },
@@ -553,7 +663,7 @@
               this.updateSelectedField('type', event.target.value);
             }.bind(this),
           },
-            ['image', 'text', 'video', 'turntable'].map(function (type) {
+            ['image', 'text', 'video', 'turntable', 'aov'].map(function (type) {
               return h('option', { key: type, value: type }, type);
             })
           )),
@@ -650,7 +760,12 @@
             type: 'button',
             className: 'cabilo-layout-button',
             onClick: function () { this.addBlock('turntable'); }.bind(this),
-          }, '+ Turntable')
+          }, '+ Turntable'),
+          h('button', {
+            type: 'button',
+            className: 'cabilo-layout-button',
+            onClick: function () { this.addBlock('aov'); }.bind(this),
+          }, '+ AOV')
         ),
         h('p', { className: 'cabilo-layout-help' },
           'Drag blocks to move them. Drag any edge or corner to resize. ',
