@@ -240,12 +240,18 @@ const defaultB = passes.length > 1 ? passes[1] : passes[0];
         if (!availableWidth) return;
 
         if (!fitViewport) {
-          container.style.width = '';
-          container.style.height = '';
-          imgA.style.width = '';
-          imgA.style.height = '';
-          imgB.style.width = '';
-          imgB.style.height = '';
+          const width = this.clientWidth;
+          const height = this.clientHeight;
+
+          if (!width || !height) return;
+
+          container.style.width = '100%';
+          container.style.height = '100%';
+
+          imgA.style.width = `${width}px`;
+          imgA.style.height = `${height}px`;
+          imgB.style.width = `${width}px`;
+          imgB.style.height = `${height}px`;
 
           requestAnimationFrame(() => {
             applySliderPosition();
