@@ -151,6 +151,16 @@ collections:
         display_fields:
           - "values.*.name"
 
+      # Experimental Layout Blocks system.
+      # This is intentionally separate from Media Blocks while the new
+      # matrix-based layout editor is being tested.
+      - label: "Layout Blocks (Experimental)"
+        name: "layoutBlocks"
+        widget: "layoutBlocks"
+        required: false
+        default: []
+        hint: "Experimental ∞ × 5 layout matrix. Drag and resize blocks; Constrained snaps to full grid units, Free snaps to half-grid units."
+
       - label: "Media Blocks"
         name: "mediaBlocks"
         widget: "list"
