@@ -172,10 +172,10 @@ const getAlignmentClasses = (
 
         <div
           class:list={[
-            'rounded-md overflow-hidden shadow-2xl border border-cabilo-card relative aspect-video',
+            'rounded-md overflow-hidden shadow-2xl border border-cabilo-card relative',
             block.fitToViewport
-              ? 'w-[min(92vw,133.3333vh)] mx-auto'
-              : 'w-full',
+              ? 'cabilo-video-fit'
+              : 'w-full aspect-video',
           ]}
         >
           {video.type === 'youtube' || video.type === 'vimeo' ? (
