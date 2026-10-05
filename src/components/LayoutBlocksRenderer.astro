@@ -58,6 +58,7 @@ const maxBottom = Math.max(
         --layout-y: ${block.y};
         --layout-w: ${block.w};
         --layout-h: ${block.h};
+        --layout-aspect-ratio: ${block.w} / ${block.h};
       `;
 
       const renderContent = () => {
@@ -84,6 +85,7 @@ const maxBottom = Math.max(
                 alt={block.title || 'Project media'}
                 loading="lazy"
                 draggable="false"
+                data-layout-asset
               />
             </div>
           );
@@ -101,7 +103,10 @@ const maxBottom = Math.max(
           }
 
           return (
-            <div class="cabilo-layout-video">
+            <div
+              class="cabilo-layout-video"
+              data-layout-video-ratio={video.type === 'youtube' || video.type === 'vimeo' ? '16 / 9' : ''}
+            >
               {video.type === 'youtube' || video.type === 'vimeo' ? (
                 <iframe
                   src={video.src}
@@ -116,6 +121,7 @@ const maxBottom = Math.max(
                   controls
                   preload="metadata"
                   playsinline
+                  data-layout-asset
                 ></video>
               )}
             </div>
@@ -132,7 +138,10 @@ const maxBottom = Math.max(
           }
 
           return (
-            <div class="cabilo-layout-aov">
+            <div
+              class="cabilo-layout-aov"
+              data-layout-asset-src={block.aovPasses[0]?.image || ''}
+            >
               <DynamicAov
                 passes={block.aovPasses}
                 fitToViewport={false}
@@ -153,7 +162,10 @@ const maxBottom = Math.max(
           }
 
           return (
-            <div class="cabilo-layout-turntable">
+            <div
+              class="cabilo-layout-turntable"
+              data-layout-asset-src={frames[0] || ''}
+            >
               <TurntableScrubber frames={frames} fitToViewport={false} />
             </div>
           );
@@ -168,6 +180,9 @@ const maxBottom = Math.max(
             'cabilo-layout-frame',
             `cabilo-layout-frame-${block.type}`,
           ]}
+          data-match-aspect={block.matchAspectRatio ? 'true' : 'false'}
+          data-match-height-to-width={block.matchHeightToWidth ? 'true' : 'false'}
+          data-asset-type={block.type}
           style={frameStyle}
         >
           {renderContent()}
@@ -195,6 +210,16 @@ const maxBottom = Math.max(
     height: calc(var(--layout-h) / 2 * var(--cabilo-layout-row-height));
     padding: clamp(8px, 1vw, 16px);
     overflow: visible;
+  }
+
+  .cabilo-layout-frame[data-match-aspect="true"][data-match-height-to-width="true"] {
+    height: auto;
+    aspect-ratio: var(--layout-aspect-ratio);
+  }
+
+  .cabilo-layout-frame[data-match-aspect="true"][data-match-height-to-width="false"] {
+    width: auto;
+    aspect-ratio: var(--layout-aspect-ratio);
   }
 
   .cabilo-layout-media,
@@ -296,6 +321,13 @@ const maxBottom = Math.max(
       padding: 0;
     }
 
+    .cabilo-layout-frame[data-match-aspect="true"] {
+      width: 100%;
+      height: auto;
+      min-height: 0;
+      aspect-ratio: var(--layout-aspect-ratio);
+    }
+
     .cabilo-layout-frame-image,
     .cabilo-layout-frame-video,
     .cabilo-layout-frame-turntable {
@@ -362,7 +394,68 @@ const maxBottom = Math.max(
 <script>
   const layoutSections = document.querySelectorAll('.cabilo-layout-blocks');
 
+  const loadLayoutAssetRatio = (frame) => {
+    if (frame.dataset.matchAspect !== 'true') return;
+
+    const fallback = frame.style.getPropertyValue('--layout-aspect-ratio').trim();
+    const applyRatio = (width, height) => {
+      if (!width || !height) return;
+      frame.style.setProperty('--layout-aspect-ratio', `${width} / ${height}`);
+    };
+
+    const type = frame.dataset.assetType;
+
+    if (type === 'image') {
+      const image = frame.querySelector('[data-layout-asset]');
+      if (image instanceof HTMLImageElement) {
+        if (image.naturalWidth && image.naturalHeight) {
+          applyRatio(image.naturalWidth, image.naturalHeight);
+        } else {
+          image.addEventListener('load', () => {
+            applyRatio(image.naturalWidth, image.naturalHeight);
+          }, { once: true });
+        }
+      }
+      return;
+    }
+
+    if (type === 'video') {
+      const video = frame.querySelector('[data-layout-asset]');
+      if (video instanceof HTMLVideoElement) {
+        if (video.videoWidth && video.videoHeight) {
+          applyRatio(video.videoWidth, video.videoHeight);
+        } else {
+          video.addEventListener('loadedmetadata', () => {
+            applyRatio(video.videoWidth, video.videoHeight);
+          }, { once: true });
+        }
+      } else {
+        const ratio = frame.querySelector('.cabilo-layout-video')?.getAttribute('data-layout-video-ratio');
+        if (ratio) frame.style.setProperty('--layout-aspect-ratio', ratio);
+      }
+      return;
+    }
+
+    if (type === 'aov' || type === 'turntable') {
+      const source = frame.querySelector('[data-layout-asset-src]')?.getAttribute('data-layout-asset-src');
+      if (!source) return;
+
+      const image = new Image();
+      image.onload = () => applyRatio(image.naturalWidth, image.naturalHeight);
+      image.src = source;
+      return;
+    }
+
+    if (fallback) {
+      frame.style.setProperty('--layout-aspect-ratio', fallback);
+    }
+  };
+
   layoutSections.forEach((section) => {
+    section.querySelectorAll('.cabilo-layout-frame[data-match-aspect="true"]').forEach((frame) => {
+      loadLayoutAssetRatio(frame);
+    });
+
     const updateHeight = () => {
       if (window.matchMedia('(max-width: 767px)').matches) {
         section.style.height = '';
