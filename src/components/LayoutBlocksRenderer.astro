@@ -18,10 +18,11 @@ const getTurntableFrames = (folder: string) => {
 
   if (!fs.existsSync(folderPath)) return [];
 
-  return fs.readdirSync(folderPath)
-    .filter((file) => /\.(jpg|jpeg|png|webp)$/i.test(file))
-    .sort((a, b) => a.localeCompare(b, undefined, { numeric: true }))
-    .map((file) => `/${folder}/${file}`);
+  const files = fs.readdirSync(folderPath)
+    .filter(file => /\.(jpg|jpeg|png|webp)$/i.test(file))
+    .sort((a, b) => a.localeCompare(b, undefined, { numeric: true }));
+
+  return files.map(file => `/${folder}/${file}`);
 };
 
 const normalizedBlocks = blocks.map((block) => ({
@@ -156,7 +157,10 @@ const maxBottom = Math.max(
 
       return (
         <article
-          class="cabilo-layout-frame"
+          class:list={[
+            'cabilo-layout-frame',
+            `cabilo-layout-frame-${block.type}`,
+          ]}
           style={frameStyle}
         >
           {renderContent()}
@@ -257,6 +261,41 @@ const maxBottom = Math.max(
       height: auto;
       min-height: 240px;
       padding: 0;
+    }
+
+    .cabilo-layout-frame-image,
+    .cabilo-layout-frame-video,
+    .cabilo-layout-frame-turntable {
+      height: clamp(240px, calc(var(--layout-h) * 18vw), 520px);
+      min-height: 240px;
+    }
+
+    .cabilo-layout-frame-text {
+      min-height: clamp(240px, calc(var(--layout-h) * 18vw), 520px);
+    }
+
+    .cabilo-layout-frame-aov {
+      min-height: 0;
+      height: auto;
+    }
+
+    .cabilo-layout-frame-aov .cabilo-layout-aov {
+      height: auto;
+    }
+
+    .cabilo-layout-frame-aov .cabilo-layout-aov :global(dynamic-aov) {
+      height: auto !important;
+    }
+
+    .cabilo-layout-frame-aov .cabilo-layout-aov :global(dynamic-aov > div) {
+      height: auto !important;
+    }
+
+    .cabilo-layout-frame-aov .cabilo-layout-aov :global(.aov-container) {
+      flex: none;
+      width: 100%;
+      height: auto;
+      aspect-ratio: 16 / 9;
     }
 
     .cabilo-layout-text {
