@@ -2,6 +2,7 @@
 import { getCollection, render } from 'astro:content';
 import Layout from '../../layouts/Layout.astro';
 import MediaBlocksRenderer from '../../components/MediaBlocksRenderer.astro';
+import LayoutBlocksRenderer from '../../components/LayoutBlocksRenderer.astro';
 import { getVideoEmbed } from '../../lib/video';
 import { slugifyTaxonomyValue } from '../../lib/taxonomy';
 
@@ -16,6 +17,7 @@ export async function getStaticPaths() {
 const { project } = Astro.props;
 const { Content } = await render(project);
 const mediaBlocks = project.data.mediaBlocks ?? [];
+const layoutBlocks = project.data.layoutBlocks ?? [];
 const showreel = getVideoEmbed(project.data.showreelUrl);
 
 ---
@@ -94,6 +96,12 @@ const showreel = getVideoEmbed(project.data.showreelUrl);
     <div class="cabilo-media">
       <MediaBlocksRenderer blocks={mediaBlocks} />
     </div>
+
+    {layoutBlocks.length > 0 && (
+      <div class="cabilo-media mb-16">
+        <LayoutBlocksRenderer blocks={layoutBlocks} />
+      </div>
+    )}
 
     <div class="cabilo-reading grid grid-cols-1 md:grid-cols-4 gap-12 border-t border-cabilo-card pt-12">
       <div class="md:col-span-3 prose prose-invert prose-p:text-text-silver prose-headings:text-text-white prose-a:text-brand-amber max-w-none">
