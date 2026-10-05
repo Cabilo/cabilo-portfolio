@@ -21,14 +21,13 @@
   var HALF_COLUMNS = 10;
   var MAX_ROWS = 50;
   var INITIAL_ROWS = 5;
-  var CELL_SIZE = 64;
 
   var styles = `
     .cabilo-layout-widget {
       font-family: inherit;
       color: #f4f4f5;
-      background: #09090b;
-      border: 1px solid #27272a;
+      background: #050506;
+      border: 1px solid #3f3f46;
       border-radius: 6px;
       padding: 14px;
     }
@@ -70,24 +69,24 @@
     }
 
     .cabilo-layout-grid-wrap {
-      overflow-x: auto;
-      border: 1px solid #3f3f46;
+      overflow: hidden;
+      border: 1px solid #52525b;
       border-radius: 6px;
-      background: #050506;
+      background: #020204;
+      padding: 0;
     }
 
     .cabilo-layout-grid {
-      --layout-cell: 64px;
       position: relative;
-      width: 640px;
-      min-width: 640px;
-      height: calc(var(--layout-visible-rows) * var(--layout-cell));
-      background-color: #050506;
+      width: 100%;
+      height: 0;
+      padding-bottom: calc(var(--layout-visible-rows) * 10%);
+      background-color: #07070a;
       background-image:
-        repeating-linear-gradient(to right, rgba(161,161,170,.08) 0 1px, transparent 1px 32px),
-        repeating-linear-gradient(to bottom, rgba(161,161,170,.08) 0 1px, transparent 1px 32px),
-        repeating-linear-gradient(to right, rgba(244,244,245,.30) 0 2px, transparent 2px 64px),
-        repeating-linear-gradient(to bottom, rgba(244,244,245,.30) 0 2px, transparent 2px 64px);
+        repeating-linear-gradient(to right, rgba(212,212,216,.20) 0 1px, transparent 1px 10%),
+        repeating-linear-gradient(to bottom, rgba(212,212,216,.20) 0 1px, transparent 1px 10%),
+        repeating-linear-gradient(to right, rgba(244,244,245,.58) 0 2px, transparent 2px 20%),
+        repeating-linear-gradient(to bottom, rgba(244,244,245,.58) 0 2px, transparent 2px 20%);
     }
 
     .cabilo-layout-block {
@@ -379,7 +378,7 @@
           startX: event.clientX,
           startY: event.clientY,
           gridWidth: rect.width,
-          rowHeight: CELL_SIZE,
+          rowHeight: rect.width / HALF_COLUMNS,
           block: clone(block),
         },
       });
@@ -469,10 +468,10 @@
     renderBlock: function (block) {
       var selected = block.id === this.state.selectedId;
       var style = {
-        left: (block.x / HALF_COLUMNS * 100) + '%',
-        top: (block.y / 2 * CELL_SIZE) + 'px',
-        width: (block.w / HALF_COLUMNS * 100) + '%',
-        height: (block.h / 2 * CELL_SIZE) + 'px',
+        left: (block.x * 10) + '%',
+        top: (block.y * 10) + '%',
+        width: (block.w * 10) + '%',
+        height: (block.h * 10) + '%',
       };
 
       var label = block.title || block.type;
