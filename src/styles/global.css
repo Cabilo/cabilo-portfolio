@@ -49,6 +49,17 @@
 }
 
 /*
+ * Fitted video frames use the viewport height as the limiting dimension
+ * while preserving the 16:9 player ratio. The width follows the height
+ * instead of leaving empty space inside a full-width frame.
+ */
+.cabilo-video-fit {
+  width: min(100%, calc(75vh * 16 / 9));
+  margin-inline: auto;
+  aspect-ratio: 16 / 9;
+}
+
+/*
  * Text media blocks are still reading-width content when they appear
  * outside a Media Group. Inside a group they remain full-width so the
  * grid controls the composition.
