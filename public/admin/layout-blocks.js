@@ -272,6 +272,8 @@
       h: Number.isFinite(block.h) ? block.h : 4,
       snap: block.snap === 'free' ? 'free' : 'grid',
       title: block.title || '',
+      matchAspectRatio: block.matchAspectRatio === true,
+      matchHeightToWidth: block.matchHeightToWidth !== false,
       content: block.content || '',
       image: block.image || '',
       videoUrl: block.videoUrl || '',
@@ -301,6 +303,7 @@
       document.addEventListener('keydown', this.handleKeyDown);
       document.addEventListener('pointermove', this.handlePointerMove);
       document.addEventListener('pointerup', this.handlePointerUp);
+      this.aspectRatios = {};
     },
 
     componentWillUnmount: function () {
@@ -385,7 +388,140 @@
     },
 
     selectBlock: function (id) {
+      var block = this.getBlocks().find(function (item) { return item.id === id; });
       this.setState({ selectedId: id });
+
+      if (block && block.matchAspectRatio) {
+        this.loadAspectRatio(block);
+      }
+    },
+
+    getAspectRatio: function (block) {
+      return this.aspectRatios && this.aspectRatios[block.id]
+        ? this.aspectRatios[block.id]
+        : (block.w / block.h);
+    },
+
+    applyAspectRatio: function (block, ratio) {
+      if (!block.matchAspectRatio || !ratio || !Number.isFinite(ratio) || ratio <= 0) {
+        return block;
+      }
+
+      var step = block.snap === 'free' ? 1 : 2;
+
+      if (block.matchHeightToWidth) {
+        var targetH = Math.max(step, snap(block.w / ratio, step));
+        targetH = clamp(targetH, step, MAX_ROWS * 2 - block.y);
+        block.h = targetH;
+      } else {
+        var targetW = Math.max(step, snap(block.h * ratio, step));
+        targetW = clamp(targetW, step, HALF_COLUMNS - block.x);
+        block.w = targetW;
+      }
+
+      return normalizeBlock(block);
+    },
+
+    loadAspectRatio: function (block) {
+      if (!block || !block.matchAspectRatio) return;
+
+      if (this.aspectRatios && this.aspectRatios[block.id]) {
+        var cachedRatio = this.aspectRatios[block.id];
+        var cachedBlocks = this.getBlocks();
+        var cachedIndex = cachedBlocks.findIndex(function (item) { return item.id === block.id; });
+        if (cachedIndex !== -1) {
+          cachedBlocks[cachedIndex] = this.applyAspectRatio(cachedBlocks[cachedIndex], cachedRatio);
+          this.updateBlocks(cachedBlocks);
+        }
+        return;
+      }
+
+      var applyLoadedRatio = function (width, height) {
+        if (!width || !height) return;
+
+        var ratio = width / height;
+        this.aspectRatios[block.id] = ratio;
+
+        var blocks = this.getBlocks();
+        var index = blocks.findIndex(function (item) { return item.id === block.id; });
+        if (index === -1) return;
+
+        blocks[index] = this.applyAspectRatio(blocks[index], ratio);
+        this.updateBlocks(blocks);
+      }.bind(this);
+
+      if (block.type === 'image' && block.image) {
+        var image = new Image();
+        image.onload = function () {
+          applyLoadedRatio(image.naturalWidth, image.naturalHeight);
+        };
+        image.src = block.image;
+        return;
+      }
+
+      if (block.type === 'aov' && block.aovPasses && block.aovPasses[0] && block.aovPasses[0].image) {
+        var aovImage = new Image();
+        aovImage.onload = function () {
+          applyLoadedRatio(aovImage.naturalWidth, aovImage.naturalHeight);
+        };
+        aovImage.src = block.aovPasses[0].image;
+        return;
+      }
+
+      if (block.type === 'video') {
+        if (/youtube\.com|youtu\.be|vimeo\.com/i.test(block.videoUrl || '')) {
+          applyLoadedRatio(16, 9);
+          return;
+        }
+
+        if (block.videoUrl) {
+          var video = document.createElement('video');
+          video.preload = 'metadata';
+          video.onloadedmetadata = function () {
+            applyLoadedRatio(video.videoWidth, video.videoHeight);
+          };
+          video.src = block.videoUrl;
+          return;
+        }
+      }
+
+      // Turntables are generated from a public folder, which the CMS widget
+      // cannot enumerate reliably. Until the site renderer can provide the
+      // first frame's dimensions, keep the editor's current ratio.
+      applyLoadedRatio(block.w, block.h);
+    },
+
+    setAspectRatioEnabled: function (enabled) {
+      var blocks = this.getBlocks();
+      var selectedId = this.state.selectedId;
+      var index = blocks.findIndex(function (block) { return block.id === selectedId; });
+
+      if (index === -1) return;
+
+      blocks[index].matchAspectRatio = enabled;
+
+      if (!enabled) {
+        this.updateBlocks(blocks);
+        return;
+      }
+
+      this.updateBlocks(blocks);
+      this.loadAspectRatio(blocks[index]);
+    },
+
+    setAspectRatioDirection: function () {
+      var blocks = this.getBlocks();
+      var selectedId = this.state.selectedId;
+      var index = blocks.findIndex(function (block) { return block.id === selectedId; });
+
+      if (index === -1) return;
+
+      blocks[index].matchHeightToWidth = !blocks[index].matchHeightToWidth;
+      blocks[index] = this.applyAspectRatio(
+        blocks[index],
+        this.getAspectRatio(blocks[index])
+      );
+      this.updateBlocks(blocks);
     },
 
     beginInteraction: function (event, id, mode, handle) {
@@ -411,6 +547,7 @@
           gridWidth: rect.width,
           rowHeight: rect.width / HALF_COLUMNS,
           block: clone(block),
+          aspectRatio: block.matchAspectRatio ? this.getAspectRatio(block) : null,
         },
       });
     },
@@ -460,6 +597,53 @@
 
         if (handle.indexOf('s') !== -1) {
           current.h = clamp(original.h + sy, step, MAX_ROWS * 2 - original.y);
+        }
+
+        if (original.matchAspectRatio && interaction.aspectRatio) {
+          var ratio = interaction.aspectRatio;
+          var horizontalResize = handle.indexOf('w') !== -1 || handle.indexOf('e') !== -1;
+          var verticalResize = handle.indexOf('n') !== -1 || handle.indexOf('s') !== -1;
+
+          if (horizontalResize && !verticalResize) {
+            current.h = clamp(
+              snap(current.w / ratio, step),
+              step,
+              MAX_ROWS * 2 - original.y
+            );
+          } else if (verticalResize && !horizontalResize) {
+            current.w = clamp(
+              snap(current.h * ratio, step),
+              step,
+              HALF_COLUMNS - original.x
+            );
+          } else if (horizontalResize && verticalResize) {
+            var widthDrivenHeight = snap(current.w / ratio, step);
+            var heightDrivenWidth = snap(current.h * ratio, step);
+            var widthDelta = Math.abs(current.w - original.w);
+            var heightDelta = Math.abs(current.h - original.h);
+
+            if (widthDelta >= heightDelta * ratio) {
+              current.h = clamp(widthDrivenHeight, step, MAX_ROWS * 2 - original.y);
+            } else {
+              current.w = clamp(heightDrivenWidth, step, HALF_COLUMNS - original.x);
+            }
+          }
+
+          if (handle.indexOf('w') !== -1) {
+            current.x = clamp(
+              original.x + original.w - current.w,
+              0,
+              HALF_COLUMNS - current.w
+            );
+          }
+
+          if (handle.indexOf('n') !== -1) {
+            current.y = clamp(
+              original.y + original.h - current.h,
+              0,
+              MAX_ROWS * 2 - current.h
+            );
+          }
         }
       }
 
@@ -667,6 +851,22 @@
               return h('option', { key: type, value: type }, type);
             })
           )),
+          this.renderField('Match asset aspect ratio', h('input', {
+            type: 'checkbox',
+            checked: selected.matchAspectRatio,
+            onChange: function (event) {
+              this.setAspectRatioEnabled(event.target.checked);
+            }.bind(this),
+          })),
+          this.renderField(
+            selected.matchHeightToWidth ? 'Match height to width' : 'Match width to height',
+            h('button', {
+              type: 'button',
+              className: 'cabilo-layout-button',
+              disabled: !selected.matchAspectRatio,
+              onClick: this.setAspectRatioDirection,
+            }, selected.matchHeightToWidth ? 'Width → Height' : 'Height → Width')
+          ),
           this.renderField('Snap mode', h('select', {
             value: selected.snap,
             onChange: function (event) {
