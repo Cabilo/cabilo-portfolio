@@ -20,7 +20,8 @@
 
   var HALF_COLUMNS = 10;
   var MAX_ROWS = 50;
-  var ROW_HEIGHT = 64;
+  var INITIAL_ROWS = 5;
+  var CELL_SIZE = 64;
 
   var styles = `
     .cabilo-layout-widget {
@@ -60,21 +61,30 @@
       margin: 0 0 12px;
     }
 
+    .cabilo-layout-add-row {
+      margin-top: 8px;
+    }
+
     .cabilo-layout-grid-wrap {
       overflow-x: auto;
       border: 1px solid #3f3f46;
       border-radius: 6px;
-      background: #09090b;
+      background: #050506;
     }
 
     .cabilo-layout-grid {
+      --layout-cell: 64px;
       position: relative;
-      min-width: 760px;
-      height: 3200px;
+      min-width: 640px;
+      height: calc(var(--layout-visible-rows) * var(--layout-cell));
+      background-color: #050506;
       background-image:
-        linear-gradient(to right, rgba(161,161,170,.12) 1px, transparent 1px),
-        linear-gradient(to bottom, rgba(161,161,170,.10) 1px, transparent 1px);
-      background-size: 10% 64px;
+        linear-gradient(to right, rgba(161,161,170,.055) 1px, transparent 1px),
+        linear-gradient(to bottom, rgba(161,161,170,.055) 1px, transparent 1px),
+        linear-gradient(to right, rgba(161,161,170,.22) 1px, transparent 1px),
+        linear-gradient(to bottom, rgba(161,161,170,.22) 1px, transparent 1px);
+      background-size: 6.25% var(--layout-cell), 6.25% var(--layout-cell), 12.5% var(--layout-cell), 12.5% var(--layout-cell);
+      background-position: 0 0, 0 0, 0 0, 0 0;
     }
 
     .cabilo-layout-block {
@@ -82,7 +92,7 @@
       box-sizing: border-box;
       border: 1px solid #fac018;
       border-radius: 5px;
-      background: rgba(250,192,24,.12);
+      background: rgba(250,192,24,.10);
       color: #f4f4f5;
       cursor: move;
       user-select: none;
@@ -255,11 +265,13 @@
     componentDidMount: function () {
       this.handlePointerMove = this.handlePointerMove.bind(this);
       this.handlePointerUp = this.handlePointerUp.bind(this);
+      document.addEventListener('keydown', this.handleKeyDown);
       document.addEventListener('pointermove', this.handlePointerMove);
       document.addEventListener('pointerup', this.handlePointerUp);
     },
 
     componentWillUnmount: function () {
+      document.removeEventListener('keydown', this.handleKeyDown);
       document.removeEventListener('pointermove', this.handlePointerMove);
       document.removeEventListener('pointerup', this.handlePointerUp);
     },
@@ -270,6 +282,37 @@
 
     updateBlocks: function (blocks) {
       this.props.onChange(blocks);
+    },
+
+    addRows: function () {
+      var currentRows = this.getVisibleRows();
+      if (currentRows >= MAX_ROWS) return;
+      this.setState({ visibleRows: Math.min(MAX_ROWS, currentRows + 5) });
+    },
+
+    getVisibleRows: function () {
+      if (this.state.visibleRows) return this.state.visibleRows;
+      var blocks = this.getBlocks();
+      var usedRows = Math.max(
+        0,
+        ...blocks.map(function (block) { return Math.ceil((block.y + block.h) / 2); })
+      );
+      return Math.min(MAX_ROWS, Math.max(INITIAL_ROWS, usedRows));
+    },
+
+    handleKeyDown: function (event) {
+      if ((event.key !== 'Delete' && event.key !== 'Backspace') || !this.state.selectedId) return;
+
+      var target = event.target;
+      if (target && (
+        target.tagName === 'INPUT' ||
+        target.tagName === 'TEXTAREA' ||
+        target.tagName === 'SELECT' ||
+        target.isContentEditable
+      )) return;
+
+      event.preventDefault();
+      this.removeSelected();
     },
 
     addBlock: function (type) {
@@ -333,7 +376,7 @@
           startX: event.clientX,
           startY: event.clientY,
           gridWidth: rect.width,
-          rowHeight: ROW_HEIGHT,
+          rowHeight: CELL_SIZE,
           block: clone(block),
         },
       });
@@ -424,7 +467,7 @@
       var selected = block.id === this.state.selectedId;
       var style = {
         left: (block.x / HALF_COLUMNS * 100) + '%',
-        top: (block.y / 2 * ROW_HEIGHT) + 'px',
+        top: (block.y / 2 * CELL_SIZE) + 'px',
         width: (block.w / HALF_COLUMNS * 100) + '%',
         height: (block.h / 2 * ROW_HEIGHT) + 'px',
       };
@@ -573,7 +616,7 @@
             }, 'Delete Block')
           ),
           h('div', { className: 'cabilo-layout-status' },
-            'Matrix: ∞ × 5 · Editor limit: 50 rows · Half-grid: 10 units'
+            'Matrix: ∞ × 5 · Editor limit: 50 rows · Half-grid: 10 × 100 units'
           )
         )
       );
@@ -616,9 +659,17 @@
         h('div', { className: 'cabilo-layout-grid-wrap' },
           h('div', {
             className: 'cabilo-layout-grid',
+            style: { '--layout-visible-rows': this.getVisibleRows() },
             onClick: function () { this.setState({ selectedId: null }); }.bind(this),
           }, blocks.map(this.renderBlock.bind(this)))
         ),
+        this.getVisibleRows() < MAX_ROWS
+          ? h('button', {
+              type: 'button',
+              className: 'cabilo-layout-button cabilo-layout-add-row',
+              onClick: this.addRows,
+            }, '+ Add 5 Rows')
+          : null,
         this.renderInspector(selected)
       );
     },
