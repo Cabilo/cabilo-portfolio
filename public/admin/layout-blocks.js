@@ -272,8 +272,12 @@
       h: Number.isFinite(block.h) ? block.h : 4,
       snap: block.snap === 'free' ? 'free' : 'grid',
       title: block.title || '',
-      matchAspectRatio: block.matchAspectRatio === true,
-      matchHeightToWidth: block.matchHeightToWidth !== false,
+      matchAspectRatio:
+        block.matchAspectRatio === true ||
+        block.matchAspectRatio === 'true',
+      matchHeightToWidth:
+        block.matchHeightToWidth !== false &&
+        block.matchHeightToWidth !== 'false',
       content: block.content || '',
       image: block.image || '',
       videoUrl: block.videoUrl || '',
@@ -530,11 +534,21 @@
     },
 
     setAspectRatioEnabled: function (enabled) {
-      this.updateSelectedField('matchAspectRatio', enabled);
+      var blocks = this.getBlocks();
+      var selectedId = this.state.selectedId;
+      var index = blocks.findIndex(function (block) {
+        return block.id === selectedId;
+      });
+
+      if (index === -1) return;
+
+      blocks[index].matchAspectRatio = Boolean(enabled);
 
       if (!enabled) {
-        this.updateSelectedField('matchHeightToWidth', true);
+        blocks[index].matchHeightToWidth = true;
       }
+
+      this.updateBlocks(blocks);
     },
 
     renderHandle: function (id, handle) {
@@ -679,7 +693,7 @@
           )),
           this.renderField('Match asset aspect ratio', h('input', {
             type: 'checkbox',
-            checked: selected.matchAspectRatio,
+            checked: Boolean(selected.matchAspectRatio),
             onChange: function (event) {
               this.setAspectRatioEnabled(event.target.checked);
             }.bind(this),
@@ -693,10 +707,16 @@
               onMouseDown: function (event) {
                 event.stopPropagation();
               },
+              onPointerDown: function (event) {
+                event.stopPropagation();
+              },
               onClick: function (event) {
                 event.preventDefault();
                 event.stopPropagation();
-                this.updateSelectedField('matchHeightToWidth', !selected.matchHeightToWidth);
+                this.updateSelectedField(
+                  'matchHeightToWidth',
+                  !Boolean(selected.matchHeightToWidth),
+                );
               }.bind(this),
             }, selected.matchHeightToWidth ? 'Width → Height' : 'Height → Width')
           ),
