@@ -27,6 +27,10 @@
     .cabilo-layout-widget {
       font-family: inherit;
       color: #f4f4f5;
+      background: #09090b;
+      border: 1px solid #27272a;
+      border-radius: 6px;
+      padding: 14px;
     }
 
     .cabilo-layout-toolbar {
@@ -75,16 +79,15 @@
     .cabilo-layout-grid {
       --layout-cell: 64px;
       position: relative;
+      width: 640px;
       min-width: 640px;
       height: calc(var(--layout-visible-rows) * var(--layout-cell));
       background-color: #050506;
       background-image:
-        linear-gradient(to right, rgba(161,161,170,.055) 1px, transparent 1px),
-        linear-gradient(to bottom, rgba(161,161,170,.055) 1px, transparent 1px),
-        linear-gradient(to right, rgba(161,161,170,.22) 1px, transparent 1px),
-        linear-gradient(to bottom, rgba(161,161,170,.22) 1px, transparent 1px);
-      background-size: 6.25% var(--layout-cell), 6.25% var(--layout-cell), 12.5% var(--layout-cell), 12.5% var(--layout-cell);
-      background-position: 0 0, 0 0, 0 0, 0 0;
+        repeating-linear-gradient(to right, rgba(161,161,170,.08) 0 1px, transparent 1px 32px),
+        repeating-linear-gradient(to bottom, rgba(161,161,170,.08) 0 1px, transparent 1px 32px),
+        repeating-linear-gradient(to right, rgba(244,244,245,.30) 0 2px, transparent 2px 64px),
+        repeating-linear-gradient(to bottom, rgba(244,244,245,.30) 0 2px, transparent 2px 64px);
     }
 
     .cabilo-layout-block {
@@ -287,7 +290,7 @@
     addRows: function () {
       var currentRows = this.getVisibleRows();
       if (currentRows >= MAX_ROWS) return;
-      this.setState({ visibleRows: Math.min(MAX_ROWS, currentRows + 5) });
+      this.setState({ visibleRows: Math.min(MAX_ROWS, currentRows + 1) });
     },
 
     getVisibleRows: function () {
@@ -469,7 +472,7 @@
         left: (block.x / HALF_COLUMNS * 100) + '%',
         top: (block.y / 2 * CELL_SIZE) + 'px',
         width: (block.w / HALF_COLUMNS * 100) + '%',
-        height: (block.h / 2 * ROW_HEIGHT) + 'px',
+        height: (block.h / 2 * CELL_SIZE) + 'px',
       };
 
       var label = block.title || block.type;
@@ -668,7 +671,7 @@
               type: 'button',
               className: 'cabilo-layout-button cabilo-layout-add-row',
               onClick: this.addRows,
-            }, '+ Add 5 Rows')
+            }, '+ Add 1 Row')
           : null,
         this.renderInspector(selected)
       );
