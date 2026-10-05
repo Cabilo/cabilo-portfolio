@@ -1,0 +1,60 @@
+---
+import Layout from '../layouts/Layout.astro';
+import MediaBlocksRenderer from '../components/MediaBlocksRenderer.astro';
+import type { MediaBlock } from '../content.config';
+
+const images = {
+  portrait: 'https://cdna.artstation.com/p/assets/images/images/046/504/170/large/lucas-cabilo-ls-portraitheadscans-square-v001-0001.jpg?1645275374',
+  xgen: 'https://cdna.artstation.com/p/assets/images/images/046/500/860/large/lucas-cabilo-xgen.jpg?1645267427',
+  topology: 'https://cdnb.artstation.com/p/assets/images/images/046/504/715/large/lucas-cabilo-uv-and-topo.jpg?1645276624',
+};
+
+const mediaBlocks: MediaBlock[] = [
+  {
+    type: 'group',
+    columns: 2,
+    items: [
+      { type: 'image', title: 'Two Column — A', image: images.portrait, fitToViewport: false },
+      { type: 'image', title: 'Two Column — B', image: images.xgen, fitToViewport: false },
+    ],
+  },
+  {
+    type: 'group',
+    columns: 3,
+    items: [
+      { type: 'image', title: 'Three Column — A', image: images.portrait, fitToViewport: false },
+      { type: 'image', title: 'Three Column — B', image: images.xgen, fitToViewport: false },
+      { type: 'image', title: 'Three Column — C', image: images.topology, fitToViewport: false },
+    ],
+  },
+  {
+    type: 'group',
+    columns: 4,
+    items: [
+      { type: 'image', title: 'Four Column — A', image: images.portrait, fitToViewport: false },
+      { type: 'image', title: 'Four Column — B', image: images.xgen, fitToViewport: false },
+      { type: 'image', title: 'Four Column — C', image: images.topology, fitToViewport: false },
+      { type: 'image', title: 'Four Column — D', image: images.portrait, fitToViewport: false },
+    ],
+  },
+];
+---
+
+<Layout title="Layout Test | CABILO" description="Temporary visual test page for CABILO media width and side-by-side layouts.">
+  <main class="px-4 py-12 md:py-20">
+    <div class="cabilo-reading mb-16">
+      <p class="text-xs tracking-widest uppercase text-brand-gold mb-4">Temporary Test Page</p>
+      <h1 class="text-4xl md:text-5xl font-bold text-text-white uppercase mb-6">
+        Media Layout Test
+      </h1>
+      <p class="text-text-silver leading-relaxed">
+        This page tests the current wide media canvas and side-by-side Media Group behavior
+        at 2, 3, and 4 columns. Resize the browser to compare desktop and mobile behavior.
+      </p>
+    </div>
+
+    <div class="cabilo-media">
+      <MediaBlocksRenderer blocks={mediaBlocks} />
+    </div>
+  </main>
+</Layout>
