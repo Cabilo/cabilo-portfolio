@@ -5,6 +5,7 @@ import { parse } from 'marked';
 import type { LayoutBlock } from '../content.config';
 import { getVideoEmbed } from '../lib/video';
 import TurntableScrubber from './TurntableScrubber.astro';
+import DynamicAov from './DynamicAov.astro';
 
 export interface Props {
   blocks: LayoutBlock[];
@@ -113,6 +114,25 @@ const maxBottom = Math.max(
           );
         }
 
+        if (block.type === 'aov') {
+          if (!block.aovPasses || block.aovPasses.length === 0) {
+            return (
+              <div class="cabilo-layout-placeholder">
+                <p>AOV block has no passes yet.</p>
+              </div>
+            );
+          }
+
+          return (
+            <div class="cabilo-layout-aov">
+              <DynamicAov
+                passes={block.aovPasses}
+                fitToViewport={false}
+              />
+            </div>
+          );
+        }
+
         if (block.type === 'turntable') {
           const frames = getTurntableFrames(block.folder);
 
@@ -162,7 +182,7 @@ const maxBottom = Math.max(
     width: calc(var(--layout-w) * 10%);
     height: calc(var(--layout-h) / 2 * var(--cabilo-layout-row-height));
     padding: clamp(8px, 1vw, 16px);
-    overflow: hidden;
+    overflow: visible;
   }
 
   .cabilo-layout-media,
@@ -196,8 +216,13 @@ const maxBottom = Math.max(
 
   .cabilo-layout-text {
     width: 100%;
-    height: 100%;
-    overflow: auto;
+    min-height: 100%;
+    overflow: visible;
+  }
+
+  .cabilo-layout-aov {
+    width: 100%;
+    min-height: 100%;
   }
 
   .cabilo-layout-placeholder,
