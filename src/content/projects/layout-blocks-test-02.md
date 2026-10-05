@@ -88,7 +88,7 @@ layoutBlocks:
     snap: free
     title: AOV Comparison
     matchAspectRatio: true
-    matchHeightToWidth: false
+    matchHeightToWidth: true
     content: ""
     image: ""
     videoUrl: ""
