@@ -1,13 +1,16 @@
 ---
 title: Layout Blocks Test 02
-category: Experimental
+category: Cinematics
+publishDate: 2026-10-05T18:13:00.000-03:00
 thumbnail: https://cdnb.artstation.com/p/assets/images/images/031/216/037/large/lucas-cabilo-highresscreenshot00012.jpg?1602954475
-role: Layout System Test
-client: CABILO
+role: Lookdev Artist
+client: Personal Project
 tags:
-  - Layout
+  - Lookdev Artist
 softwareUsed:
   - Maya
+  - Arnold
+  - Substance Painter
 layoutBlocks:
   - id: layout-test-02-turntable
     type: turntable
@@ -70,11 +73,11 @@ layoutBlocks:
     aovPasses: []
   - id: layout-test-02-aov
     type: aov
-    x: 1
+    x: 2
     y: 8
-    w: 8
+    w: 6
     h: 5
-    snap: grid
+    snap: free
     title: AOV Comparison
     content: ""
     image: ""
@@ -93,8 +96,8 @@ layoutBlocks:
     h: 3
     snap: free
     title: Small Text
-    content: >-
-      A small free-snap text block. It should keep its own space without introducing an internal scrollbar.
+    content: A small free-snap text block. It should keep its own space without
+      introducing an internal scrollbar.
     image: ""
     videoUrl: ""
     folder: ""
@@ -120,8 +123,8 @@ layoutBlocks:
     h: 3
     snap: free
     title: Another Text Block
-    content: >-
-      Another small block to test how multiple fractional free-snap elements sit beside one another.
+    content: Another small block to test how multiple fractional free-snap elements
+      sit beside one another.
     image: ""
     videoUrl: ""
     folder: ""
