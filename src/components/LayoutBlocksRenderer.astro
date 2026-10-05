@@ -19,7 +19,7 @@ const getTurntableFrames = (folder: string) => {
   if (!fs.existsSync(folderPath)) return [];
 
   return fs.readdirSync(folderPath)
-    .filter((file) => /\\.(jpg|jpeg|png|webp)$/i.test(file))
+    .filter((file) => /\.(jpg|jpeg|png|webp)$/i.test(file))
     .sort((a, b) => a.localeCompare(b, undefined, { numeric: true }))
     .map((file) => `/${folder}/${file}`);
 };
