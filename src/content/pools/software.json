@@ -18,11 +18,7 @@
     },
     {
       "name": "Houdini",
-      "addToArsenal": true
-    },
-    {
-      "name": "Redshift",
-      "addToArsenal": true
+      "addToArsenal": false
     },
     {
       "name": "Substance Painter",
@@ -34,11 +30,11 @@
     },
     {
       "name": "RizomUV",
-      "addToArsenal": true
+      "addToArsenal": false
     },
     {
       "name": "Plasticity",
-      "addToArsenal": true
+      "addToArsenal": false
     },
     {
       "name": "Substance Designer",
@@ -57,14 +53,6 @@
       "addToArsenal": true
     },
     {
-      "name": "After Effects",
-      "addToArsenal": true
-    },
-    {
-      "name": "Premiere Pro",
-      "addToArsenal": true
-    },
-    {
       "name": "Marvelous Designer",
       "addToArsenal": true
     },
@@ -73,24 +61,16 @@
       "addToArsenal": true
     },
     {
-      "name": "V-Ray",
-      "addToArsenal": true
-    },
-    {
-      "name": "Cinema 4D",
-      "addToArsenal": true
-    },
-    {
       "name": "DaVinci Resolve",
-      "addToArsenal": true
+      "addToArsenal": false
     },
     {
       "name": "SpeedTree",
-      "addToArsenal": true
+      "addToArsenal": false
     },
     {
       "name": "Fusion",
-      "addToArsenal": true
+      "addToArsenal": false
     }
   ]
 }
