@@ -327,7 +327,7 @@
         id: uid(),
         type: type,
         x: 0,
-        y: maxBottom,
+        y: Math.max(maxBottom, 0),
         w: 4,
         h: 4,
         snap: 'grid',
