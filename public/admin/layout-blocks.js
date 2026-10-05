@@ -529,6 +529,14 @@
       this.updateBlocks(blocks);
     },
 
+    setAspectRatioEnabled: function (enabled) {
+      this.updateSelectedField('matchAspectRatio', enabled);
+
+      if (!enabled) {
+        this.updateSelectedField('matchHeightToWidth', true);
+      }
+    },
+
     renderHandle: function (id, handle) {
       return h('span', {
         key: handle,
