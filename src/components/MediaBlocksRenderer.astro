@@ -170,10 +170,18 @@ const getAlignmentClasses = (
           </h3>
         )}
 
-        <div class="rounded-md overflow-hidden shadow-2xl border border-cabilo-card relative aspect-video w-full">
+        <div
+          class:list={[
+            'rounded-md overflow-hidden shadow-2xl border border-cabilo-card relative aspect-video w-full',
+            block.fitToViewport && 'max-h-[75vh]',
+          ]}
+        >
           {video.type === 'youtube' || video.type === 'vimeo' ? (
             <iframe
-              class="absolute inset-0 w-full h-full"
+              class:list={[
+                'absolute inset-0 w-full h-full',
+                block.fitToViewport ? 'object-contain' : 'object-cover',
+              ]}
               src={video.src}
               frameborder="0"
               loading="lazy"
@@ -182,7 +190,10 @@ const getAlignmentClasses = (
             ></iframe>
           ) : video.type === 'direct' ? (
             <video
-              class="absolute inset-0 w-full h-full object-contain bg-black"
+              class:list={[
+                'absolute inset-0 w-full h-full bg-black',
+                block.fitToViewport ? 'object-contain' : 'object-cover',
+              ]}
               src={video.src}
               controls
               preload="metadata"
