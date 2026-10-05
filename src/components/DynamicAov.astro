@@ -34,13 +34,16 @@ const defaultB = passes.length > 1 ? passes[1] : passes[0];
 ---
 
 <dynamic-aov
-  class="block w-full"
+  class:list={['block w-full', !fitToViewport && 'h-full']}
   data-fit-viewport={fitToViewport ? 'true' : 'false'}
 >
-  <div class="flex flex-col gap-6">
+  <div class:list={['flex flex-col gap-6', !fitToViewport && 'h-full']}>
 
     <div
-      class="aov-container relative overflow-hidden max-w-full mx-auto bg-cabilo-obsidian"
+      class:list={[
+        'aov-container relative overflow-hidden max-w-full mx-auto bg-cabilo-obsidian',
+        !fitToViewport && 'h-full',
+      ]}
       style="touch-action: pan-y;"
     >
 
