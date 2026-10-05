@@ -1,4 +1,6 @@
 ---
+import fs from 'node:fs';
+import path from 'node:path';
 import { parse } from 'marked';
 import type { LayoutBlock } from '../content.config';
 import { getVideoEmbed } from '../lib/video';
@@ -9,6 +11,17 @@ export interface Props {
 }
 
 const { blocks } = Astro.props;
+
+const getTurntableFrames = (folder: string) => {
+  const folderPath = path.join(process.cwd(), 'public', folder);
+
+  if (!fs.existsSync(folderPath)) return [];
+
+  return fs.readdirSync(folderPath)
+    .filter((file) => /\\.(jpg|jpeg|png|webp)$/i.test(file))
+    .sort((a, b) => a.localeCompare(b, undefined, { numeric: true }))
+    .map((file) => `/${folder}/${file}`);
+};
 
 const normalizedBlocks = blocks.map((block) => ({
   ...block,
@@ -101,12 +114,19 @@ const maxBottom = Math.max(
         }
 
         if (block.type === 'turntable') {
+          const frames = getTurntableFrames(block.folder);
+
+          if (frames.length === 0) {
+            return (
+              <div class="cabilo-layout-placeholder">
+                <p>Turntable folder not found or contains no frames.</p>
+              </div>
+            );
+          }
+
           return (
             <div class="cabilo-layout-turntable">
-              <TurntableScrubber frames={[]} fitToViewport={false} />
-              <p class="text-text-silver text-sm">
-                Turntable: {block.folder}
-              </p>
+              <TurntableScrubber frames={frames} fitToViewport={false} />
             </div>
           );
         }
