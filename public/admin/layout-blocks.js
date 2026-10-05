@@ -303,7 +303,6 @@
       document.addEventListener('keydown', this.handleKeyDown);
       document.addEventListener('pointermove', this.handlePointerMove);
       document.addEventListener('pointerup', this.handlePointerUp);
-      this.aspectRatios = {};
     },
 
     componentWillUnmount: function () {
@@ -388,138 +387,7 @@
     },
 
     selectBlock: function (id) {
-      var block = this.getBlocks().find(function (item) { return item.id === id; });
       this.setState({ selectedId: id });
-
-
-    },
-
-    getAspectRatio: function (block) {
-      return this.aspectRatios && this.aspectRatios[block.id]
-        ? this.aspectRatios[block.id]
-        : (block.w / block.h);
-    },
-
-    applyAspectRatio: function (block, ratio) {
-      if (!block.matchAspectRatio || !ratio || !Number.isFinite(ratio) || ratio <= 0) {
-        return block;
-      }
-
-      var step = block.snap === 'free' ? 1 : 2;
-
-      if (block.matchHeightToWidth) {
-        var targetH = Math.max(step, snap(block.w / ratio, step));
-        targetH = clamp(targetH, step, MAX_ROWS * 2 - block.y);
-        block.h = targetH;
-      } else {
-        var targetW = Math.max(step, snap(block.h * ratio, step));
-        targetW = clamp(targetW, step, HALF_COLUMNS - block.x);
-        block.w = targetW;
-      }
-
-      return normalizeBlock(block);
-    },
-
-    loadAspectRatio: function (block) {
-      if (!block || !block.matchAspectRatio) return;
-
-      if (this.aspectRatios && this.aspectRatios[block.id]) {
-        var cachedRatio = this.aspectRatios[block.id];
-        var cachedBlocks = this.getBlocks();
-        var cachedIndex = cachedBlocks.findIndex(function (item) { return item.id === block.id; });
-        if (cachedIndex !== -1) {
-          cachedBlocks[cachedIndex] = this.applyAspectRatio(cachedBlocks[cachedIndex], cachedRatio);
-          this.updateBlocks(cachedBlocks);
-        }
-        return;
-      }
-
-      var applyLoadedRatio = function (width, height) {
-        if (!width || !height) return;
-
-        var ratio = width / height;
-        this.aspectRatios[block.id] = ratio;
-
-        var blocks = this.getBlocks();
-        var index = blocks.findIndex(function (item) { return item.id === block.id; });
-        if (index === -1) return;
-
-        blocks[index] = this.applyAspectRatio(blocks[index], ratio);
-        this.updateBlocks(blocks);
-      }.bind(this);
-
-      if (block.type === 'image' && block.image) {
-        var image = new Image();
-        image.onload = function () {
-          applyLoadedRatio(image.naturalWidth, image.naturalHeight);
-        };
-        image.src = block.image;
-        return;
-      }
-
-      if (block.type === 'aov' && block.aovPasses && block.aovPasses[0] && block.aovPasses[0].image) {
-        var aovImage = new Image();
-        aovImage.onload = function () {
-          applyLoadedRatio(aovImage.naturalWidth, aovImage.naturalHeight);
-        };
-        aovImage.src = block.aovPasses[0].image;
-        return;
-      }
-
-      if (block.type === 'video') {
-        if (/youtube\.com|youtu\.be|vimeo\.com/i.test(block.videoUrl || '')) {
-          applyLoadedRatio(16, 9);
-          return;
-        }
-
-        if (block.videoUrl) {
-          var video = document.createElement('video');
-          video.preload = 'metadata';
-          video.onloadedmetadata = function () {
-            applyLoadedRatio(video.videoWidth, video.videoHeight);
-          };
-          video.src = block.videoUrl;
-          return;
-        }
-      }
-
-      // Turntables are generated from a public folder, which the CMS widget
-      // cannot enumerate reliably. Until the site renderer can provide the
-      // first frame's dimensions, keep the editor's current ratio.
-      applyLoadedRatio(block.w, block.h);
-    },
-
-    setAspectRatioEnabled: function (enabled) {
-      var blocks = this.getBlocks();
-      var selectedId = this.state.selectedId;
-      var index = blocks.findIndex(function (block) { return block.id === selectedId; });
-
-      if (index === -1) return;
-
-      blocks[index].matchAspectRatio = enabled;
-
-      if (!enabled) {
-        this.updateBlocks(blocks);
-        return;
-      }
-
-      this.updateBlocks(blocks);
-      this.loadAspectRatio(blocks[index]);
-    },
-
-    setAspectRatioDirection: function () {
-      var blocks = this.getBlocks();
-      var selectedId = this.state.selectedId;
-      var index = blocks.findIndex(function (block) { return block.id === selectedId; });
-
-      if (index === -1) return;
-
-      blocks[index].matchHeightToWidth = !blocks[index].matchHeightToWidth;
-      blocks[index] = this.applyAspectRatio(
-        blocks[index],
-        this.getAspectRatio(blocks[index])
-      );
-      this.updateBlocks(blocks);
     },
 
     beginInteraction: function (event, id, mode, handle) {
@@ -545,7 +413,6 @@
           gridWidth: rect.width,
           rowHeight: rect.width / HALF_COLUMNS,
           block: clone(block),
-          aspectRatio: block.matchAspectRatio ? this.getAspectRatio(block) : null,
         },
       });
     },
@@ -595,8 +462,6 @@
 
         if (handle.indexOf('s') !== -1) {
           current.h = clamp(original.h + sy, step, MAX_ROWS * 2 - original.y);
-        }
-
         }
       }
 
@@ -661,30 +526,6 @@
       if (index === -1) return;
 
       blocks[index][field] = value;
-      this.updateBlocks(blocks);
-    },
-
-    updateSelectedDimension: function (field, value) {
-      var blocks = this.getBlocks();
-      var selectedId = this.state.selectedId;
-      var index = blocks.findIndex(function (block) {
-        return block.id === selectedId;
-      });
-
-      if (index === -1) return;
-
-      var block = blocks[index];
-      var step = block.snap === 'free' ? 1 : 2;
-      var units = Math.max(0.5, Number(value) || 0.5);
-      var halfUnits = Math.max(step, snap(units * 2, step));
-
-      if (field === 'w') {
-        block.w = clamp(halfUnits, step, HALF_COLUMNS - block.x);
-      } else {
-        block.h = clamp(halfUnits, step, MAX_ROWS * 2 - block.y);
-      }
-
-      blocks[index] = block;
       this.updateBlocks(blocks);
     },
 
