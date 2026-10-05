@@ -1,0 +1,214 @@
+---
+import { parse } from 'marked';
+import type { LayoutBlock } from '../content.config';
+import { getVideoEmbed } from '../lib/video';
+import TurntableScrubber from './TurntableScrubber.astro';
+
+export interface Props {
+  blocks: LayoutBlock[];
+}
+
+const { blocks } = Astro.props;
+
+const normalizedBlocks = blocks.map((block) => ({
+  ...block,
+  x: Math.max(0, Math.min(9, block.x)),
+  y: Math.max(0, Math.min(99, block.y)),
+  w: Math.max(1, Math.min(10 - block.x, block.w)),
+  h: Math.max(1, Math.min(100 - block.y, block.h)),
+}));
+
+const maxBottom = Math.max(
+  1,
+  ...normalizedBlocks.map((block) => block.y + block.h),
+);
+---
+
+{normalizedBlocks.length > 0 && (
+  <section
+    class="cabilo-layout-blocks"
+    style={`--cabilo-layout-rows: ${Math.ceil(maxBottom / 2)};`}
+    aria-label="Layout content"
+  >
+    {normalizedBlocks.map((block) => {
+      const frameStyle = `
+        --layout-x: ${block.x};
+        --layout-y: ${block.y};
+        --layout-w: ${block.w};
+        --layout-h: ${block.h};
+      `;
+
+      const renderContent = () => {
+        if (block.type === 'text') {
+          const parsedHTML = parse(block.content) as string;
+
+          return (
+            <div class="cabilo-layout-text prose prose-invert prose-p:text-text-silver prose-headings:text-text-white prose-a:text-brand-amber max-w-none">
+              {block.title && (
+                <h3 class="text-xl text-text-white mb-6 uppercase tracking-wider">
+                  {block.title}
+                </h3>
+              )}
+              <div set:html={parsedHTML} />
+            </div>
+          );
+        }
+
+        if (block.type === 'image') {
+          return (
+            <div class="cabilo-layout-media">
+              <img
+                src={block.image}
+                alt={block.title || 'Project media'}
+                loading="lazy"
+                draggable="false"
+              />
+            </div>
+          );
+        }
+
+        if (block.type === 'video') {
+          const video = getVideoEmbed(block.videoUrl);
+
+          if (!video) {
+            return (
+              <div class="cabilo-layout-placeholder">
+                <p>Video URL not recognized.</p>
+              </div>
+            );
+          }
+
+          return (
+            <div class="cabilo-layout-video">
+              {video.type === 'youtube' || video.type === 'vimeo' ? (
+                <iframe
+                  src={video.src}
+                  title={block.title || 'Video'}
+                  loading="lazy"
+                  allow="autoplay; fullscreen; picture-in-picture"
+                  allowfullscreen
+                ></iframe>
+              ) : (
+                <video
+                  src={video.src}
+                  controls
+                  preload="metadata"
+                  playsinline
+                ></video>
+              )}
+            </div>
+          );
+        }
+
+        if (block.type === 'turntable') {
+          return (
+            <div class="cabilo-layout-turntable">
+              <TurntableScrubber frames={[]} fitToViewport={false} />
+              <p class="text-text-silver text-sm">
+                Turntable: {block.folder}
+              </p>
+            </div>
+          );
+        }
+
+        return null;
+      };
+
+      return (
+        <article
+          class="cabilo-layout-frame"
+          style={frameStyle}
+        >
+          {renderContent()}
+        </article>
+      );
+    })}
+  </section>
+)}
+
+<style>
+  .cabilo-layout-blocks {
+    --cabilo-layout-row-height: clamp(96px, 11vw, 180px);
+    position: relative;
+    width: 100%;
+    min-height: calc(var(--cabilo-layout-rows) * var(--cabilo-layout-row-height));
+  }
+
+  .cabilo-layout-frame {
+    position: absolute;
+    box-sizing: border-box;
+    left: calc(var(--layout-x) * 10%);
+    top: calc(var(--layout-y) / 2 * var(--cabilo-layout-row-height));
+    width: calc(var(--layout-w) * 10%);
+    height: calc(var(--layout-h) / 2 * var(--cabilo-layout-row-height));
+    padding: clamp(8px, 1vw, 16px);
+    overflow: hidden;
+  }
+
+  .cabilo-layout-media,
+  .cabilo-layout-video,
+  .cabilo-layout-turntable {
+    width: 100%;
+    height: 100%;
+    min-height: 0;
+    overflow: hidden;
+    border-radius: 0.375rem;
+    background: var(--color-cabilo-card);
+  }
+
+  .cabilo-layout-media img {
+    display: block;
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+    object-position: center;
+  }
+
+  .cabilo-layout-video iframe,
+  .cabilo-layout-video video {
+    display: block;
+    width: 100%;
+    height: 100%;
+    border: 0;
+    object-fit: contain;
+    background: #000;
+  }
+
+  .cabilo-layout-text {
+    width: 100%;
+    height: 100%;
+    overflow: auto;
+  }
+
+  .cabilo-layout-placeholder,
+  .cabilo-layout-turntable {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 1.5rem;
+    box-sizing: border-box;
+  }
+
+  @media (max-width: 767px) {
+    .cabilo-layout-blocks {
+      display: flex;
+      flex-direction: column;
+      gap: 1rem;
+      min-height: 0;
+    }
+
+    .cabilo-layout-frame {
+      position: relative;
+      inset: auto;
+      width: 100%;
+      height: auto;
+      min-height: 240px;
+      padding: 0;
+    }
+
+    .cabilo-layout-text {
+      height: auto;
+      overflow: visible;
+    }
+  }
+</style>
