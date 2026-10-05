@@ -1,43 +1,96 @@
 {
   "values": [
     {
-      "name": "Maya"
+      "name": "Maya",
+      "addToArsenal": true
     },
     {
-      "name": "Arnold"
+      "name": "Arnold",
+      "addToArsenal": true
     },
     {
-      "name": "ZBrush"
+      "name": "ZBrush",
+      "addToArsenal": true
     },
     {
-      "name": "Nuke"
+      "name": "Nuke",
+      "addToArsenal": true
     },
     {
-      "name": "Houdini"
+      "name": "Houdini",
+      "addToArsenal": true
     },
     {
-      "name": "Redshift"
+      "name": "Redshift",
+      "addToArsenal": true
     },
     {
-      "name": "Substance Painter"
+      "name": "Substance Painter",
+      "addToArsenal": true
     },
     {
-      "name": "Unreal Engine 5"
+      "name": "Unreal Engine 5",
+      "addToArsenal": true
     },
     {
-      "name": "RizomUV"
+      "name": "RizomUV",
+      "addToArsenal": true
     },
     {
-      "name": "Plasticity"
+      "name": "Plasticity",
+      "addToArsenal": true
     },
     {
-      "name": "Substance Designer"
+      "name": "Substance Designer",
+      "addToArsenal": true
     },
     {
-      "name": "Mari"
+      "name": "Mari",
+      "addToArsenal": true
     },
     {
-      "name": "Blender"
+      "name": "Blender",
+      "addToArsenal": true
+    },
+    {
+      "name": "Photoshop",
+      "addToArsenal": true
+    },
+    {
+      "name": "After Effects",
+      "addToArsenal": true
+    },
+    {
+      "name": "Premiere Pro",
+      "addToArsenal": true
+    },
+    {
+      "name": "Marvelous Designer",
+      "addToArsenal": true
+    },
+    {
+      "name": "Marmoset Toolbag",
+      "addToArsenal": true
+    },
+    {
+      "name": "V-Ray",
+      "addToArsenal": true
+    },
+    {
+      "name": "Cinema 4D",
+      "addToArsenal": true
+    },
+    {
+      "name": "DaVinci Resolve",
+      "addToArsenal": true
+    },
+    {
+      "name": "SpeedTree",
+      "addToArsenal": true
+    },
+    {
+      "name": "Fusion",
+      "addToArsenal": true
     }
   ]
 }

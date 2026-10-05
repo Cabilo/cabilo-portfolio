@@ -29,6 +29,36 @@
     },
     {
       "name": "Topology"
+    },
+    {
+      "name": "Modeling"
+    },
+    {
+      "name": "Texturing"
+    },
+    {
+      "name": "Shading"
+    },
+    {
+      "name": "Rendering"
+    },
+    {
+      "name": "Compositing"
+    },
+    {
+      "name": "Rigging"
+    },
+    {
+      "name": "Animation"
+    },
+    {
+      "name": "Environment"
+    },
+    {
+      "name": "Character"
+    },
+    {
+      "name": "VFX"
     }
   ]
 }

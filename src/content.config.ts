@@ -19,7 +19,7 @@ const thumbnailCropSchema = z.object({
   positionY: z.number().min(0).max(100).default(50),
 });
 
-export const mediaBlockSchema = z.discriminatedUnion('type', [
+const mediaBlockItemSchema = z.discriminatedUnion('type', [
   z.object({
     type: z.literal('image'),
     title: z.string().optional(),
@@ -66,6 +66,16 @@ export const mediaBlockSchema = z.discriminatedUnion('type', [
   }),
 ]);
 
+export const mediaBlockSchema = z.union([
+  mediaBlockItemSchema,
+
+  z.object({
+    type: z.literal('group'),
+    columns: z.number().int().min(1).max(5).default(2),
+    items: z.array(mediaBlockItemSchema).min(1).max(5),
+  }),
+]);
+
 export type MediaBlock = z.infer<typeof mediaBlockSchema>;
 
 const taxonomyEntrySchema = z.object({
@@ -87,14 +97,30 @@ const taxonomyFileLoader = (filePath: string) =>
     },
   });
 
+const softwareFileLoader = file('./src/content/pools/software.json', {
+  parser: (contents) => {
+    const parsed = JSON.parse(contents) as {
+      values: Array<{ name: string; addToArsenal?: boolean }>;
+    };
+
+    return parsed.values.map((value) => ({
+      id: slugifyTaxonomyValue(value.name),
+      name: value.name,
+      addToArsenal: value.addToArsenal ?? true,
+    }));
+  },
+});
+
 const tagCollection = defineCollection({
   loader: taxonomyFileLoader('./src/content/pools/tags.json'),
   schema: taxonomyEntrySchema,
 });
 
 const softwareCollection = defineCollection({
-  loader: taxonomyFileLoader('./src/content/pools/software.json'),
-  schema: taxonomyEntrySchema,
+  loader: softwareFileLoader,
+  schema: taxonomyEntrySchema.extend({
+    addToArsenal: z.boolean().default(true),
+  }),
 });
 
 const projectCollection = defineCollection({

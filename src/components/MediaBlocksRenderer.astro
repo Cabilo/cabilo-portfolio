@@ -8,6 +8,7 @@
 
 import DynamicAov from './DynamicAov.astro';
 import TurntableScrubber from './TurntableScrubber.astro';
+import MediaBlockGroup from './MediaBlockGroup.astro';
 import fs from 'node:fs';
 import path from 'node:path';
 import { parse } from 'marked';
@@ -16,9 +17,10 @@ import { getVideoEmbed } from '../lib/video';
 
 export interface Props {
   blocks: MediaBlock[];
+  compact?: boolean;
 }
 
-const { blocks } = Astro.props;
+const { blocks, compact = false } = Astro.props;
 
 // ------------------------------------------------------------
 // HELPER FUNCTIONS
@@ -71,11 +73,15 @@ const getAlignmentClasses = (
 
 {blocks.map((block) => {
 
+  if (block.type === 'group') {
+    return <MediaBlockGroup blocks={block.items} columns={block.columns} />;
+  }
+
   if (block.type === 'text_block') {
     const parsedHTML = parse(block.content) as string;
 
     return (
-      <div class="mb-16">
+      <div class:list={['mb-16', compact && 'mb-0']}>
         {block.title && (
           <h3 class="text-xl text-text-white mb-6 uppercase tracking-wider">
             {block.title}
@@ -211,7 +217,7 @@ const getAlignmentClasses = (
     if (frames.length === 0) return null;
 
     return (
-      <div class="mb-20">
+      <div class:list={['mb-20', compact && 'mb-0']}>
         {block.title && (
           <h3
             class:list={[
