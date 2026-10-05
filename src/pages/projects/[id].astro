@@ -54,10 +54,10 @@ const showreel = getVideoEmbed(project.data.showreelUrl);
     {showreel && (
       <div
         class:list={[
-          'cabilo-media mb-16 rounded-md overflow-hidden shadow-2xl border border-cabilo-card relative aspect-video',
+          'cabilo-media mb-16 rounded-md overflow-hidden shadow-2xl border border-cabilo-card relative',
           project.data.showreelFitToViewport
-            ? 'w-[min(92vw,133.3333vh)] mx-auto'
-            : 'w-full',
+            ? 'cabilo-video-fit'
+            : 'w-full aspect-video',
         ]}
       >
         {showreel.type === 'youtube' || showreel.type === 'vimeo' ? (
