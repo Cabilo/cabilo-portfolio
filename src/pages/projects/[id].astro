@@ -52,11 +52,36 @@ const showreel = getVideoEmbed(project.data.showreelUrl);
     </div>
 
     {showreel && (
-      <div class="cabilo-media mb-16 rounded-md overflow-hidden shadow-2xl border border-cabilo-card relative aspect-video">
+      <div
+        class:list={[
+          'cabilo-media mb-16 rounded-md overflow-hidden shadow-2xl border border-cabilo-card relative aspect-video',
+          project.data.showreelFitToViewport && 'max-h-[75vh]',
+        ]}
+      >
         {showreel.type === 'youtube' || showreel.type === 'vimeo' ? (
-          <iframe class="absolute inset-0 w-full h-full" src={showreel.src} frameborder="0" allow="autoplay; fullscreen; picture-in-picture" allowfullscreen></iframe>
+          <iframe
+            class:list={[
+              'absolute inset-0 w-full h-full',
+              project.data.showreelFitToViewport ? 'object-contain' : 'object-cover',
+            ]}
+            src={showreel.src}
+            frameborder="0"
+            allow="autoplay; fullscreen; picture-in-picture"
+            allowfullscreen
+          ></iframe>
         ) : showreel.type === 'direct' ? (
-          <video class="absolute inset-0 w-full h-full object-cover" src={showreel.src} autoplay muted loop playsinline controls></video>
+          <video
+            class:list={[
+              'absolute inset-0 w-full h-full',
+              project.data.showreelFitToViewport ? 'object-contain' : 'object-cover',
+            ]}
+            src={showreel.src}
+            autoplay
+            muted
+            loop
+            playsinline
+            controls
+          ></video>
         ) : (
           <div class="absolute inset-0 flex items-center justify-center bg-cabilo-dark p-8"><p class="text-text-silver">Video URL could not be recognized.</p></div>
         )}
