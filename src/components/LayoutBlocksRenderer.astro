@@ -171,6 +171,7 @@ const maxBottom = Math.max(
     --cabilo-layout-row-height: clamp(96px, 11vw, 180px);
     position: relative;
     width: 100%;
+    height: calc(var(--cabilo-layout-rows) * var(--cabilo-layout-row-height));
     min-height: calc(var(--cabilo-layout-rows) * var(--cabilo-layout-row-height));
   }
 
@@ -222,7 +223,13 @@ const maxBottom = Math.max(
 
   .cabilo-layout-aov {
     width: 100%;
+    height: 100%;
     min-height: 100%;
+  }
+
+  .cabilo-layout-aov :global(.aov-container) {
+    width: 100%;
+    height: 100%;
   }
 
   .cabilo-layout-placeholder,
