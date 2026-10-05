@@ -106,6 +106,10 @@ export const layoutBlockSchema = z.discriminatedUnion('type', [
     type: z.literal('turntable'),
     folder: z.string(),
   }),
+  layoutBlockBaseSchema.extend({
+    type: z.literal('aov'),
+    aovPasses: z.array(aovPassSchema).default([]),
+  }),
 ]);
 
 export type LayoutBlock = z.infer<typeof layoutBlockSchema>;
