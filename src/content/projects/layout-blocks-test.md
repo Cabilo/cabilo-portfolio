@@ -26,7 +26,7 @@ layoutBlocks:
     x: 4
     y: 0
     w: 2
-    h: 6
+    h: 10
     snap: grid
     title: Text
     content: >-
