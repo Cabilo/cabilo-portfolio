@@ -61,7 +61,8 @@ const topVideo = getVideoEmbed(doc.data.videoUrl);
     </div>
 
     <!-- PLUG IN THE MASTER MEDIA BLOCKS NODE! -->
-    <div class="cabilo-media">\n      <MediaBlocksRenderer blocks={mediaBlocks} />\n    </div>
+    <div class="cabilo-media">
+      <MediaBlocksRenderer blocks={mediaBlocks} />\n    </div>
 
     {layoutBlocks.length > 0 && (
       <div class="cabilo-media mb-16">
