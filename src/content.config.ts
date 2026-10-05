@@ -79,6 +79,37 @@ export const mediaBlockSchema = z.union([
 
 export type MediaBlock = z.infer<typeof mediaBlockSchema>;
 
+const layoutBlockBaseSchema = z.object({
+  id: z.string(),
+  x: z.number().int().min(0).max(9),
+  y: z.number().int().min(0).max(99),
+  w: z.number().int().min(1).max(10),
+  h: z.number().int().min(1).max(100),
+  snap: z.enum(['grid', 'free']).default('grid'),
+  title: z.string().optional(),
+});
+
+export const layoutBlockSchema = z.discriminatedUnion('type', [
+  layoutBlockBaseSchema.extend({
+    type: z.literal('image'),
+    image: z.string(),
+  }),
+  layoutBlockBaseSchema.extend({
+    type: z.literal('text'),
+    content: z.string().default(''),
+  }),
+  layoutBlockBaseSchema.extend({
+    type: z.literal('video'),
+    videoUrl: z.string(),
+  }),
+  layoutBlockBaseSchema.extend({
+    type: z.literal('turntable'),
+    folder: z.string(),
+  }),
+]);
+
+export type LayoutBlock = z.infer<typeof layoutBlockSchema>;
+
 const taxonomyEntrySchema = z.object({
   name: z.string().min(1),
 });
@@ -139,6 +170,7 @@ const projectCollection = defineCollection({
     tags: z.array(z.string()).min(1),
     softwareUsed: z.array(z.string()).min(1),
     mediaBlocks: z.array(mediaBlockSchema).optional(),
+    layoutBlocks: z.array(layoutBlockSchema).optional(),
   }),
 });
 
@@ -161,6 +193,7 @@ const learningCollection = defineCollection({
 
     // Shared media-block system used by Projects, Tutorials, and Breakdowns.
     mediaBlocks: z.array(mediaBlockSchema).optional(),
+    layoutBlocks: z.array(layoutBlockSchema).optional(),
   }),
 });
 
