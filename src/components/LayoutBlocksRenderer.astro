@@ -264,3 +264,38 @@ const maxBottom = Math.max(
     }
   }
 </style>
+
+<script>
+  const layoutSections = document.querySelectorAll('.cabilo-layout-blocks');
+
+  layoutSections.forEach((section) => {
+    const updateHeight = () => {
+      if (window.matchMedia('(max-width: 767px)').matches) {
+        section.style.height = '';
+        return;
+      }
+
+      const baseHeight = section.scrollHeight;
+      let requiredHeight = baseHeight;
+
+      section.querySelectorAll('.cabilo-layout-frame').forEach((frame) => {
+        requiredHeight = Math.max(
+          requiredHeight,
+          frame.offsetTop + frame.scrollHeight,
+        );
+      });
+
+      section.style.height = requiredHeight + 'px';
+    };
+
+    updateHeight();
+
+    const observer = new ResizeObserver(updateHeight);
+    section.querySelectorAll('.cabilo-layout-frame').forEach((frame) => {
+      observer.observe(frame);
+    });
+
+    window.addEventListener('resize', updateHeight);
+  });
+</script>
+
