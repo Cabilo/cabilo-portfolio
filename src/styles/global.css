@@ -14,3 +14,60 @@
   --color-brand-gold: #FAC018;      /* Gradient start */
   --color-brand-amber: #E67300;     /* Gradient end */
 }
+
+/*
+ * CABILO CONTENT WIDTH SYSTEM
+ *
+ * These tokens separate reading space from visual/media space.
+ * The portfolio is intentionally wider on desktop so images and
+ * multi-column media can keep their visual scale instead of shrinking
+ * to fit a narrow article column.
+ *
+ * Mobile/tablet deliberately use the same semantic system but tighter
+ * viewport gutters, so desktop freedom does not become a bad mobile layout.
+ */
+:root {
+  --cabilo-reading-max: 900px;
+  --cabilo-media-width: 92vw;
+  --cabilo-wide-width: 96vw;
+  --cabilo-page-gutter: 5vw;
+}
+
+.cabilo-reading {
+  width: min(var(--cabilo-reading-max), calc(100% - (var(--cabilo-page-gutter) * 2)));
+  margin-inline: auto;
+}
+
+.cabilo-media {
+  width: min(var(--cabilo-media-width), calc(100% - (var(--cabilo-page-gutter) * 2)));
+  margin-inline: auto;
+}
+
+.cabilo-wide {
+  width: min(var(--cabilo-wide-width), calc(100% - (var(--cabilo-page-gutter) * 2)));
+  margin-inline: auto;
+}
+
+/*
+ * Text media blocks are still reading-width content when they appear
+ * outside a Media Group. Inside a group they remain full-width so the
+ * grid controls the composition.
+ */
+.cabilo-media > div:has(> .prose) {
+  width: min(var(--cabilo-reading-max), 100%);
+  margin-inline: auto;
+}
+
+@media (min-width: 768px) {
+  :root {
+    --cabilo-page-gutter: 4vw;
+  }
+}
+
+@media (max-width: 767px) {
+  .cabilo-reading,
+  .cabilo-media,
+  .cabilo-wide {
+    width: 100%;
+  }
+}
