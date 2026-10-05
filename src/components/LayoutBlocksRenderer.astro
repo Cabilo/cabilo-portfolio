@@ -58,7 +58,6 @@ const maxBottom = Math.max(
         --layout-y: ${block.y};
         --layout-w: ${block.w};
         --layout-h: ${block.h};
-        --layout-aspect-ratio: ${block.w} / ${block.h};
       `;
 
       const renderContent = () => {
@@ -185,7 +184,13 @@ const maxBottom = Math.max(
           data-asset-type={block.type}
           style={frameStyle}
         >
-          {renderContent()}
+          {block.matchAspectRatio ? (
+            <div class="cabilo-layout-asset-frame">
+              {renderContent()}
+            </div>
+          ) : (
+            renderContent()
+          )}
         </article>
       );
     })}
@@ -212,14 +217,29 @@ const maxBottom = Math.max(
     overflow: visible;
   }
 
-  .cabilo-layout-frame[data-match-aspect="true"][data-match-height-to-width="true"] {
-    height: auto;
-    aspect-ratio: var(--layout-aspect-ratio);
+  .cabilo-layout-asset-frame {
+    position: relative;
+    width: 100%;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
   }
 
-  .cabilo-layout-frame[data-match-aspect="true"][data-match-height-to-width="false"] {
+  .cabilo-layout-frame[data-match-aspect="true"] .cabilo-layout-asset-frame {
+    width: 100%;
+    height: auto;
+    aspect-ratio: var(--asset-aspect-ratio, 1 / 1);
+  }
+
+  .cabilo-layout-frame[data-match-aspect="true"][data-match-height-to-width="false"] .cabilo-layout-asset-frame {
     width: auto;
-    aspect-ratio: var(--layout-aspect-ratio);
+    height: 100%;
+    aspect-ratio: var(--asset-aspect-ratio, 1 / 1);
+  }
+
+  .cabilo-layout-frame[data-match-aspect="true"] .cabilo-layout-asset-frame > * {
+    flex: 0 0 auto;
   }
 
   .cabilo-layout-media,
@@ -321,11 +341,19 @@ const maxBottom = Math.max(
       padding: 0;
     }
 
-    .cabilo-layout-frame[data-match-aspect="true"] {
+    .cabilo-layout-frame[data-match-aspect="true"] .cabilo-layout-asset-frame {
       width: 100%;
       height: auto;
       min-height: 0;
-      aspect-ratio: var(--layout-aspect-ratio);
+      aspect-ratio: var(--asset-aspect-ratio, 1 / 1);
+    }
+
+    .cabilo-layout-frame[data-match-aspect="true"][data-match-height-to-width="false"] .cabilo-layout-asset-frame {
+      width: auto;
+      height: 100%;
+      max-width: 100%;
+      min-height: 0;
+      aspect-ratio: var(--asset-aspect-ratio, 1 / 1);
     }
 
     .cabilo-layout-frame-image,
@@ -397,10 +425,10 @@ const maxBottom = Math.max(
   const loadLayoutAssetRatio = (frame) => {
     if (frame.dataset.matchAspect !== 'true') return;
 
-    const fallback = frame.style.getPropertyValue('--layout-aspect-ratio').trim();
+    const fallback = frame.style.getPropertyValue('--asset-aspect-ratio').trim();
     const applyRatio = (width, height) => {
       if (!width || !height) return;
-      frame.style.setProperty('--layout-aspect-ratio', `${width} / ${height}`);
+      frame.style.setProperty('--asset-aspect-ratio', `${width} / ${height}`);
     };
 
     const type = frame.dataset.assetType;
@@ -431,7 +459,7 @@ const maxBottom = Math.max(
         }
       } else {
         const ratio = frame.querySelector('.cabilo-layout-video')?.getAttribute('data-layout-video-ratio');
-        if (ratio) frame.style.setProperty('--layout-aspect-ratio', ratio);
+        if (ratio) frame.style.setProperty('--asset-aspect-ratio', ratio);
       }
       return;
     }
@@ -447,7 +475,7 @@ const maxBottom = Math.max(
     }
 
     if (fallback) {
-      frame.style.setProperty('--layout-aspect-ratio', fallback);
+      frame.style.setProperty('--asset-aspect-ratio', fallback);
     }
   };
 
