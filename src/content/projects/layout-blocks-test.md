@@ -14,7 +14,7 @@ layoutBlocks:
     x: 0
     y: 0
     w: 4
-    h: 4
+    h: 6
     snap: grid
     title: Turntable
     content: ""
@@ -65,7 +65,7 @@ layoutBlocks:
   - id: layout-muvfal5z-czi2e
     type: video
     x: 0
-    y: 4
+    y: 6
     w: 4
     h: 4
     snap: grid
@@ -93,3 +93,17 @@ layoutBlocks:
       - name: Passfasf
         image: https://cdnb.artstation.com/p/media_assets/images/images/001/392/567/large/Wildcat’s_Gilded_Jade_1.jpg?1790720806
 ---
+
+  - id: layout-aov-test
+    type: aov
+    x: 0
+    y: 10
+    w: 10
+    h: 6
+    snap: grid
+    title: AOV Comparison
+    aovPasses:
+      - name: Viewport
+        image: https://cdna.artstation.com/p/assets/images/images/046/500/860/large/lucas-cabilo-xgen.jpg?1645267427
+      - name: Wireframe
+        image: https://cdnb.artstation.com/p/assets/images/images/031/216/037/large/lucas-cabilo-highresscreenshot00012.jpg?1602954475
