@@ -27,9 +27,9 @@ const topVideo = getVideoEmbed(doc.data.videoUrl);
   description={doc.data.description}
   image={doc.data.thumbnail}
 >
-  <main class="max-w-4xl mx-auto px-6 py-12 md:py-20">
+  <main class="px-4 py-12 md:py-20">
     
-    <div class="mb-12 text-center flex flex-col items-center">
+    <div class="cabilo-reading mb-12 text-center flex flex-col items-center">
       <div class="flex flex-wrap justify-center gap-2 mb-6">
         {doc.data.tags.map((tag: string) => (
           <a
@@ -44,7 +44,7 @@ const topVideo = getVideoEmbed(doc.data.videoUrl);
       <p class="text-text-silver text-lg max-w-2xl">{doc.data.description}</p>
     </div>
 
-    <div class="mb-16 rounded-md overflow-hidden shadow-2xl border border-cabilo-card relative aspect-video bg-cabilo-obsidian">
+    <div class="cabilo-media mb-16 rounded-md overflow-hidden shadow-2xl border border-cabilo-card relative aspect-video bg-cabilo-obsidian">
       {topVideo ? (
         topVideo.type === 'youtube' || topVideo.type === 'vimeo' ? (
           <iframe class="absolute inset-0 w-full h-full" src={topVideo.src} frameborder="0" allow="autoplay; fullscreen; picture-in-picture" allowfullscreen></iframe>
@@ -59,10 +59,10 @@ const topVideo = getVideoEmbed(doc.data.videoUrl);
     </div>
 
     <!-- PLUG IN THE MASTER MEDIA BLOCKS NODE! -->
-    <MediaBlocksRenderer blocks={mediaBlocks} />
+    <div class="cabilo-media">\n      <MediaBlocksRenderer blocks={mediaBlocks} />\n    </div>
 
     {doc.data.softwareUsed?.length > 0 && (
-      <div class="mb-12 border-t border-cabilo-card pt-8">
+      <div class="cabilo-reading mb-12 border-t border-cabilo-card pt-8">
         <h4 class="text-xs uppercase tracking-widest text-text-white font-bold mb-4">Software Used</h4>
         <div class="flex flex-wrap gap-2">
           {doc.data.softwareUsed.map((software: string) => (
@@ -77,7 +77,7 @@ const topVideo = getVideoEmbed(doc.data.videoUrl);
       </div>
     )}
 
-    <div class="prose prose-invert prose-p:text-text-silver prose-headings:text-text-white prose-a:text-brand-amber max-w-none prose-img:rounded-md prose-img:border prose-img:border-cabilo-card prose-hr:border-cabilo-card border-t border-cabilo-card pt-12">
+    <div class="cabilo-reading prose prose-invert prose-p:text-text-silver prose-headings:text-text-white prose-a:text-brand-amber max-w-none prose-img:rounded-md prose-img:border prose-img:border-cabilo-card prose-hr:border-cabilo-card border-t border-cabilo-card pt-12">
       <Content />
     </div>
 
