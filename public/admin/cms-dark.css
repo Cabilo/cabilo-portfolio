@@ -1,0 +1,104 @@
+/*
+ * CABILO CMS DARK MODE
+ *
+ * Decap CMS does not currently expose a reliable global dark-theme switch
+ * for the CDN build used by this admin page. This stylesheet is intentionally
+ * scoped to #nc-root so it cannot affect the public portfolio.
+ */
+
+html,
+body,
+#nc-root {
+  color-scheme: dark !important;
+  background: #050506 !important;
+  color: #e8e8ea !important;
+}
+
+#nc-root {
+  min-height: 100vh;
+}
+
+/*
+ * Decap's default UI is built with Emotion-generated classes. Those classes
+ * contain "css-", so we use them as the boundary for the CMS components.
+ * This keeps the override scoped to Decap without depending on unstable
+ * component class names.
+ */
+#nc-root [class*="css-"] {
+  background-color: #111216 !important;
+  color: #e8e8ea !important;
+  border-color: #303239 !important;
+  box-shadow: none !important;
+}
+
+#nc-root [class*="css-"] h1,
+#nc-root [class*="css-"] h2,
+#nc-root [class*="css-"] h3,
+#nc-root [class*="css-"] h4,
+#nc-root [class*="css-"] h5,
+#nc-root [class*="css-"] h6,
+#nc-root [class*="css-"] p,
+#nc-root [class*="css-"] label,
+#nc-root [class*="css-"] span,
+#nc-root [class*="css-"] a {
+  color: inherit !important;
+}
+
+#nc-root input,
+#nc-root textarea,
+#nc-root select {
+  background-color: #0b0c0f !important;
+  color: #f0f0f2 !important;
+  border-color: #3a3c44 !important;
+  color-scheme: dark !important;
+}
+
+#nc-root input::placeholder,
+#nc-root textarea::placeholder {
+  color: #777b85 !important;
+}
+
+#nc-root button {
+  background-color: #30343b !important;
+  color: #f4f4f5 !important;
+  border-color: #3f434b !important;
+}
+
+#nc-root button:hover,
+#nc-root button:focus {
+  background-color: #41464f !important;
+  color: #ffffff !important;
+}
+
+#nc-root a {
+  color: #aebcff !important;
+}
+
+#nc-root [role="menu"],
+#nc-root [role="listbox"],
+#nc-root [role="dialog"],
+#nc-root [role="tooltip"] {
+  background-color: #111216 !important;
+  color: #e8e8ea !important;
+  border-color: #303239 !important;
+}
+
+#nc-root [role="option"]:hover,
+#nc-root [role="option"][aria-selected="true"] {
+  background-color: #252a35 !important;
+  color: #ffffff !important;
+}
+
+#nc-root [aria-selected="true"] {
+  color: #ffffff !important;
+}
+
+/*
+ * Keep the actual media previews untouched. Only their surrounding UI
+ * receives the dark treatment.
+ */
+#nc-root img,
+#nc-root video,
+#nc-root svg {
+  background-color: transparent !important;
+}
