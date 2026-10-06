@@ -21,6 +21,7 @@ layoutBlocks:
     snap: free
     title: Turntable
     fitMode: width-to-height
+    fitToViewport: true
     content: ""
     image: ""
     videoUrl: ""
@@ -35,6 +36,7 @@ layoutBlocks:
     snap: grid
     title: Text
     fitMode: width-to-height
+    fitToViewport: true
     content: >-
       # Layout Blocks Test 02
 
@@ -56,6 +58,7 @@ layoutBlocks:
     snap: free
     title: Wide Image
     fitMode: width-to-height
+    fitToViewport: true
     content: ""
     image: https://cdnb.artstation.com/p/media_assets/images/images/001/392/567/large/Wildcat%E2%80%99s_Gilded_Jade_1.jpg?1790720806
     videoUrl: ""
@@ -70,6 +73,7 @@ layoutBlocks:
     snap: free
     title: Small Video
     fitMode: width-to-height
+    fitToViewport: true
     content: ""
     image: ""
     videoUrl: https://www.youtube.com/watch?v=FjSAVJJ0w3I
@@ -77,13 +81,14 @@ layoutBlocks:
     aovPasses: []
   - id: layout-test-02-aov
     type: aov
-    x: 0
+    x: 2
     y: 8
-    w: 10
+    w: 6
     h: 5
     snap: free
     title: AOV Comparison
     fitMode: width-to-height
+    fitToViewport: true
     content: ""
     image: ""
     videoUrl: ""
@@ -106,6 +111,7 @@ layoutBlocks:
     snap: free
     title: Small Text
     fitMode: width-to-height
+    fitToViewport: true
     content: A small free-snap text block. It should keep its own space without
       introducing an internal scrollbar.
     image: ""
@@ -121,6 +127,7 @@ layoutBlocks:
     snap: free
     title: Small Image
     fitMode: width-to-height
+    fitToViewport: true
     content: ""
     image: https://cdna.artstation.com/p/media_assets/images/images/001/392/568/large/Wildcat%27s_Gilded_Jade_-_1_1.jpg?1790720808
     videoUrl: ""
@@ -135,6 +142,7 @@ layoutBlocks:
     snap: free
     title: Another Text Block
     fitMode: width-to-height
+    fitToViewport: true
     content: Another small block to test how multiple fractional free-snap elements
       sit beside one another.
     image: ""
