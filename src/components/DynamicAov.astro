@@ -14,6 +14,7 @@
  *   while the finger moves anywhere inside the AOV frame.
  * - While dragging, browser text/image selection is temporarily disabled.
  * - Vertical page scrolling remains available when the user starts a fresh gesture.
+ * - AOV pass selection stays inside the comparison viewport as compact dropdown controls.
  */
 
 export interface Props {
@@ -121,67 +122,52 @@ const defaultB = passes.length > 1 ? passes[1] : passes[0];
         </div>
       </div>
 
-      <!-- LABELS -->
-      <div class="label-a absolute bottom-4 left-4 bg-cabilo-obsidian/80 backdrop-blur-sm px-3 py-1 rounded text-xs tracking-widest text-text-white uppercase pointer-events-none z-10">
-        {defaultA.name}
-      </div>
-
-      <div class="label-b absolute bottom-4 right-4 bg-cabilo-obsidian/80 backdrop-blur-sm px-3 py-1 rounded text-xs tracking-widest text-text-white uppercase pointer-events-none z-10">
-        {defaultB.name}
-      </div>
-    </div>
-
-    <!-- AOV PASS SELECTORS -->
-    <div class="flex-none grid grid-cols-1 md:grid-cols-2 gap-8 bg-cabilo-dark p-6 rounded-md border border-cabilo-card">
-
-      <div>
-        <h4 class="text-text-silver text-xs tracking-widest uppercase mb-3">
-          Left Side (A)
-        </h4>
-
-        <div class="flex flex-wrap gap-2">
+      <!-- AOV PASS SELECTORS -->
+      <div class="aov-pass-select aov-pass-select-a absolute bottom-4 left-4 z-30">
+        <label class="sr-only" for="aov-pass-a">Choose left AOV pass</label>
+        <select
+          id="aov-pass-a"
+          class="aov-pass-select-control"
+          aria-label="Choose left AOV pass"
+        >
           {passes.map((pass, index) => (
-            <button
-              class:list={[
-                'btn-a px-3 py-1.5 rounded-md text-xs font-bold tracking-wider uppercase transition-colors',
-                index === 0
-                  ? 'bg-brand-amber text-text-white'
-                  : 'bg-cabilo-card text-text-silver hover:text-text-white',
-              ]}
-              data-name={pass.name}
-              data-image={pass.image}
-              type="button"
-            >
-              {pass.name}
-            </button>
+            <option value={index}>{pass.name}</option>
           ))}
-        </div>
+        </select>
+        <svg
+          class="aov-pass-select-chevron pointer-events-none absolute right-3 top-1/2 -translate-y-1/2 w-3.5 h-3.5 text-text-silver"
+          fill="none"
+          stroke="currentColor"
+          viewBox="0 0 24 24"
+          aria-hidden="true"
+        >
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m6 9 6 6 6-6"></path>
+        </svg>
       </div>
 
-      <div>
-        <h4 class="text-text-silver text-xs tracking-widest uppercase mb-3">
-          Right Side (B)
-        </h4>
-
-        <div class="flex flex-wrap gap-2">
+      <div class="aov-pass-select aov-pass-select-b absolute bottom-4 right-4 z-30">
+        <label class="sr-only" for="aov-pass-b">Choose right AOV pass</label>
+        <select
+          id="aov-pass-b"
+          class="aov-pass-select-control"
+          aria-label="Choose right AOV pass"
+        >
           {passes.map((pass, index) => (
-            <button
-              class:list={[
-                'btn-b px-3 py-1.5 rounded-md text-xs font-bold tracking-wider uppercase transition-colors',
-                index === 1
-                  ? 'bg-brand-amber text-text-white'
-                  : 'bg-cabilo-card text-text-silver hover:text-text-white',
-              ]}
-              data-name={pass.name}
-              data-image={pass.image}
-              type="button"
-            >
+            <option value={index} selected={index === 1 || (passes.length === 1 && index === 0)}>
               {pass.name}
-            </button>
+            </option>
           ))}
-        </div>
+        </select>
+        <svg
+          class="aov-pass-select-chevron pointer-events-none absolute right-3 top-1/2 -translate-y-1/2 w-3.5 h-3.5 text-text-silver"
+          fill="none"
+          stroke="currentColor"
+          viewBox="0 0 24 24"
+          aria-hidden="true"
+        >
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m6 9 6 6 6-6"></path>
+        </svg>
       </div>
-
     </div>
   </div>
 </dynamic-aov>
@@ -198,10 +184,8 @@ const defaultB = passes.length > 1 ? passes[1] : passes[0];
       const slider = this.querySelector('.aov-slider') as HTMLElement;
       const imgA = this.querySelector('.img-a') as HTMLImageElement;
       const imgB = this.querySelector('.img-b') as HTMLImageElement;
-      const labelA = this.querySelector('.label-a') as HTMLElement;
-      const labelB = this.querySelector('.label-b') as HTMLElement;
-      const buttonsA = this.querySelectorAll('.btn-a');
-      const buttonsB = this.querySelectorAll('.btn-b');
+      const selectA = this.querySelector('.aov-pass-select-a select') as HTMLSelectElement;
+      const selectB = this.querySelector('.aov-pass-select-b select') as HTMLSelectElement;
 
       if (!container || !clipperB || !slider || !imgA || !imgB) return;
 
@@ -409,47 +393,88 @@ const defaultB = passes.length > 1 ? passes[1] : passes[0];
         activePointerId = null;
       });
 
-      buttonsA.forEach((btn) => {
-        btn.addEventListener('click', (e) => {
-          const target = e.currentTarget as HTMLButtonElement;
-          const image = target.getAttribute('data-image') || '';
-          const name = target.getAttribute('data-name') || '';
+      const updatePassA = () => {
+        const index = Number.parseInt(selectA.value, 10);
+        const pass = passes[index];
 
-          imgA.src = image;
-          labelA.innerText = name;
+        if (!pass) return;
 
-          buttonsA.forEach((button) => {
-            button.classList.remove('bg-brand-amber', 'text-text-white');
-            button.classList.add('bg-cabilo-card', 'text-text-silver');
-          });
+        imgA.src = pass.image;
+        imgA.alt = pass.name;
 
-          target.classList.remove('bg-cabilo-card', 'text-text-silver');
-          target.classList.add('bg-brand-amber', 'text-text-white');
-        });
-      });
+        /*
+         * The A image defines the Layout Blocks comparison aspect ratio,
+         * so recalculate the viewport when the left pass changes.
+         */
+        fitImageToViewport();
+      };
 
-      buttonsB.forEach((btn) => {
-        btn.addEventListener('click', (e) => {
-          const target = e.currentTarget as HTMLButtonElement;
-          const image = target.getAttribute('data-image') || '';
-          const name = target.getAttribute('data-name') || '';
+      const updatePassB = () => {
+        const index = Number.parseInt(selectB.value, 10);
+        const pass = passes[index];
 
-          imgB.src = image;
-          labelB.innerText = name;
+        if (!pass) return;
 
-          fitImageToViewport();
+        imgB.src = pass.image;
+        imgB.alt = pass.name;
+      };
 
-          buttonsB.forEach((button) => {
-            button.classList.remove('bg-brand-amber', 'text-text-white');
-            button.classList.add('bg-cabilo-card', 'text-text-silver');
-          });
-
-          target.classList.remove('bg-cabilo-card', 'text-text-silver');
-          target.classList.add('bg-brand-amber', 'text-text-white');
-        });
-      });
+      selectA?.addEventListener('change', updatePassA);
+      selectB?.addEventListener('change', updatePassB);
     }
   }
 
   customElements.define('dynamic-aov', DynamicAov);
 </script>
+
+<style>
+  .aov-pass-select {
+    max-width: min(42%, 220px);
+  }
+
+  .aov-pass-select-control {
+    appearance: none;
+    -webkit-appearance: none;
+    width: 100%;
+    min-width: 92px;
+    padding: 0.5rem 2rem 0.5rem 0.75rem;
+    border: 1px solid color-mix(in srgb, var(--color-cabilo-card) 85%, white 15%);
+    border-radius: 0.375rem;
+    background: color-mix(in srgb, var(--color-cabilo-obsidian) 88%, transparent);
+    color: var(--color-text-white);
+    backdrop-filter: blur(8px);
+    font-size: 0.6875rem;
+    font-weight: 700;
+    letter-spacing: 0.12em;
+    line-height: 1.2;
+    text-transform: uppercase;
+    cursor: pointer;
+    outline: none;
+  }
+
+  .aov-pass-select-control:hover {
+    border-color: var(--color-brand-amber);
+  }
+
+  .aov-pass-select-control:focus-visible {
+    border-color: var(--color-brand-amber);
+    box-shadow: 0 0 0 2px color-mix(in srgb, var(--color-brand-amber) 35%, transparent);
+  }
+
+  .aov-pass-select-control option {
+    background: var(--color-cabilo-obsidian);
+    color: var(--color-text-white);
+  }
+
+  @media (max-width: 640px) {
+    .aov-pass-select {
+      max-width: 46%;
+    }
+
+    .aov-pass-select-control {
+      min-width: 0;
+      padding-left: 0.625rem;
+      padding-right: 1.75rem;
+    }
+  }
+</style>
