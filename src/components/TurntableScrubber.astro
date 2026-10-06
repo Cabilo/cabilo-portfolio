@@ -93,7 +93,7 @@ const frameDataString = JSON.stringify(frames);
   <div
     id="tt-status"
     class:list={[
-      'z-30 flex items-center justify-center gap-5 text-[10px] font-mono tracking-widest text-text-silver',
+      'z-30 flex w-[var(--tt-status-width,auto)] max-w-full items-center justify-center gap-5 text-xs font-mono tracking-widest text-text-silver',
       statusPosition !== 'bottom' && 'absolute pointer-events-none',
       statusPosition === 'bottom' && 'mt-0',
     ]}
@@ -193,6 +193,11 @@ const frameDataString = JSON.stringify(frames);
           container.style.height = '';
           container.style.maxWidth = '100%';
 
+          this.style.setProperty(
+            '--tt-status-width',
+            `${container.getBoundingClientRect().width}px`
+          );
+
           display.style.width = '';
           display.style.height = '';
 
@@ -241,6 +246,11 @@ const frameDataString = JSON.stringify(frames);
 
         container.style.maxWidth =
           '100%';
+
+        this.style.setProperty(
+          '--tt-status-width',
+          `${width}px`
+        );
 
         display.style.width =
           `${width}px`;
@@ -671,6 +681,13 @@ const frameDataString = JSON.stringify(frames);
       updateSensitivity();
 
       fitTurntableToViewport();
+
+      if (!fitViewport) {
+        this.style.setProperty(
+          '--tt-status-width',
+          `${container.getBoundingClientRect().width}px`
+        );
+      }
 
       loadFrame(0);
     }
