@@ -20,7 +20,7 @@ layoutBlocks:
     h: 5
     snap: free
     title: Turntable
-    fitMode: height-to-width
+    fitMode: width-to-height
     content: ""
     image: ""
     videoUrl: ""
@@ -69,7 +69,7 @@ layoutBlocks:
     h: 3
     snap: free
     title: Small Video
-    fitMode: height-to-width
+    fitMode: width-to-height
     content: ""
     image: ""
     videoUrl: https://www.youtube.com/watch?v=FjSAVJJ0w3I
