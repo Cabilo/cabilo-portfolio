@@ -60,6 +60,23 @@ const maxBottom = Math.max(
         --layout-h: ${block.h};
       `;
 
+      const assetAlignment =
+        block.assetAlignment === 'left' ||
+        block.assetAlignment === 'center' ||
+        block.assetAlignment === 'right'
+          ? block.assetAlignment
+          : 'auto';
+
+      const automaticAlignment =
+        block.x + block.w / 2 < 5
+          ? 'left'
+          : block.x + block.w / 2 > 5
+            ? 'right'
+            : 'center';
+
+      const resolvedAssetAlignment =
+        assetAlignment === 'auto' ? automaticAlignment : assetAlignment;
+
       const renderContent = () => {
         if (block.type === 'text') {
           const parsedHTML = parse(block.content) as string;
@@ -186,6 +203,7 @@ const maxBottom = Math.max(
           data-fit-mode={block.fitMode}
           data-fit-to-viewport={block.fitToViewport ? 'true' : 'false'}
           data-asset-type={block.type}
+          data-asset-alignment={block.type === 'text' ? 'none' : resolvedAssetAlignment}
           style={frameStyle}
         >
           {block.fitMode !== 'none' ? (
@@ -258,6 +276,30 @@ const maxBottom = Math.max(
     width: auto;
     height: 100%;
     aspect-ratio: var(--asset-aspect-ratio);
+  }
+
+  /*
+   * Asset alignment is independent from fit mode.
+   * The authored grid slot remains the reference frame; if the asset is
+   * smaller than that slot (for example because of the 75vh cap), this
+   * controls where the asset sits inside the slot.
+   *
+   * Text blocks deliberately opt out so Markdown content keeps its own
+   * alignment semantics.
+   */
+  .cabilo-layout-frame[data-asset-alignment="left"] .cabilo-layout-asset-frame {
+    margin-left: 0;
+    margin-right: auto;
+  }
+
+  .cabilo-layout-frame[data-asset-alignment="center"] .cabilo-layout-asset-frame {
+    margin-left: auto;
+    margin-right: auto;
+  }
+
+  .cabilo-layout-frame[data-asset-alignment="right"] .cabilo-layout-asset-frame {
+    margin-left: auto;
+    margin-right: 0;
   }
 
   .cabilo-layout-frame[data-fit-mode="none"] .cabilo-layout-asset-frame {
