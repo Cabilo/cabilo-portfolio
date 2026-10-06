@@ -83,7 +83,7 @@ layoutBlocks:
     h: 5
     snap: free
     title: AOV Comparison
-    fitMode: height-to-width
+    fitMode: width-to-height
     content: ""
     image: ""
     videoUrl: ""
