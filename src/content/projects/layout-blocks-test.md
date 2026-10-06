@@ -19,7 +19,7 @@ layoutBlocks:
     x: 0
     y: 0
     w: 4
-    h: 6
+    h: 4
     snap: grid
     title: Turntable
     fitMode: width-to-height
@@ -67,7 +67,7 @@ layoutBlocks:
   - id: layout-muvfal5z-czi2e
     type: video
     x: 0
-    y: 6
+    y: 4
     w: 4
     h: 4
     snap: grid
@@ -83,7 +83,7 @@ layoutBlocks:
     x: 6
     y: 4
     w: 4
-    h: 6
+    h: 4
     snap: grid
     title: Aov
     fitMode: width-to-height
