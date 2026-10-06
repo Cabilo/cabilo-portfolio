@@ -283,6 +283,11 @@
               ? 'height-to-width'
               : 'width-to-height')
             : 'none',
+      fitToViewport:
+        block.fitToViewport === false ||
+        block.fitToViewport === 'false'
+          ? false
+          : true,
       content: block.content || '',
       image: block.image || '',
       videoUrl: block.videoUrl || '',
@@ -718,6 +723,16 @@
               }, option[1]);
             })
           )),
+          selected.type !== 'text'
+            ? this.renderField('Fit to viewport (max 75vh)', h('input', {
+                type: 'checkbox',
+                checked: selected.fitToViewport !== false,
+                style: { width: 'auto' },
+                onChange: function (event) {
+                  this.updateSelectedField('fitToViewport', event.target.checked);
+                }.bind(this),
+              }))
+            : null,
           this.renderField('Snap mode', h('select', {
             value: selected.snap,
             onChange: function (event) {
