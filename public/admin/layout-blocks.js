@@ -747,7 +747,7 @@
                     value: option[0],
                   }, option[1]);
                 })
-              }))
+              ))
             : null,
           selected.type !== 'text'
             ? this.renderField('Fit to viewport (max 75vh)', h('input', {
