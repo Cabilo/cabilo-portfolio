@@ -1,0 +1,38 @@
+---
+/**
+ * src/components/ProjectBreakdown.astro
+ *
+ * Shared project-breakdown presentation used by project detail pages.
+ * The Markdown body remains the CMS-editable project content.
+ */
+
+import { slugifyTaxonomyValue } from '../lib/taxonomy';
+
+export interface Props {
+  Content: any;
+  softwareUsed: string[];
+}
+
+const { Content, softwareUsed } = Astro.props;
+---
+
+<div class="cabilo-reading grid grid-cols-1 md:grid-cols-4 gap-12 border-t border-cabilo-card pt-12">
+  <div class="md:col-span-3 prose prose-invert prose-p:text-text-silver prose-headings:text-text-white prose-a:text-brand-amber max-w-none">
+    <h3 class="text-2xl font-medium mb-6 uppercase tracking-wide">Project Breakdown</h3>
+    <Content />
+  </div>
+
+  <div class="md:col-span-1">
+    <h4 class="text-xs uppercase tracking-widest text-text-white font-bold mb-4">Software Used</h4>
+    <div class="flex flex-col gap-2">
+      {softwareUsed.map((software) => (
+        <a
+          href={`/tags/${slugifyTaxonomyValue(software)}`}
+          class="px-3 py-2 bg-cabilo-dark border border-cabilo-card rounded-md text-sm text-text-silver"
+        >
+          {software}
+        </a>
+      ))}
+    </div>
+  </div>
+</div>
