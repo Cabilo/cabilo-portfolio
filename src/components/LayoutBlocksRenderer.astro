@@ -581,14 +581,18 @@ const maxBottom = Math.max(
       }
 
       /*
-       * Layout Blocks are authored as independent matrix rectangles, but a
-       * fit mode can make a block taller than its authored slot. Resolve that
-       * overflow here instead of letting it visually collide with the next
-       * block.
+       * The CMS Y position is authoritative.
        *
-       * Only blocks that overlap horizontally participate in this vertical
-       * collision pass. Blocks in separate columns therefore keep their
-       * authored Y positions.
+       * Fit modes are allowed to make a block physically taller than its
+       * authored slot, but they never move another block individually.
+       * Instead, the row that contains the oversized block becomes elastic:
+       * every later authored row starts after the previous row's actual
+       * footprint.
+       *
+       * This gives us the useful part of collision handling without turning
+       * the layout into a physics system. Blocks in the same authored row
+       * therefore always stay together, while the empty space below that row
+       * expands when its content needs more room.
        */
       const resolved = frames.map((frame) => {
         const x = Number(frame.style.getPropertyValue('--layout-x'));
@@ -614,7 +618,12 @@ const maxBottom = Math.max(
         getComputedStyle(section).getPropertyValue('--cabilo-layout-row-height'),
       ) || 1;
 
-      resolved.forEach((item, index) => {
+      /*
+       * First determine the actual footprint required by each block.
+       * Width → Height can grow vertically from its asset/content ratio.
+       * Height → Width can grow horizontally without affecting row flow.
+       */
+      resolved.forEach((item) => {
         const fitMode = item.frame.dataset.fitMode;
 
         if (fitMode === 'width-to-height') {
@@ -633,40 +642,48 @@ const maxBottom = Math.max(
             item.resolvedW = measuredWidth;
           }
         }
+      });
 
-        for (let previousIndex = 0; previousIndex < index; previousIndex += 1) {
-          const previous = resolved[previousIndex];
+      /*
+       * Build physical row offsets from authored row starts.
+       *
+       * Example:
+       *   row 8  -> actual bottom 18
+       *   row 13 -> shifted to 18
+       *
+       * The blocks that authored themselves at row 13 all receive the same
+       * offset, so they remain a single visual row instead of being pushed
+       * independently.
+       */
+      const rowStarts = [...new Set(resolved.map((item) => item.y))]
+        .sort((a, b) => a - b);
 
-          /*
-           * A small horizontal overlap can be intentional in a spatial layout.
-           * Only treat it as a collision when the previous block covers at
-           * least half of the current block's width. This preserves authored
-           * edge compositions such as a 3-column block beginning one column
-           * inside the edge of a wider neighboring block.
-           */
-          const horizontalOverlapStart = Math.max(
-            item.x,
-            previous.x,
-          );
-          const horizontalOverlapEnd = Math.min(
-            item.x + item.resolvedW,
-            previous.x + previous.resolvedW,
-          );
-          const horizontalOverlap = Math.max(
-            0,
-            horizontalOverlapEnd - horizontalOverlapStart,
-          );
-          const horizontalCollision =
-            horizontalOverlap >= item.resolvedW * 0.5;
+      const rowOffsets = new Map();
+      let previousPhysicalBottom = 0;
 
-          const verticalOverlap =
-            item.resolvedY < previous.resolvedY + previous.resolvedH &&
-            item.resolvedY + item.resolvedH > previous.resolvedY;
+      rowStarts.forEach((rowStart) => {
+        const rowItems = resolved.filter((item) => item.y === rowStart);
+        const rowOffset = Math.max(0, previousPhysicalBottom - rowStart);
 
-          if (horizontalCollision && verticalOverlap) {
-            item.resolvedY = previous.resolvedY + previous.resolvedH;
-          }
-        }
+        rowOffsets.set(rowStart, rowOffset);
+
+        const physicalBottom = Math.max(
+          ...rowItems.map(
+            (item) => rowStart + rowOffset + item.resolvedH,
+          ),
+        );
+
+        previousPhysicalBottom = Math.max(
+          previousPhysicalBottom,
+          physicalBottom,
+        );
+      });
+
+      resolved.forEach((item) => {
+        const fitMode = item.frame.dataset.fitMode;
+        const rowOffset = rowOffsets.get(item.y) || 0;
+
+        item.resolvedY = item.y + rowOffset;
 
         item.frame.style.top =
           String(item.resolvedY / 2 * rowHeight) + 'px';
