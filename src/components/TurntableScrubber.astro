@@ -15,7 +15,7 @@ const frameDataString = JSON.stringify(frames);
 <turntable-scrubber
   data-frames={frameDataString}
   data-fit-viewport={fitToViewport ? 'true' : 'false'}
-  class:list={['flex flex-col items-center gap-3 w-full', !fitToViewport && 'h-full']}
+  class:list={['flex w-full', !fitToViewport && 'h-full']}
 >
 
   <div
@@ -72,25 +72,31 @@ const frameDataString = JSON.stringify(frames);
       </div>
     </div>
 
-  </div>
-
-  <div
-    class="flex items-center justify-center gap-6 text-[10px] tracking-widest text-text-silver font-mono bg-cabilo-dark/50 py-2 rounded border border-cabilo-card w-fit mx-auto px-6"
-  >
-    <span>
-      FRAME
-      <span id="tt-counter" class="text-text-white font-bold">
-        001
+    <!--
+      The status readout is intentionally inside the viewport.
+      It must not become a second flex item because its height would
+      then participate in Layout Block sizing and could change the
+      physical footprint of the turntable.
+    -->
+    <div
+      class="absolute bottom-3 left-1/2 z-30 -translate-x-1/2 flex items-center justify-center gap-5 rounded bg-cabilo-dark/60 px-4 py-2 text-[10px] font-mono tracking-widest text-text-silver backdrop-blur-md"
+    >
+      <span>
+        FRAME
+        <span id="tt-counter" class="text-text-white font-bold">
+          001
+        </span>
+        / {String(frames.length).padStart(3, '0')}
       </span>
-      / {String(frames.length).padStart(3, '0')}
-    </span>
 
-    <span>
-      ZOOM
-      <span id="tt-zoom" class="text-text-white font-bold">
-        1.0
-      </span>x
-    </span>
+      <span>
+        ZOOM
+        <span id="tt-zoom" class="text-text-white font-bold">
+          1.0
+        </span>x
+      </span>
+    </div>
+
   </div>
 
 </turntable-scrubber>
