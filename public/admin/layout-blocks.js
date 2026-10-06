@@ -165,6 +165,29 @@
       box-shadow: 0 12px 28px rgba(1,4,9,.55);
     }
 
+    /*
+     * When the widget itself is inside Decap's scrolling editor, keep the
+     * inspector attached to the bottom of the viewport without taking it
+     * out of Decap's normal field layout.
+     *
+     * The fixed presentation is applied to the inspector only after the
+     * widget is known to be visible; the widget itself remains untouched.
+     */
+    .cabilo-layout-widget.is-inspector-floating {
+      padding-bottom: 110px;
+    }
+
+    .cabilo-layout-widget.is-inspector-floating .cabilo-layout-inspector {
+      position: fixed;
+      left: var(--cabilo-layout-inspector-left, 0px);
+      bottom: var(--cabilo-layout-inspector-bottom, 12px);
+      width: var(--cabilo-layout-inspector-width, auto);
+      max-height: min(42vh, 520px);
+      overflow: auto;
+      z-index: 1000;
+      margin: 0;
+    }
+
     .cabilo-layout-inspector-grid {
       max-height: 34vh;
       overflow-y: auto;
@@ -364,9 +387,70 @@
       document.addEventListener('keydown', this.handleKeyDown);
       document.addEventListener('pointermove', this.handlePointerMove);
       document.addEventListener('pointerup', this.handlePointerUp);
+      this.startInspectorFloating();
+    },
+
+    startInspectorFloating: function () {
+      if (this.inspectorFrame) return;
+
+      this.updateInspectorFloating = this.updateInspectorFloating.bind(this);
+      this.inspectorObserver = new IntersectionObserver(function (entries) {
+        var entry = entries[0];
+        if (!entry || !this.inspectorNode) return;
+
+        this.inspectorVisible = entry.isIntersecting;
+        this.updateInspectorFloating();
+      }.bind(this), { threshold: [0, 0.01, 1] });
+
+      this.inspectorScrollHandler = this.updateInspectorFloating;
+      window.addEventListener('scroll', this.inspectorScrollHandler, true);
+      window.addEventListener('resize', this.inspectorScrollHandler);
+
+      this.inspectorFrame = requestAnimationFrame(this.updateInspectorFloating);
+    },
+
+    stopInspectorFloating: function () {
+      if (this.inspectorFrame) cancelAnimationFrame(this.inspectorFrame);
+      this.inspectorFrame = null;
+
+      if (this.inspectorObserver) this.inspectorObserver.disconnect();
+      this.inspectorObserver = null;
+
+      if (this.inspectorScrollHandler) {
+        window.removeEventListener('scroll', this.inspectorScrollHandler, true);
+        window.removeEventListener('resize', this.inspectorScrollHandler);
+      }
+
+      this.inspectorScrollHandler = null;
+    },
+
+    updateInspectorFloating: function () {
+      if (!this.inspectorNode) return;
+
+      var widget = this.inspectorNode.closest('.cabilo-layout-widget');
+      if (!widget) return;
+
+      var rect = widget.getBoundingClientRect();
+      var inspector = this.inspectorNode;
+
+      var visible = rect.bottom > 0 && rect.top < window.innerHeight;
+      if (!visible) {
+        widget.classList.remove('is-inspector-floating');
+        return;
+      }
+
+      var width = Math.min(rect.width, window.innerWidth - 24);
+      var left = Math.max(12, Math.min(rect.left, window.innerWidth - width - 12));
+
+      widget.style.setProperty('--cabilo-layout-inspector-left', left + 'px');
+      widget.style.setProperty('--cabilo-layout-inspector-width', width + 'px');
+      widget.style.setProperty('--cabilo-layout-inspector-bottom', '12px');
+
+      widget.classList.add('is-inspector-floating');
     },
 
     componentWillUnmount: function () {
+      this.stopInspectorFloating();
       document.removeEventListener('keydown', this.handleKeyDown);
       document.removeEventListener('pointermove', this.handlePointerMove);
       document.removeEventListener('pointerup', this.handlePointerUp);
@@ -670,7 +754,13 @@
 
     renderInspector: function (selected) {
       if (!selected) {
-        return h('div', { className: 'cabilo-layout-inspector' },
+        return h('div', {
+        className: 'cabilo-layout-inspector',
+        ref: function (node) {
+          this.inspectorNode = node;
+          if (node) this.updateInspectorFloating();
+        }.bind(this),
+      },
           h('div', { className: 'cabilo-layout-help' },
             'Select a block to edit its content and snapping mode.'
           )
