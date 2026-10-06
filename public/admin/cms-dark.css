@@ -9,7 +9,7 @@
  */
 
 :root {
-  --cabilo-cms-bg: #21262d;
+  --cabilo-cms-bg: #0d1117;
   --cabilo-cms-surface: #161b22;
   --cabilo-cms-field: #21262d;
   --cabilo-cms-field-hover: #292f38;
@@ -315,6 +315,22 @@ body {
   background: #6e7681 !important;
 }
 
+
+/* Collection entries need to read as actual buttons/cards, not as part of the page background. */
+#nc-root [class*="ListItem"],
+#nc-root [class*="CollectionCard"],
+#nc-root [class*="EntryCard"] {
+  background-color: var(--cabilo-cms-surface) !important;
+  color: var(--cabilo-cms-text) !important;
+  border-color: var(--cabilo-cms-border-strong) !important;
+}
+
+#nc-root [class*="ListItem"]:hover,
+#nc-root [class*="CollectionCard"]:hover,
+#nc-root [class*="EntryCard"]:hover {
+  background-color: var(--cabilo-cms-field-hover) !important;
+  border-color: var(--cabilo-cms-accent) !important;
+}
 
 /*
  * Final neutral-surface safety net.
