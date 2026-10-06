@@ -638,7 +638,7 @@ const maxBottom = Math.max(
           const previous = resolved[previousIndex];
 
           const horizontalOverlap =
-            item.x < previous.x + previous.w &&
+            item.x < previous.x + previous.resolvedW &&
             item.x + item.resolvedW > previous.x;
 
           const verticalOverlap =
