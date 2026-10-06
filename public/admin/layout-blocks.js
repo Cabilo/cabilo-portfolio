@@ -176,7 +176,7 @@
       box-sizing: border-box;
       border: 1px solid #3f3f46;
       border-radius: 4px;
-      background: #09090b;
+      background: #1a1b20;
       color: #f4f4f5;
       padding: 7px 8px;
       font: inherit;
