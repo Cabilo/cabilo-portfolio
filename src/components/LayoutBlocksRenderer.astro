@@ -179,12 +179,11 @@ const maxBottom = Math.max(
             'cabilo-layout-frame',
             `cabilo-layout-frame-${block.type}`,
           ]}
-          data-match-aspect={block.matchAspectRatio ? 'true' : 'false'}
-          data-match-height-to-width={block.matchHeightToWidth ? 'true' : 'false'}
+          data-fit-mode={block.fitMode}
           data-asset-type={block.type}
           style={frameStyle}
         >
-          {block.matchAspectRatio ? (
+          {block.fitMode !== 'none' ? (
             <div class="cabilo-layout-asset-frame">
               {renderContent()}
             </div>
@@ -218,17 +217,18 @@ const maxBottom = Math.max(
   }
 
   /*
-   * The Layout Block itself is always the authored grid slot.
-   * Aspect matching only sizes the asset inside that slot.
+   * The Layout Block is the authored slot.
+   * Fit modes control the media frame inside that slot:
+   * - none: use the full authored slot.
+   * - width-to-height: width is authoritative; height follows the asset ratio.
+   * - height-to-width: height is authoritative; width follows the asset ratio.
    *
-   * This intentionally follows the same container-first model used by
-   * DynamicAov/TurntableScrubber when fitToViewport=false:
-   * measure the available container, then calculate the media dimensions.
+   * CSS aspect-ratio is used here instead of manually calculating both
+   * dimensions in JavaScript. This makes the two directions genuinely
+   * different: only one side is fixed in each fit mode.
    */
   .cabilo-layout-asset-frame {
     position: relative;
-    width: 100%;
-    height: 100%;
     min-width: 0;
     min-height: 0;
     display: flex;
@@ -236,10 +236,28 @@ const maxBottom = Math.max(
     justify-content: center;
   }
 
-  .cabilo-layout-frame[data-match-aspect="true"] .cabilo-layout-asset-frame > * {
+  .cabilo-layout-frame[data-fit-mode="width-to-height"] .cabilo-layout-asset-frame {
+    width: 100%;
+    height: auto;
+    aspect-ratio: var(--asset-aspect-ratio);
+  }
+
+  .cabilo-layout-frame[data-fit-mode="height-to-width"] .cabilo-layout-asset-frame {
+    width: auto;
+    height: 100%;
+    aspect-ratio: var(--asset-aspect-ratio);
+  }
+
+  .cabilo-layout-frame[data-fit-mode="none"] .cabilo-layout-asset-frame {
+    width: 100%;
+    height: 100%;
+  }
+
+  .cabilo-layout-frame[data-fit-mode="width-to-height"] .cabilo-layout-asset-frame > *,
+  .cabilo-layout-frame[data-fit-mode="height-to-width"] .cabilo-layout-asset-frame > * {
     flex: 0 0 auto;
-    max-width: 100%;
-    max-height: 100%;
+    width: 100%;
+    height: 100%;
   }
 
   .cabilo-layout-media,
@@ -417,91 +435,26 @@ const maxBottom = Math.max(
 <script>
   const layoutSections = document.querySelectorAll('.cabilo-layout-blocks');
 
-  const parseAspectRatio = (frame) => {
-    const value = frame.style.getPropertyValue('--asset-aspect-ratio').trim();
-    if (!value) return 0;
+  const setAssetRatio = (frame, width, height) => {
+    if (!width || !height) return;
 
-    const parts = value.split('/').map((part) => Number(part.trim()));
-    if (parts.length !== 2 || !parts[0] || !parts[1]) return 0;
-
-    const ratio = parts[0] / parts[1];
-    return Number.isFinite(ratio) && ratio > 0 ? ratio : 0;
-  };
-
-  const sizeAspectAsset = (frame) => {
-    if (frame.dataset.matchAspect !== 'true') return;
-
-    const assetFrame = frame.querySelector('.cabilo-layout-asset-frame');
-    const asset = assetFrame?.firstElementChild;
-
-    if (!(assetFrame instanceof HTMLElement) || !(asset instanceof HTMLElement)) {
-      return;
-    }
-
-    const ratio = parseAspectRatio(frame);
-
-    if (!ratio) {
-      asset.style.width = '';
-      asset.style.height = '';
-      return;
-    }
-
-    const availableWidth = assetFrame.clientWidth;
-    const availableHeight = assetFrame.clientHeight;
-
-    if (!availableWidth || !availableHeight) return;
-
-    const heightFromWidth = availableWidth / ratio;
-    const widthFromHeight = availableHeight * ratio;
-
-    let width;
-    let height;
-
-    if (frame.dataset.matchHeightToWidth !== 'false') {
-      /*
-       * Width → Height:
-       * start from the full available width, then clamp to the
-       * available height if the requested aspect ratio is too tall.
-       */
-      width = availableWidth;
-      height = heightFromWidth;
-
-      if (height > availableHeight) {
-        height = availableHeight;
-        width = widthFromHeight;
-      }
-    } else {
-      /*
-       * Height → Width:
-       * start from the full available height, then clamp to the
-       * available width if the requested aspect ratio is too wide.
-       */
-      height = availableHeight;
-      width = widthFromHeight;
-
-      if (width > availableWidth) {
-        width = availableWidth;
-        height = heightFromWidth;
-      }
-    }
-
-    asset.style.width = `${width}px`;
-    asset.style.height = `${height}px`;
+    frame.style.setProperty(
+      '--asset-aspect-ratio',
+      `${width} / ${height}`,
+    );
   };
 
   const loadLayoutAssetRatio = (frame) => {
-    if (frame.dataset.matchAspect !== 'true') return;
+    const fitMode = frame.dataset.fitMode;
+
+    if (fitMode === 'none') return;
 
     const applyRatio = (width, height) => {
       if (!width || !height) return;
 
-      frame.style.setProperty(
-        '--asset-aspect-ratio',
-        `${width} / ${height}`,
-      );
-
+      setAssetRatio(frame, width, height);
       requestAnimationFrame(() => {
-        sizeAspectAsset(frame);
+        frame.dispatchEvent(new Event('layout-aspect-ready'));
       });
     };
 
@@ -540,10 +493,11 @@ const maxBottom = Math.max(
           ?.getAttribute('data-layout-video-ratio');
 
         if (ratio) {
-          frame.style.setProperty('--asset-aspect-ratio', ratio);
-          requestAnimationFrame(() => {
-            sizeAspectAsset(frame);
-          });
+          const parts = ratio.split('/').map((part) => Number(part.trim()));
+
+          if (parts.length === 2 && parts[0] > 0 && parts[1] > 0) {
+            applyRatio(parts[0], parts[1]);
+          }
         }
       }
 
@@ -569,62 +523,16 @@ const maxBottom = Math.max(
 
   layoutSections.forEach((section) => {
     const aspectFrames = section.querySelectorAll(
-      '.cabilo-layout-frame[data-match-aspect="true"]',
+      '.cabilo-layout-frame[data-fit-mode]:not([data-fit-mode="none"])',
     );
 
     aspectFrames.forEach((frame) => {
       loadLayoutAssetRatio(frame);
     });
 
-    const updateAspectSizes = () => {
-      aspectFrames.forEach((frame) => {
-        sizeAspectAsset(frame);
-      });
-    };
-
-    /*
-     * The CMS controls change data attributes, not the frame's geometry.
-     * ResizeObserver therefore cannot see a direction toggle by itself.
-     * Watch the two aspect-control attributes explicitly so the renderer
-     * recalculates immediately when either control changes.
-     */
-    const aspectAttributeObserver = new MutationObserver((mutations) => {
-      mutations.forEach((mutation) => {
-        if (
-          mutation.type !== 'attributes' ||
-          !mutation.target ||
-          !(mutation.target instanceof HTMLElement)
-        ) {
-          return;
-        }
-
-        const frame = mutation.target;
-
-        if (frame.dataset.matchAspect === 'true') {
-          loadLayoutAssetRatio(frame);
-        } else {
-          const assetFrame = frame.querySelector('.cabilo-layout-asset-frame');
-          const asset = assetFrame?.firstElementChild;
-
-          if (asset instanceof HTMLElement) {
-            asset.style.width = '';
-            asset.style.height = '';
-          }
-        }
-      });
-    });
-
-    aspectFrames.forEach((frame) => {
-      aspectAttributeObserver.observe(frame, {
-        attributes: true,
-        attributeFilter: ['data-match-aspect', 'data-match-height-to-width'],
-      });
-    });
-
     const updateHeight = () => {
       if (window.matchMedia('(max-width: 767px)').matches) {
         section.style.height = '';
-        updateAspectSizes();
         return;
       }
 
@@ -639,7 +547,6 @@ const maxBottom = Math.max(
       });
 
       section.style.height = requiredHeight + 'px';
-      updateAspectSizes();
     };
 
     updateHeight();
@@ -648,8 +555,8 @@ const maxBottom = Math.max(
       requestAnimationFrame(updateHeight);
     });
 
-    section.querySelectorAll('.cabilo-layout-frame').forEach((frame) => {
-      observer.observe(frame);
+    section.querySelectorAll('.cabilo-layout-frame, .cabilo-layout-asset-frame').forEach((element) => {
+      observer.observe(element);
     });
 
     window.addEventListener('resize', updateHeight);
