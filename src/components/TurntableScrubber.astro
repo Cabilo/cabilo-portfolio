@@ -93,9 +93,12 @@ const frameDataString = JSON.stringify(frames);
   <div
     id="tt-status"
     class:list={[
-      'z-30 flex w-[var(--tt-status-width,auto)] max-w-full items-center justify-center gap-5 text-xs font-mono tracking-widest text-text-silver',
-      statusPosition !== 'bottom' && 'absolute pointer-events-none',
-      statusPosition === 'bottom' && 'mt-0',
+      'absolute z-30 inline-flex items-center justify-center whitespace-nowrap rounded border border-text-silver/30 bg-cabilo-obsidian/85 px-2 py-1 text-[11px] font-mono tracking-widest text-text-silver shadow-sm',
+      statusPosition === 'bottom' && 'bottom-2 left-1/2 -translate-x-1/2',
+      statusPosition === 'top' && 'top-2 left-1/2 -translate-x-1/2',
+      statusPosition === 'left' && 'left-2 top-1/2 -translate-y-1/2',
+      statusPosition === 'right' && 'right-2 top-1/2 -translate-y-1/2',
+      statusPosition !== 'bottom' && statusPosition !== 'top' && 'pointer-events-none',
     ]}
   >
     <span>
@@ -104,13 +107,6 @@ const frameDataString = JSON.stringify(frames);
         001
       </span>
       / {String(frames.length).padStart(3, '0')}
-    </span>
-
-    <span>
-      ZOOM
-      <span id="tt-zoom" class="text-text-white font-bold">
-        1.0
-      </span>x
     </span>
   </div>
 
@@ -131,9 +127,6 @@ const frameDataString = JSON.stringify(frames);
 
       const counter =
         this.querySelector('#tt-counter') as HTMLElement;
-
-      const zoomCounter =
-        this.querySelector('#tt-zoom') as HTMLElement;
 
       const overlay =
         this.querySelector('#tt-overlay') as HTMLElement;
@@ -183,37 +176,12 @@ const frameDataString = JSON.stringify(frames);
         new Set<number>();
 
       const updateStatusWidth = () => {
-        const containerRect =
-          container.getBoundingClientRect();
-
-        if (
-          !containerRect.width ||
-          !containerRect.height ||
-          !display.naturalWidth ||
-          !display.naturalHeight
-        ) {
-          return;
-        }
-
         /*
-         * The Layout Block can be wider than the visible Turntable image.
-         * In that case the image uses object-contain, so measure the
-         * rendered image footprint rather than the asset/container frame.
+         * The readout is intentionally independent from the image width.
+         * It is a compact overlay and must never change the Turntable's
+         * layout footprint.
          */
-        const imageAspectRatio =
-          display.naturalWidth /
-          display.naturalHeight;
-
-        const containedImageWidth =
-          Math.min(
-            containerRect.width,
-            containerRect.height * imageAspectRatio
-          );
-
-        this.style.setProperty(
-          '--tt-status-width',
-          `${containedImageWidth}px`
-        );
+        this.style.removeProperty('--tt-status-width');
       };
 
       const fitTurntableToViewport = () => {
@@ -642,9 +610,6 @@ const frameDataString = JSON.stringify(frames);
           display.style.transform =
             `scale(${currentScale})`;
 
-          zoomCounter.innerText =
-            currentScale.toFixed(1);
-
           this.style.cursor =
             currentScale > 1
               ? 'crosshair'
@@ -724,56 +689,17 @@ const frameDataString = JSON.stringify(frames);
 </script>
 
 <style>
-  turntable-scrubber[data-status-position="top"] #tt-status {
-    top: 0;
-    left: 50%;
-    transform: translateX(-50%);
-    white-space: nowrap;
-  }
-
-  turntable-scrubber[data-status-position="left"] #tt-status,
-  turntable-scrubber[data-status-position="right"] #tt-status {
-    top: 50%;
-    flex-direction: column;
-    gap: 0.35rem;
-    white-space: nowrap;
-  }
-
-  turntable-scrubber[data-status-position="left"] #tt-status {
-    left: 0;
-    transform: translateY(-50%);
-  }
-
-  turntable-scrubber[data-status-position="right"] #tt-status {
-    right: 0;
-    transform: translateY(-50%);
-  }
-
   /*
-   * Side/top positions are intentionally overlay-style presentation modes:
-   * the status stays inside the Turntable's own containing box and does not
-   * participate in the image sizing calculation. This prevents a side
-   * readout from pushing the image left/right or changing its dimensions.
-   *
-   * Layout Blocks already clip their Turntable wrapper to the authored
-   * block footprint, so these alternate readout positions cannot spill into
-   * neighboring blocks.
+   * The readout is a compact overlay so it never participates in the
+   * Turntable's layout sizing or pushes neighboring Layout Blocks.
    */
-  turntable-scrubber[data-status-position="top"] #tt-status,
-  turntable-scrubber[data-status-position="left"] #tt-status,
-  turntable-scrubber[data-status-position="right"] #tt-status {
+  turntable-scrubber #tt-status {
     pointer-events: none;
   }
 
   @media (max-width: 767px) {
-    /*
-     * Keep the alternate readout modes compact on narrow screens.
-     * The default bottom position remains normal and unchanged.
-     */
-    turntable-scrubber[data-status-position="left"] #tt-status,
-    turntable-scrubber[data-status-position="right"] #tt-status {
+    turntable-scrubber #tt-status {
       font-size: 11px;
-      padding: 0.4rem 0.55rem;
     }
   }
 </style>
