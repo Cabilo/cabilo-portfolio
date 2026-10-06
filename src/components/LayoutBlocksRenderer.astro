@@ -564,35 +564,130 @@ const maxBottom = Math.max(
       loadLayoutAssetRatio(frame);
     });
 
-    const updateHeight = () => {
+    const frames = Array.from(
+      section.querySelectorAll('.cabilo-layout-frame'),
+    );
+
+    const resolveLayout = () => {
       if (window.matchMedia('(max-width: 767px)').matches) {
         section.style.height = '';
+        frames.forEach((frame) => {
+          frame.style.top = '';
+          frame.style.left = '';
+          frame.style.width = '';
+          frame.style.height = '';
+        });
         return;
       }
 
-      const baseHeight = section.scrollHeight;
-      let requiredHeight = baseHeight;
+      /*
+       * Layout Blocks are authored as independent matrix rectangles, but a
+       * fit mode can make a block taller than its authored slot. Resolve that
+       * overflow here instead of letting it visually collide with the next
+       * block.
+       *
+       * Only blocks that overlap horizontally participate in this vertical
+       * collision pass. Blocks in separate columns therefore keep their
+       * authored Y positions.
+       */
+      const resolved = frames.map((frame) => {
+        const x = Number(frame.style.getPropertyValue('--layout-x'));
+        const y = Number(frame.style.getPropertyValue('--layout-y'));
+        const w = Number(frame.style.getPropertyValue('--layout-w'));
+        const h = Number(frame.style.getPropertyValue('--layout-h'));
 
-      section.querySelectorAll('.cabilo-layout-frame').forEach((frame) => {
+        return {
+          frame,
+          x,
+          y,
+          w,
+          h,
+          resolvedY: y,
+          resolvedW: w,
+          resolvedH: h,
+        };
+      });
+
+      resolved.sort((a, b) => a.y - b.y || a.x - b.x);
+
+      const rowHeight = parseFloat(
+        getComputedStyle(section).getPropertyValue('--cabilo-layout-row-height'),
+      ) || 1;
+
+      resolved.forEach((item, index) => {
+        const fitMode = item.frame.dataset.fitMode;
+
+        if (fitMode === 'width-to-height') {
+          const measuredHeight = item.frame.scrollHeight / rowHeight * 2;
+
+          if (Number.isFinite(measuredHeight) && measuredHeight > item.resolvedH) {
+            item.resolvedH = measuredHeight;
+          }
+        }
+
+        if (fitMode === 'height-to-width') {
+          const measuredWidth =
+            item.frame.scrollWidth / section.clientWidth * 10;
+
+          if (Number.isFinite(measuredWidth) && measuredWidth > item.resolvedW) {
+            item.resolvedW = measuredWidth;
+          }
+        }
+
+        for (let previousIndex = 0; previousIndex < index; previousIndex += 1) {
+          const previous = resolved[previousIndex];
+
+          const horizontalOverlap =
+            item.x < previous.x + previous.w &&
+            item.x + item.resolvedW > previous.x;
+
+          const verticalOverlap =
+            item.resolvedY < previous.resolvedY + previous.resolvedH &&
+            item.resolvedY + item.resolvedH > previous.resolvedY;
+
+          if (horizontalOverlap && verticalOverlap) {
+            item.resolvedY = previous.resolvedY + previous.resolvedH;
+          }
+        }
+
+        item.frame.style.top =
+          String(item.resolvedY / 2 * rowHeight) + 'px';
+
+        if (fitMode === 'width-to-height') {
+          item.frame.style.height =
+            String(item.resolvedH / 2 * rowHeight) + 'px';
+        }
+
+        if (fitMode === 'height-to-width') {
+          item.frame.style.width =
+            String(item.resolvedW / 10 * section.clientWidth) + 'px';
+        }
+      });
+
+      let requiredHeight = 0;
+
+      resolved.forEach((item) => {
         requiredHeight = Math.max(
           requiredHeight,
-          frame.offsetTop + frame.scrollHeight,
+          item.resolvedY / 2 * rowHeight +
+            item.resolvedH / 2 * rowHeight,
         );
       });
 
-      section.style.height = requiredHeight + 'px';
+      section.style.height = Math.max(
+        section.scrollHeight,
+        requiredHeight,
+      ) + 'px';
     };
 
-    updateHeight();
+    resolveLayout();
 
     const observer = new ResizeObserver(() => {
-      requestAnimationFrame(updateHeight);
+      requestAnimationFrame(resolveLayout);
     });
 
-    section.querySelectorAll('.cabilo-layout-frame, .cabilo-layout-asset-frame').forEach((element) => {
-      observer.observe(element);
-    });
+    frames.forEach((frame) => observer.observe(frame));
 
-    window.addEventListener('resize', updateHeight);
+    window.addEventListener('resize', resolveLayout);
   });
 </script>
