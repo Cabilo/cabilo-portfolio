@@ -20,7 +20,7 @@ layoutBlocks:
     h: 5
     snap: free
     title: Turntable
-    fitMode: none
+    fitMode: width-to-height
     content: ""
     image: ""
     videoUrl: ""
@@ -83,7 +83,7 @@ layoutBlocks:
     h: 5
     snap: free
     title: AOV Comparison
-    fitMode: width-to-height
+    fitMode: height-to-width
     content: ""
     image: ""
     videoUrl: ""
