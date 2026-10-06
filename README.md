@@ -160,6 +160,16 @@ This gives the editor freedom without falling back to arbitrary pixel positionin
 
 Current experimental content types are **Image, Text, Video, Turntable, and AOV**. Turntables still expect a real frame folder under `public/`; missing test folders are intentionally reported as empty rather than fabricated.
 
+## Layout Block asset fit
+
+Each Layout Block has one **Asset Fit** mode:
+
+- **None** — the media fills the authored block slot.
+- **Width → Height** — the block's available width is authoritative and the media height follows the asset's natural aspect ratio.
+- **Height → Width** — the block's available height is authoritative and the media width follows the asset's natural aspect ratio.
+
+This is intentionally a single three-state value rather than separate aspect-ratio and direction switches. CSS `aspect-ratio` performs the proportional sizing after the renderer discovers the asset's intrinsic ratio.
+
 The custom CMS widget also converts Decap's incoming field value into plain JavaScript data before editing it. This is important because Layout Blocks must survive a CMS refresh, not only exist in the widget's temporary UI state.
 
 ## CMS implementation
