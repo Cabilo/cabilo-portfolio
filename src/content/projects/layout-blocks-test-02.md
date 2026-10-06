@@ -20,7 +20,7 @@ layoutBlocks:
     h: 5
     snap: free
     title: Turntable
-    fitMode: width-to-height
+    fitMode: none
     content: ""
     image: ""
     videoUrl: ""
@@ -89,10 +89,14 @@ layoutBlocks:
     videoUrl: ""
     folder: ""
     aovPasses:
-      - name: Viewport
-        image: https://cdna.artstation.com/p/assets/images/images/046/500/860/large/lucas-cabilo-xgen.jpg?1645267427
+      - name: Beauty
+        image: https://help.maxon.net/r3d/cinema/en-us/Content/Resources/Images/aov_scene_beauty17ce.jpg
+      - name: Reflection
+        image: https://help.maxon.net/r3d/cinema/en-us/Content/Resources/Images/aov_scene_test.Reflectionsb184.jpg
+      - name: Depth
+        image: https://help.maxon.net/r3d/cinema/en-us/Content/Resources/Images/aov_utility.Z_Normalized_Inverted4230.jpg
       - name: Wireframe
-        image: https://cdnb.artstation.com/p/assets/images/images/031/216/037/large/lucas-cabilo-highresscreenshot00012.jpg?1602954475
+        image: https://help.maxon.net/r3d/cinema/en-us/Content/Resources/Images/aov_utility.Wireframe1353.jpg
   - id: layout-test-02-text-small
     type: text
     x: 0
