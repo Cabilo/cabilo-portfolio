@@ -55,7 +55,7 @@ layoutBlocks:
     h: 3
     snap: free
     title: Wide Image
-    fitMode: none
+    fitMode: height-to-width
     content: ""
     image: https://cdnb.artstation.com/p/media_assets/images/images/001/392/567/large/Wildcat%E2%80%99s_Gilded_Jade_1.jpg?1790720806
     videoUrl: ""
