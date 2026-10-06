@@ -151,12 +151,27 @@
     .cabilo-layout-handle-sw { left: -6px; bottom: -6px; cursor: nesw-resize; }
     .cabilo-layout-handle-se { right: -6px; bottom: -6px; cursor: nwse-resize; }
 
+    /*
+     * Keep the selected block controls visible while working through a long
+     * Layout Blocks canvas. The inspector stays attached to the widget and
+     * pins itself to the bottom of the visible scroll area.
+     */
     .cabilo-layout-inspector {
-      margin-top: 12px;
+      position: sticky;
+      bottom: 12px;
+      z-index: 20;
+      margin: 12px 0 0;
       padding: 14px;
-      border: 1px solid #30363d;
+      border: 1px solid #484f58;
       border-radius: 6px;
       background: #161b22;
+      box-shadow: 0 12px 28px rgba(1,4,9,.55);
+    }
+
+    .cabilo-layout-inspector-grid {
+      max-height: 34vh;
+      overflow-y: auto;
+      padding-right: 2px;
     }
 
     .cabilo-layout-inspector-grid {
@@ -893,6 +908,7 @@
           'Constrained snaps to the 5-column grid; Free snaps to half-columns and half-rows. ',
           'The visible grid is only an editing aid — it is not stored as content.'
         ),
+        this.renderInspector(selected),
         h('div', { className: 'cabilo-layout-grid-wrap' },
           h('div', {
             className: 'cabilo-layout-grid',
@@ -906,8 +922,7 @@
               className: 'cabilo-layout-button cabilo-layout-add-row',
               onClick: this.addRows,
             }, '+ Add 1 Row')
-          : null,
-        this.renderInspector(selected)
+          : null
       );
     },
   });
