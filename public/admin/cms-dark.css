@@ -314,3 +314,46 @@ body {
 #nc-root ::-webkit-scrollbar-thumb:hover {
   background: #6e7681 !important;
 }
+
+
+/*
+ * Final neutral-surface safety net.
+ * Keep white available for text, but prevent non-text CMS surfaces from
+ * falling back to Decap's light-theme white.
+ */
+#nc-root [class*="App"],
+#nc-root [class*="EditorContainer"],
+#nc-root [class*="EditorControlPane"],
+#nc-root [class*="ControlContainer"],
+#nc-root [class*="EditorControl"],
+#nc-root [class*="WidgetControl"],
+#nc-root [class*="WidgetPreview"],
+#nc-root [class*="ObjectControl"],
+#nc-root [class*="ListControl"],
+#nc-root [class*="ObjectWidget"],
+#nc-root [class*="ListWidget"],
+#nc-root [class*="Card"],
+#nc-root [class*="Panel"],
+#nc-root [class*="Modal"],
+#nc-root [class*="Dialog"],
+#nc-root [class*="Popover"],
+#nc-root [class*="Dropdown"],
+#nc-root [class*="Menu"],
+#nc-root [class*="Toolbar"],
+#nc-root [class*="TopBar"] {
+  background-color: var(--cabilo-cms-field) !important;
+}
+
+/* Native controls and their wrappers should also stay on the grey palette. */
+#nc-root select,
+#nc-root input:not([type="checkbox"]):not([type="radio"]),
+#nc-root textarea {
+  background-color: var(--cabilo-cms-field) !important;
+}
+
+/* Preserve white/light colors only where they are actually text or icons. */
+#nc-root [class*="App"] svg,
+#nc-root [class*="EditorContainer"] svg,
+#nc-root [class*="Toolbar"] svg {
+  background-color: transparent !important;
+}
