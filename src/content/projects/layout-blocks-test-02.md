@@ -20,8 +20,7 @@ layoutBlocks:
     h: 5
     snap: free
     title: Turntable
-    matchAspectRatio: false
-    matchHeightToWidth: true
+    fitMode: height-to-width
     content: ""
     image: ""
     videoUrl: ""
@@ -35,8 +34,7 @@ layoutBlocks:
     h: 5
     snap: grid
     title: Text
-    matchAspectRatio: false
-    matchHeightToWidth: true
+    fitMode: none
     content: >-
       # Layout Blocks Test 02
 
@@ -57,8 +55,7 @@ layoutBlocks:
     h: 3
     snap: free
     title: Wide Image
-    matchAspectRatio: false
-    matchHeightToWidth: true
+    fitMode: none
     content: ""
     image: https://cdnb.artstation.com/p/media_assets/images/images/001/392/567/large/Wildcat%E2%80%99s_Gilded_Jade_1.jpg?1790720806
     videoUrl: ""
@@ -72,8 +69,7 @@ layoutBlocks:
     h: 3
     snap: free
     title: Small Video
-    matchAspectRatio: false
-    matchHeightToWidth: true
+    fitMode: none
     content: ""
     image: ""
     videoUrl: https://www.youtube.com/watch?v=FjSAVJJ0w3I
@@ -87,8 +83,7 @@ layoutBlocks:
     h: 5
     snap: free
     title: AOV Comparison
-    matchAspectRatio: true
-    matchHeightToWidth: true
+    fitMode: width-to-height
     content: ""
     image: ""
     videoUrl: ""
@@ -106,8 +101,7 @@ layoutBlocks:
     h: 3
     snap: free
     title: Small Text
-    matchAspectRatio: false
-    matchHeightToWidth: true
+    fitMode: none
     content: A small free-snap text block. It should keep its own space without
       introducing an internal scrollbar.
     image: ""
@@ -122,8 +116,7 @@ layoutBlocks:
     h: 3
     snap: free
     title: Small Image
-    matchAspectRatio: false
-    matchHeightToWidth: true
+    fitMode: none
     content: ""
     image: https://cdna.artstation.com/p/media_assets/images/images/001/392/568/large/Wildcat%27s_Gilded_Jade_-_1_1.jpg?1790720808
     videoUrl: ""
@@ -137,8 +130,7 @@ layoutBlocks:
     h: 3
     snap: free
     title: Another Text Block
-    matchAspectRatio: false
-    matchHeightToWidth: true
+    fitMode: none
     content: Another small block to test how multiple fractional free-snap elements
       sit beside one another.
     image: ""
