@@ -58,16 +58,33 @@ body,
   color: #777b85 !important;
 }
 
-#nc-root button {
+/*
+ * Form controls and custom widget buttons need an explicit light foreground.
+ * This is intentionally stronger than the generic Decap override above so
+ * controls remain readable even when their generated component styles supply
+ * a dark text color.
+ */
+#nc-root button,
+#nc-root [role="button"] {
   background-color: #30343b !important;
   color: #f4f4f5 !important;
   border-color: #3f434b !important;
+  -webkit-text-fill-color: #f4f4f5 !important;
+}
+
+#nc-root button *,
+#nc-root [role="button"] * {
+  color: inherit !important;
+  -webkit-text-fill-color: inherit !important;
 }
 
 #nc-root button:hover,
-#nc-root button:focus {
+#nc-root button:focus,
+#nc-root [role="button"]:hover,
+#nc-root [role="button"]:focus {
   background-color: #41464f !important;
   color: #ffffff !important;
+  -webkit-text-fill-color: #ffffff !important;
 }
 
 #nc-root a {
