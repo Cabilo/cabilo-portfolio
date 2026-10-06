@@ -93,8 +93,8 @@ const frameDataString = JSON.stringify(frames);
   <div
     id="tt-status"
     class:list={[
-      'z-30 inline-flex items-center justify-center whitespace-nowrap rounded border border-text-silver/30 bg-cabilo-obsidian/85 px-2 py-1 text-[11px] font-mono tracking-widest text-text-silver shadow-sm',
-      statusPosition === 'bottom' && 'relative self-center flex-none',
+      'absolute z-30 inline-flex items-center justify-center whitespace-nowrap rounded border border-text-silver/30 bg-cabilo-obsidian/85 px-2 py-1 text-[11px] font-mono tracking-widest text-text-silver shadow-sm',
+      statusPosition === 'bottom' && 'top-full left-1/2 -translate-x-1/2 pointer-events-none',
       statusPosition === 'top' && 'absolute top-0 left-1/2 -translate-x-1/2 pointer-events-none',
       statusPosition === 'left' && 'absolute left-0 top-1/2 -translate-y-1/2 pointer-events-none',
       statusPosition === 'right' && 'absolute right-0 top-1/2 -translate-y-1/2 pointer-events-none',
@@ -174,15 +174,6 @@ const frameDataString = JSON.stringify(frames);
       const loadingFrames =
         new Set<number>();
 
-      const updateStatusWidth = () => {
-        /*
-         * The readout is intentionally independent from the image width.
-         * It is a compact overlay and must never change the Turntable's
-         * layout footprint.
-         */
-        this.style.removeProperty('--tt-status-width');
-      };
-
       const fitTurntableToViewport = () => {
         if (!fitViewport) {
           /*
@@ -196,8 +187,6 @@ const frameDataString = JSON.stringify(frames);
 
           display.style.width = '';
           display.style.height = '';
-
-          requestAnimationFrame(updateStatusWidth);
 
           return;
         }
@@ -675,8 +664,6 @@ const frameDataString = JSON.stringify(frames);
 
       fitTurntableToViewport();
 
-      requestAnimationFrame(updateStatusWidth);
-
       loadFrame(0);
     }
   }
@@ -689,8 +676,9 @@ const frameDataString = JSON.stringify(frames);
 
 <style>
   /*
-   * The readout is a compact overlay so it never participates in the
-   * Turntable's layout sizing or pushes neighboring Layout Blocks.
+   * The readout is positioned below the media and is intentionally kept
+   * out of normal flow. LayoutBlocksRenderer measures it separately for
+   * collision handling.
    */
   turntable-scrubber #tt-status {
     pointer-events: none;

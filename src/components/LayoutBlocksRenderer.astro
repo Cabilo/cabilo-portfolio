@@ -605,6 +605,24 @@ const maxBottom = Math.max(
           frame.style.left = '';
           frame.style.width = '';
           frame.style.height = '';
+          frame.style.marginBottom = '';
+
+          if (frame.dataset.assetType === 'turntable') {
+            const status = frame.querySelector('#tt-status');
+
+            if (status instanceof HTMLElement) {
+              const frameRect = frame.getBoundingClientRect();
+              const statusRect = status.getBoundingClientRect();
+              const overflow = Math.max(
+                0,
+                statusRect.bottom - frameRect.bottom,
+              );
+
+              if (overflow > 0) {
+                frame.style.marginBottom = overflow + 'px';
+              }
+            }
+          }
         });
         return;
       }
@@ -638,6 +656,7 @@ const maxBottom = Math.max(
           resolvedY: y,
           resolvedW: w,
           resolvedH: h,
+          collisionH: h,
         };
       });
 
@@ -656,7 +675,23 @@ const maxBottom = Math.max(
         const fitMode = item.frame.dataset.fitMode;
 
         if (fitMode === 'width-to-height') {
-          const measuredHeight = item.frame.scrollHeight / rowHeight * 2;
+          let measuredHeight = item.frame.scrollHeight / rowHeight * 2;
+
+          /*
+           * Turntable media sizing must come from the media container only.
+           * Its out-of-flow status readout is measured separately below.
+           */
+          if (item.frame.dataset.assetType === 'turntable') {
+            const container = item.frame.querySelector('#tt-container');
+
+            if (container instanceof HTMLElement) {
+              const containerHeight = container.getBoundingClientRect().height;
+
+              if (containerHeight > 0) {
+                measuredHeight = containerHeight / rowHeight * 2;
+              }
+            }
+          }
 
           if (Number.isFinite(measuredHeight) && measuredHeight > item.resolvedH) {
             item.resolvedH = measuredHeight;
@@ -699,34 +734,53 @@ const maxBottom = Math.max(
           }
 
           /*
-           * Turntable is also a composite block, but its controls are fixed
-           * and intentionally live below the image. Because the status
-           * readout is now in normal flow, scrollHeight includes it in the
-           * component footprint. This keeps it inside the Layout Block's
-           * measured height without giving it AOV-style dynamic growth.
+           * Turntable has two different footprints:
+           * - resolvedH controls the media box and therefore its aspect ratio.
+           * - collisionH includes the readout below the media so later rows
+           *   stay clear of it.
+           *
+           * The readout is intentionally never fed back into resolvedH.
            */
           if (item.frame.dataset.assetType === 'turntable') {
             const turntable = item.frame.querySelector('turntable-scrubber');
+            const container = item.frame.querySelector('#tt-container');
+            const status = item.frame.querySelector('#tt-status');
 
-            if (turntable instanceof HTMLElement) {
+            if (
+              turntable instanceof HTMLElement &&
+              container instanceof HTMLElement &&
+              status instanceof HTMLElement
+            ) {
               const frameRect = item.frame.getBoundingClientRect();
-              const turntableRect = turntable.getBoundingClientRect();
+              const mediaRect = container.getBoundingClientRect();
+              const statusRect = status.getBoundingClientRect();
               const paddingBottom = parseFloat(
                 getComputedStyle(item.frame).paddingBottom,
               ) || 0;
-              const measuredHeightPx =
-                turntableRect.top -
-                frameRect.top +
-                turntable.scrollHeight +
-                paddingBottom;
-              const measuredHeight = measuredHeightPx / rowHeight * 2;
 
-              if (Number.isFinite(measuredHeight) && measuredHeight > item.resolvedH) {
-                item.resolvedH = measuredHeight;
+              const collisionBottomPx =
+                Math.max(mediaRect.bottom, statusRect.bottom) -
+                frameRect.top +
+                paddingBottom;
+
+              const collisionHeight = collisionBottomPx / rowHeight * 2;
+
+              if (Number.isFinite(collisionHeight)) {
+                item.collisionH = Math.max(
+                  item.resolvedH,
+                  collisionHeight,
+                );
               }
             }
           }
         }
+      });
+
+      resolved.forEach((item) => {
+        item.collisionH = Math.max(
+          item.collisionH,
+          item.resolvedH,
+        );
       });
 
       /*
@@ -754,7 +808,7 @@ const maxBottom = Math.max(
 
         const physicalBottom = Math.max(
           ...rowItems.map(
-            (item) => rowStart + rowOffset + item.resolvedH,
+            (item) => rowStart + rowOffset + item.collisionH,
           ),
         );
 
@@ -790,7 +844,7 @@ const maxBottom = Math.max(
         requiredHeight = Math.max(
           requiredHeight,
           item.resolvedY / 2 * rowHeight +
-            item.resolvedH / 2 * rowHeight,
+            item.collisionH / 2 * rowHeight,
         );
       });
 
