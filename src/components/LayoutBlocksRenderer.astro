@@ -679,18 +679,39 @@ const maxBottom = Math.max(
            * the frame's padded content area. Other Height → Width blocks
            * remain width-only.
            */
-          if (item.frame.dataset.assetType === 'aov') {
-            const aov = item.frame.querySelector('dynamic-aov');
+          if (
+            item.frame.dataset.assetType === 'aov' ||
+            item.frame.dataset.assetType === 'turntable'
+          ) {
+            const composite =
+              item.frame.dataset.assetType === 'aov'
+                ? item.frame.querySelector('dynamic-aov')
+                : item.frame.querySelector('turntable-scrubber');
 
-            if (aov instanceof HTMLElement) {
+            if (composite instanceof HTMLElement) {
               const frameRect = item.frame.getBoundingClientRect();
-              const aovRect = aov.getBoundingClientRect();
+
+              /*
+               * Both AOV and Turntable are composite blocks: their visual
+               * controls live outside the main media viewport. Measure the
+               * rendered component footprint instead of assuming the
+               * authored viewport is the whole block.
+               *
+               * Turntable's frame/zoom readout is now in normal flow below
+               * the image, so scrollHeight includes it as part of the
+               * component's required vertical footprint.
+               */
+              const measuredHeightPx =
+                composite.scrollHeight +
+                composite.getBoundingClientRect().top -
+                frameRect.top;
+
               const paddingBottom = parseFloat(
                 getComputedStyle(item.frame).paddingBottom,
               ) || 0;
-              const measuredHeightPx =
-                aovRect.bottom - frameRect.top + paddingBottom;
-              const measuredHeight = measuredHeightPx / rowHeight * 2;
+
+              const measuredHeight =
+                (measuredHeightPx + paddingBottom) / rowHeight * 2;
 
               if (Number.isFinite(measuredHeight) && measuredHeight > item.resolvedH) {
                 item.resolvedH = measuredHeight;
@@ -790,6 +811,19 @@ const maxBottom = Math.max(
 
       if (dynamicAov instanceof HTMLElement) {
         observer.observe(dynamicAov);
+      }
+
+      const turntable = frame.querySelector('turntable-scrubber');
+
+      if (turntable instanceof HTMLElement) {
+        observer.observe(turntable);
+
+        const turntableContainer =
+          turntable.querySelector('#tt-container');
+
+        if (turntableContainer instanceof HTMLElement) {
+          observer.observe(turntableContainer);
+        }
       }
     });
 
