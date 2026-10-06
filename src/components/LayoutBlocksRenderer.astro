@@ -143,8 +143,8 @@ const maxBottom = Math.max(
             >
               <DynamicAov
                 passes={block.aovPasses}
-                fitToViewport={false}
-                fitToLayoutAspect
+                fitToViewport={block.fitToViewport}
+                fitToLayoutAspect={!block.fitToViewport}
               />
             </div>
           );
@@ -181,6 +181,7 @@ const maxBottom = Math.max(
             `cabilo-layout-frame-${block.type}`,
           ]}
           data-fit-mode={block.fitMode}
+          data-fit-to-viewport={block.fitToViewport ? 'true' : 'false'}
           data-asset-type={block.type}
           style={frameStyle}
         >
@@ -259,6 +260,16 @@ const maxBottom = Math.max(
   .cabilo-layout-frame[data-fit-mode="none"] .cabilo-layout-asset-frame {
     width: 100%;
     height: 100%;
+  }
+
+  /*
+   * Fit mode determines which dimension is matched.
+   * Fit to viewport is a separate safety cap: when enabled, the asset
+   * can still match its layout/asset ratio, but it may never exceed 75vh.
+   * Turning it off intentionally allows oversized/detail media.
+   */
+  .cabilo-layout-frame[data-fit-to-viewport="true"] .cabilo-layout-asset-frame {
+    max-height: 75vh;
   }
 
   .cabilo-layout-frame[data-fit-mode="width-to-height"] .cabilo-layout-asset-frame > *,
