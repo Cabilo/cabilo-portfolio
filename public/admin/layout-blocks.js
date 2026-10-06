@@ -152,15 +152,12 @@
     .cabilo-layout-handle-se { right: -6px; bottom: -6px; cursor: nwse-resize; }
 
     /*
-     * Keep the selected block controls visible while working through a long
-     * Layout Blocks canvas. The inspector stays attached to the widget and
-     * pins itself to the bottom of the visible scroll area.
+     * The inspector is kept in the widget's normal document flow so Decap
+     * can safely expand/collapse the Layout Blocks field. The controls
+     * themselves remain easy to reach while working through the canvas.
      */
     .cabilo-layout-inspector {
-      position: sticky;
-      bottom: 12px;
-      z-index: 20;
-      margin: 12px 0 0;
+      margin-top: 12px;
       padding: 14px;
       border: 1px solid #484f58;
       border-radius: 6px;
