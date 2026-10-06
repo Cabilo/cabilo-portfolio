@@ -398,32 +398,53 @@ const defaultB = passes.length > 1 ? passes[1] : passes[0];
         activePointerId = null;
       });
 
+      const getSelectedPass = (select: HTMLSelectElement) => {
+        const option = select.options[select.selectedIndex];
+
+        if (!option) return null;
+
+        return {
+          image: option.getAttribute('data-image') || '',
+          name: option.getAttribute('data-name') || option.textContent?.trim() || '',
+        };
+      };
+
       const updatePassA = () => {
-        const option = selectA.selectedOptions[0];
+        const pass = getSelectedPass(selectA);
 
-        if (!option) return;
+        if (!pass?.image) return;
 
-        imgA.src = option.dataset.image || '';
-        imgA.alt = option.dataset.name || option.textContent?.trim() || '';
+        imgA.src = pass.image;
+        imgA.alt = pass.name;
 
         /*
          * The A image defines the Layout Blocks comparison aspect ratio,
-         * so recalculate the viewport when the left pass changes.
+         * so recalculate the viewport once the new image is available.
          */
-        fitImageToViewport();
+        if (imgA.complete) {
+          fitImageToViewport();
+        }
       };
 
       const updatePassB = () => {
-        const option = selectB.selectedOptions[0];
+        const pass = getSelectedPass(selectB);
 
-        if (!option) return;
+        if (!pass?.image) return;
 
-        imgB.src = option.dataset.image || '';
-        imgB.alt = option.dataset.name || option.textContent?.trim() || '';
+        imgB.src = pass.image;
+        imgB.alt = pass.name;
       };
 
+      /*
+       * Both events are intentional:
+       * - change handles normal mouse/keyboard selection.
+       * - input keeps the image in sync on browsers that commit a native
+       *   picker selection through the input event first.
+       */
       selectA?.addEventListener('change', updatePassA);
+      selectA?.addEventListener('input', updatePassA);
       selectB?.addEventListener('change', updatePassB);
+      selectB?.addEventListener('input', updatePassB);
     }
   }
 
