@@ -166,7 +166,10 @@ const maxBottom = Math.max(
               class="cabilo-layout-turntable"
               data-layout-asset-src={frames[0] || ''}
             >
-              <TurntableScrubber frames={frames} fitToViewport={false} />
+              <TurntableScrubber
+                frames={frames}
+                fitToViewport={block.fitToViewport}
+              />
             </div>
           );
         }
@@ -263,13 +266,22 @@ const maxBottom = Math.max(
   }
 
   /*
-   * Fit mode determines which dimension is matched.
-   * Fit to viewport is a separate safety cap: when enabled, the asset
-   * can still match its layout/asset ratio, but it may never exceed 75vh.
-   * Turning it off intentionally allows oversized/detail media.
+   * Fit to viewport is a size limit, not an alternate fit mode.
+   *
+   * Width → Height keeps width authoritative until the resulting height
+   * would exceed 75vh. At that point both dimensions scale down together
+   * so the asset ratio remains intact.
+   *
+   * Height → Width keeps the authored height authoritative until it would
+   * exceed 75vh. The asset frame then scales down from that height and its
+   * width follows the same ratio.
    */
-  .cabilo-layout-frame[data-fit-to-viewport="true"] .cabilo-layout-asset-frame {
-    max-height: 75vh;
+  .cabilo-layout-frame[data-fit-to-viewport="true"][data-fit-mode="width-to-height"] .cabilo-layout-asset-frame {
+    width: min(100%, calc(75vh * var(--asset-ratio)));
+  }
+
+  .cabilo-layout-frame[data-fit-to-viewport="true"][data-fit-mode="height-to-width"] .cabilo-layout-asset-frame {
+    height: min(100%, 75vh);
   }
 
   .cabilo-layout-frame[data-fit-mode="width-to-height"] .cabilo-layout-asset-frame > *,
@@ -527,6 +539,7 @@ const maxBottom = Math.max(
       if (!width || !height) return;
 
       setAssetRatio(frame, width, height);
+      frame.style.setProperty('--asset-ratio', String(width / height));
       requestAnimationFrame(() => {
         frame.dispatchEvent(new Event('layout-aspect-ready'));
       });
