@@ -273,12 +273,33 @@ const maxBottom = Math.max(
    * In Layout Blocks, the viewport itself follows the asset ratio;
    * the controls remain in normal flow so they contribute to the
    * block's measured height instead of spilling outside it.
+   *
+   * Height → Width is special for AOV because the block is a composite:
+   * the comparison viewport has an authored height, while the selector
+   * panel below it can grow when pass buttons wrap. Let the AOV itself
+   * grow naturally so the Layout Blocks resolver can measure that full
+   * vertical footprint without changing the authored viewport height.
    */
   .cabilo-layout-frame[data-fit-mode="width-to-height"] .cabilo-layout-aov {
     height: auto;
   }
 
   .cabilo-layout-frame[data-fit-mode="width-to-height"] .cabilo-layout-aov :global(dynamic-aov) {
+    height: auto;
+    min-height: 0;
+  }
+
+  .cabilo-layout-frame-aov[data-fit-mode="height-to-width"] .cabilo-layout-aov {
+    height: auto;
+    min-height: 0;
+  }
+
+  .cabilo-layout-frame-aov[data-fit-mode="height-to-width"] .cabilo-layout-aov :global(dynamic-aov) {
+    height: auto;
+    min-height: 0;
+  }
+
+  .cabilo-layout-frame-aov[data-fit-mode="height-to-width"] .cabilo-layout-aov :global(dynamic-aov > div) {
     height: auto;
     min-height: 0;
   }
@@ -640,6 +661,25 @@ const maxBottom = Math.max(
 
           if (Number.isFinite(measuredWidth) && measuredWidth > item.resolvedW) {
             item.resolvedW = measuredWidth;
+          }
+
+          /*
+           * AOV is a composite block: its authored height controls the
+           * comparison viewport, but the pass selector panel lives below
+           * that viewport and can become taller when its buttons wrap.
+           *
+           * Measure the frame's full vertical content footprint as well.
+           * This allows the elastic-row resolver to move later authored
+           * rows down as a unit instead of letting the AOV controls overlap
+           * them. Other Height → Width blocks remain width-only.
+           */
+          if (item.frame.dataset.assetType === 'aov') {
+            const measuredHeight =
+              item.frame.scrollHeight / rowHeight * 2;
+
+            if (Number.isFinite(measuredHeight) && measuredHeight > item.resolvedH) {
+              item.resolvedH = measuredHeight;
+            }
           }
         }
       });
