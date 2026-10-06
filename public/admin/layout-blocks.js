@@ -272,12 +272,17 @@
       h: Number.isFinite(block.h) ? block.h : 4,
       snap: block.snap === 'free' ? 'free' : 'grid',
       title: block.title || '',
-      matchAspectRatio:
-        block.matchAspectRatio === true ||
-        block.matchAspectRatio === 'true',
-      matchHeightToWidth:
-        block.matchHeightToWidth !== false &&
-        block.matchHeightToWidth !== 'false',
+      fitMode:
+        block.fitMode === 'width-to-height' ||
+        block.fitMode === 'height-to-width'
+          ? block.fitMode
+          : block.matchAspectRatio === true ||
+            block.matchAspectRatio === 'true'
+            ? (block.matchHeightToWidth === false ||
+              block.matchHeightToWidth === 'false'
+              ? 'height-to-width'
+              : 'width-to-height')
+            : 'none',
       content: block.content || '',
       image: block.image || '',
       videoUrl: block.videoUrl || '',
@@ -547,16 +552,11 @@
       this.updateBlocks(blocks);
     },
 
-    setAspectRatioEnabled: function (enabled) {
+    setFitMode: function (mode) {
       this.updateSelectedBlock(function (block) {
-        block.matchAspectRatio = Boolean(enabled);
-        return block;
-      });
-    },
-
-    toggleAspectDirection: function () {
-      this.updateSelectedBlock(function (block) {
-        block.matchHeightToWidth = !Boolean(block.matchHeightToWidth);
+        block.fitMode = mode;
+        delete block.matchAspectRatio;
+        delete block.matchHeightToWidth;
         return block;
       });
     },
@@ -701,32 +701,23 @@
               return h('option', { key: type, value: type }, type);
             })
           )),
-          this.renderField('Match asset aspect ratio', h('input', {
-            type: 'checkbox',
-            checked: Boolean(selected.matchAspectRatio),
+          this.renderField('Asset fit', h('select', {
+            value: selected.fitMode,
             onChange: function (event) {
-              this.setAspectRatioEnabled(event.currentTarget.checked);
+              this.setFitMode(event.target.value);
             }.bind(this),
-          })),
-          this.renderField(
-            'Asset sizing direction',
-            h('button', {
-              type: 'button',
-              className: 'cabilo-layout-button',
-              disabled: !selected.matchAspectRatio,
-              onMouseDown: function (event) {
-                event.stopPropagation();
-              },
-              onPointerDown: function (event) {
-                event.stopPropagation();
-              },
-              onClick: function (event) {
-                event.preventDefault();
-                event.stopPropagation();
-                this.toggleAspectDirection();
-              }.bind(this),
-            }, selected.matchHeightToWidth ? 'Width → Height' : 'Height → Width')
-          ),
+          },
+            [
+              ['none', 'None'],
+              ['width-to-height', 'Width → Height'],
+              ['height-to-width', 'Height → Width'],
+            ].map(function (option) {
+              return h('option', {
+                key: option[0],
+                value: option[0],
+              }, option[1]);
+            })
+          )),
           this.renderField('Snap mode', h('select', {
             value: selected.snap,
             onChange: function (event) {
