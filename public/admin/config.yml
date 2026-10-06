@@ -618,6 +618,12 @@ collections:
                   - { label: "Page Right", value: "page-right" }
 
 
+      - label: "Project Breakdown"
+        name: "body"
+        widget: "markdown"
+        required: false
+        hint: "Main project breakdown content. This is the Markdown content shown below the project media."
+
   # ============================================================
   # LEARNING
   # ============================================================
