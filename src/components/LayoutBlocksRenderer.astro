@@ -242,7 +242,14 @@ const maxBottom = Math.max(
     aspect-ratio: var(--asset-aspect-ratio);
   }
 
+  .cabilo-layout-frame[data-fit-mode="height-to-width"] {
+    display: flex;
+    align-items: flex-start;
+    justify-content: center;
+  }
+
   .cabilo-layout-frame[data-fit-mode="height-to-width"] .cabilo-layout-asset-frame {
+    flex: 0 0 auto;
     width: auto;
     height: 100%;
     aspect-ratio: var(--asset-aspect-ratio);
