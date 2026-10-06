@@ -182,6 +182,40 @@ const frameDataString = JSON.stringify(frames);
       const loadingFrames =
         new Set<number>();
 
+      const updateStatusWidth = () => {
+        const containerRect =
+          container.getBoundingClientRect();
+
+        if (
+          !containerRect.width ||
+          !containerRect.height ||
+          !display.naturalWidth ||
+          !display.naturalHeight
+        ) {
+          return;
+        }
+
+        /*
+         * The Layout Block can be wider than the visible Turntable image.
+         * In that case the image uses object-contain, so measure the
+         * rendered image footprint rather than the asset/container frame.
+         */
+        const imageAspectRatio =
+          display.naturalWidth /
+          display.naturalHeight;
+
+        const containedImageWidth =
+          Math.min(
+            containerRect.width,
+            containerRect.height * imageAspectRatio
+          );
+
+        this.style.setProperty(
+          '--tt-status-width',
+          `${containedImageWidth}px`
+        );
+      };
+
       const fitTurntableToViewport = () => {
         if (!fitViewport) {
           /*
@@ -193,13 +227,10 @@ const frameDataString = JSON.stringify(frames);
           container.style.height = '';
           container.style.maxWidth = '100%';
 
-          this.style.setProperty(
-            '--tt-status-width',
-            `${container.getBoundingClientRect().width}px`
-          );
-
           display.style.width = '';
           display.style.height = '';
+
+          requestAnimationFrame(updateStatusWidth);
 
           return;
         }
@@ -247,16 +278,13 @@ const frameDataString = JSON.stringify(frames);
         container.style.maxWidth =
           '100%';
 
-        this.style.setProperty(
-          '--tt-status-width',
-          `${width}px`
-        );
-
         display.style.width =
           `${width}px`;
 
         display.style.height =
           `${height}px`;
+
+        requestAnimationFrame(updateStatusWidth);
       };
 
       const loadFrame = (index: number) => {
@@ -630,6 +658,7 @@ const frameDataString = JSON.stringify(frames);
         () => {
           updateSensitivity();
           fitTurntableToViewport();
+          requestAnimationFrame(updateStatusWidth);
         }
       );
 
@@ -682,12 +711,7 @@ const frameDataString = JSON.stringify(frames);
 
       fitTurntableToViewport();
 
-      if (!fitViewport) {
-        this.style.setProperty(
-          '--tt-status-width',
-          `${container.getBoundingClientRect().width}px`
-        );
-      }
+      requestAnimationFrame(updateStatusWidth);
 
       loadFrame(0);
     }
