@@ -15,10 +15,6 @@ tags:
 softwareUsed:
   - Maya
 layoutBlocks:
-  # ============================================================
-  # ROW 1 — Three visual types sharing the same row.
-  # The AOV is mathematically centered; image/video sit left/right.
-  # ============================================================
   - id: funky-image-left
     type: image
     x: 0
@@ -30,11 +26,11 @@ layoutBlocks:
     fitMode: width-to-height
     fitToViewport: true
     assetAlignment: auto
+    content: ""
     image: https://cdnb.artstation.com/p/media_assets/images/images/001/392/567/large/Wildcat%E2%80%99s_Gilded_Jade_1.jpg?1790720806
     videoUrl: ""
     folder: ""
     aovPasses: []
-
   - id: funky-aov-center
     type: aov
     x: 3
@@ -46,6 +42,7 @@ layoutBlocks:
     fitMode: width-to-height
     fitToViewport: true
     assetAlignment: auto
+    content: ""
     image: ""
     videoUrl: ""
     folder: ""
@@ -58,7 +55,6 @@ layoutBlocks:
         image: https://help.maxon.net/r3d/cinema/en-us/Content/Resources/Images/aov_utility.Z_Normalized_Inverted4230.jpg
       - name: Wireframe
         image: https://help.maxon.net/r3d/cinema/en-us/Content/Resources/Images/aov_utility.Wireframe1353.jpg
-
   - id: funky-video-right
     type: video
     x: 7
@@ -70,16 +66,11 @@ layoutBlocks:
     fitMode: width-to-height
     fitToViewport: true
     assetAlignment: auto
+    content: ""
     image: ""
     videoUrl: https://www.youtube.com/watch?v=FjSAVJJ0w3I
     folder: ""
     aovPasses: []
-
-  # ============================================================
-  # ROW 2 — Turntable + text + AOV.
-  # Tests the Turntable collision footprint beside text.
-  # Text deliberately has no asset alignment control.
-  # ============================================================
   - id: funky-turntable
     type: turntable
     x: 0
@@ -91,11 +82,11 @@ layoutBlocks:
     fitMode: width-to-height
     fitToViewport: true
     assetAlignment: auto
+    content: ""
     image: ""
     videoUrl: ""
     folder: turntables\test
     aovPasses: []
-
   - id: funky-text
     type: text
     x: 4
@@ -105,18 +96,18 @@ layoutBlocks:
     snap: grid
     title: Text — Markdown Controlled
     fitMode: none
+    fitToViewport: true
+    assetAlignment: auto
     content: >-
       ## A little controlled chaos
 
-      This block is intentionally text-only. Its alignment belongs to the
-      Markdown content, not the visual asset alignment system.
+      This block is intentionally text-only. Its alignment belongs to the Markdown content, not the visual asset alignment system.
 
       Try moving the neighboring assets around it and watch the layout breathe.
     image: ""
     videoUrl: ""
     folder: ""
     aovPasses: []
-
   - id: funky-aov-right
     type: aov
     x: 6
@@ -128,6 +119,7 @@ layoutBlocks:
     fitMode: width-to-height
     fitToViewport: true
     assetAlignment: auto
+    content: ""
     image: ""
     videoUrl: ""
     folder: ""
@@ -140,15 +132,10 @@ layoutBlocks:
         image: https://help.maxon.net/r3d/cinema/en-us/Content/Resources/Images/aov_utility.Z_Normalized_Inverted4230.jpg
       - name: Wireframe
         image: https://help.maxon.net/r3d/cinema/en-us/Content/Resources/Images/aov_utility.Wireframe1353.jpg
-
-  # ============================================================
-  # ROW 3 — Explicit alignment controls.
-  # Same AOV assets, deliberately forced left / center / right.
-  # ============================================================
   - id: funky-aov-forced-left
     type: aov
     x: 0
-    y: 22
+    y: 28
     w: 3
     h: 8
     snap: free
@@ -156,6 +143,7 @@ layoutBlocks:
     fitMode: width-to-height
     fitToViewport: true
     assetAlignment: left
+    content: ""
     image: ""
     videoUrl: ""
     folder: ""
@@ -168,11 +156,10 @@ layoutBlocks:
         image: https://help.maxon.net/r3d/cinema/en-us/Content/Resources/Images/aov_utility.Z_Normalized_Inverted4230.jpg
       - name: Wireframe
         image: https://help.maxon.net/r3d/cinema/en-us/Content/Resources/Images/aov_utility.Wireframe1353.jpg
-
   - id: funky-aov-forced-center
     type: aov
     x: 3
-    y: 22
+    y: 28
     w: 4
     h: 8
     snap: grid
@@ -180,6 +167,7 @@ layoutBlocks:
     fitMode: width-to-height
     fitToViewport: true
     assetAlignment: center
+    content: ""
     image: ""
     videoUrl: ""
     folder: ""
@@ -192,11 +180,10 @@ layoutBlocks:
         image: https://help.maxon.net/r3d/cinema/en-us/Content/Resources/Images/aov_utility.Z_Normalized_Inverted4230.jpg
       - name: Wireframe
         image: https://help.maxon.net/r3d/cinema/en-us/Content/Resources/Images/aov_utility.Wireframe1353.jpg
-
   - id: funky-aov-forced-right
     type: aov
     x: 7
-    y: 22
+    y: 28
     w: 3
     h: 8
     snap: free
@@ -204,6 +191,7 @@ layoutBlocks:
     fitMode: width-to-height
     fitToViewport: true
     assetAlignment: right
+    content: ""
     image: ""
     videoUrl: ""
     folder: ""
@@ -216,15 +204,10 @@ layoutBlocks:
         image: https://help.maxon.net/r3d/cinema/en-us/Content/Resources/Images/aov_utility.Z_Normalized_Inverted4230.jpg
       - name: Wireframe
         image: https://help.maxon.net/r3d/cinema/en-us/Content/Resources/Images/aov_utility.Wireframe1353.jpg
-
-  # ============================================================
-  # ROW 4 — Viewport cap stress test.
-  # This AOV gets a very wide authored slot and should respect 75vh.
-  # ============================================================
   - id: funky-aov-viewport-cap
     type: aov
     x: 0
-    y: 34
+    y: 36
     w: 10
     h: 10
     snap: grid
@@ -232,6 +215,7 @@ layoutBlocks:
     fitMode: width-to-height
     fitToViewport: true
     assetAlignment: center
+    content: ""
     image: ""
     videoUrl: ""
     folder: ""
@@ -244,11 +228,6 @@ layoutBlocks:
         image: https://help.maxon.net/r3d/cinema/en-us/Content/Resources/Images/aov_utility.Z_Normalized_Inverted4230.jpg
       - name: Wireframe
         image: https://help.maxon.net/r3d/cinema/en-us/Content/Resources/Images/aov_utility.Wireframe1353.jpg
-
-  # ============================================================
-  # ROW 5 — Deliberately oversized detail image.
-  # Viewport protection is OFF so this can become genuinely huge.
-  # ============================================================
   - id: funky-detail-image
     type: image
     x: 1
@@ -260,6 +239,7 @@ layoutBlocks:
     fitMode: width-to-height
     fitToViewport: false
     assetAlignment: center
+    content: ""
     image: https://cdnb.artstation.com/p/media_assets/images/images/001/392/567/large/Wildcat%E2%80%99s_Gilded_Jade_1.jpg?1790720806
     videoUrl: ""
     folder: ""
