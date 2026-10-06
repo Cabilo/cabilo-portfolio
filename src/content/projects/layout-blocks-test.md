@@ -22,6 +22,7 @@ layoutBlocks:
     h: 6
     snap: grid
     title: Turntable
+    fitMode: width-to-height
     content: ""
     image: ""
     videoUrl: ""
@@ -35,6 +36,7 @@ layoutBlocks:
     h: 10
     snap: grid
     title: Text
+    fitMode: none
     content: >-
       What is Lorem Ipsum?
 
@@ -56,6 +58,7 @@ layoutBlocks:
     h: 4
     snap: grid
     title: Image
+    fitMode: width-to-height
     content: ""
     image: https://cdnb.artstation.com/p/media_assets/images/images/001/392/567/large/Wildcat%E2%80%99s_Gilded_Jade_1.jpg?1790720806
     videoUrl: ""
@@ -69,6 +72,7 @@ layoutBlocks:
     h: 4
     snap: grid
     title: Video
+    fitMode: width-to-height
     content: ""
     image: ""
     videoUrl: https://www.youtube.com/watch?v=FjSAVJJ0w3I
@@ -82,6 +86,7 @@ layoutBlocks:
     h: 6
     snap: grid
     title: Aov
+    fitMode: width-to-height
     content: ""
     image: ""
     videoUrl: ""
