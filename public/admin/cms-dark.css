@@ -47,15 +47,30 @@ body,
 #nc-root input,
 #nc-root textarea,
 #nc-root select {
-  background-color: #0b0c0f !important;
-  color: #f0f0f2 !important;
-  border-color: #3a3c44 !important;
+  background-color: #1a1b20 !important;
+  color: #f4f4f5 !important;
+  border-color: #464952 !important;
   color-scheme: dark !important;
+  -webkit-text-fill-color: #f4f4f5 !important;
 }
 
 #nc-root input::placeholder,
 #nc-root textarea::placeholder {
-  color: #777b85 !important;
+  color: #8b8f99 !important;
+}
+
+#nc-root input,
+#nc-root textarea,
+#nc-root select,
+#nc-root option {
+  color: #f4f4f5 !important;
+  -webkit-text-fill-color: #f4f4f5 !important;
+}
+
+#nc-root select option {
+  background-color: #1a1b20 !important;
+  color: #f4f4f5 !important;
+  -webkit-text-fill-color: #f4f4f5 !important;
 }
 
 /*
