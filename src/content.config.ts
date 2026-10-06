@@ -87,8 +87,7 @@ const layoutBlockBaseSchema = z.object({
   h: z.number().int().min(1).max(100),
   snap: z.enum(['grid', 'free']).default('grid'),
   title: z.string().optional(),
-  matchAspectRatio: z.boolean().default(false),
-  matchHeightToWidth: z.boolean().default(true),
+  fitMode: z.enum(['none', 'width-to-height', 'height-to-width']).default('none'),
 });
 
 export const layoutBlockSchema = z.discriminatedUnion('type', [
