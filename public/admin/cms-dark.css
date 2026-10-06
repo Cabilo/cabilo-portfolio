@@ -167,6 +167,50 @@ body {
   color: #fff !important;
 }
 
+
+/* Standard Decap editor widgets. */
+#nc-root [class*="ControlContainer"],
+#nc-root [class*="ControlContainer"] > div,
+#nc-root [class*="EditorControl"],
+#nc-root [class*="WidgetControl"],
+#nc-root [class*="WidgetPreview"],
+#nc-root [class*="ObjectControl"],
+#nc-root [class*="ListControl"],
+#nc-root [class*="ObjectWidget"],
+#nc-root [class*="ListWidget"] {
+  background-color: var(--cabilo-cms-surface) !important;
+  color: var(--cabilo-cms-text) !important;
+  border-color: var(--cabilo-cms-border) !important;
+}
+
+#nc-root [class*="WidgetControl"] input,
+#nc-root [class*="WidgetControl"] textarea,
+#nc-root [class*="WidgetControl"] select {
+  background-color: var(--cabilo-cms-field) !important;
+  color: var(--cabilo-cms-text) !important;
+  border-color: var(--cabilo-cms-border-strong) !important;
+  -webkit-text-fill-color: var(--cabilo-cms-text) !important;
+}
+
+#nc-root [class*="ObjectWidget"] [class*="TopBar"],
+#nc-root [class*="ListWidget"] [class*="TopBar"],
+#nc-root [class*="ObjectControl"] [class*="TopBar"],
+#nc-root [class*="ListControl"] [class*="TopBar"] {
+  background-color: var(--cabilo-cms-field) !important;
+  color: var(--cabilo-cms-text) !important;
+  border-color: var(--cabilo-cms-border) !important;
+}
+
+#nc-root [class*="EditorControlPane"] > div {
+  background-color: var(--cabilo-cms-bg) !important;
+}
+
+#nc-root [class*="EditorControlPane"] [class*="Card"] {
+  background-color: var(--cabilo-cms-surface) !important;
+  color: var(--cabilo-cms-text) !important;
+  border-color: var(--cabilo-cms-border) !important;
+}
+
 /* Lists / object widgets. */
 #nc-root [class*="listControlItem"],
 #nc-root [class*="StyledListItem"] {
