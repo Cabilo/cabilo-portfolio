@@ -131,7 +131,7 @@ const defaultB = passes.length > 1 ? passes[1] : passes[0];
           aria-label="Choose left AOV pass"
         >
           {passes.map((pass, index) => (
-            <option value={index}>{pass.name}</option>
+            <option value={index} data-image={pass.image} data-name={pass.name}>{pass.name}</option>
           ))}
         </select>
         <svg
@@ -153,9 +153,14 @@ const defaultB = passes.length > 1 ? passes[1] : passes[0];
           aria-label="Choose right AOV pass"
         >
           {passes.map((pass, index) => (
-            <option value={index} selected={index === 1 || (passes.length === 1 && index === 0)}>
-              {pass.name}
-            </option>
+            <option
+            value={index}
+            data-image={pass.image}
+            data-name={pass.name}
+            selected={index === 1 || (passes.length === 1 && index === 0)}
+          >
+            {pass.name}
+          </option>
           ))}
         </select>
         <svg
@@ -394,13 +399,12 @@ const defaultB = passes.length > 1 ? passes[1] : passes[0];
       });
 
       const updatePassA = () => {
-        const index = Number.parseInt(selectA.value, 10);
-        const pass = passes[index];
+        const option = selectA.selectedOptions[0];
 
-        if (!pass) return;
+        if (!option) return;
 
-        imgA.src = pass.image;
-        imgA.alt = pass.name;
+        imgA.src = option.dataset.image || '';
+        imgA.alt = option.dataset.name || option.textContent?.trim() || '';
 
         /*
          * The A image defines the Layout Blocks comparison aspect ratio,
@@ -410,13 +414,12 @@ const defaultB = passes.length > 1 ? passes[1] : passes[0];
       };
 
       const updatePassB = () => {
-        const index = Number.parseInt(selectB.value, 10);
-        const pass = passes[index];
+        const option = selectB.selectedOptions[0];
 
-        if (!pass) return;
+        if (!option) return;
 
-        imgB.src = pass.image;
-        imgB.alt = pass.name;
+        imgB.src = option.dataset.image || '';
+        imgB.alt = option.dataset.name || option.textContent?.trim() || '';
       };
 
       selectA?.addEventListener('change', updatePassA);
