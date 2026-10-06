@@ -69,7 +69,7 @@ layoutBlocks:
     h: 3
     snap: free
     title: Small Video
-    fitMode: width-to-height
+    fitMode: height-to-width
     content: ""
     image: ""
     videoUrl: https://www.youtube.com/watch?v=FjSAVJJ0w3I
