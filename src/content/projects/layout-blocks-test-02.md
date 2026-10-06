@@ -77,9 +77,9 @@ layoutBlocks:
     aovPasses: []
   - id: layout-test-02-aov
     type: aov
-    x: 2
+    x: 0
     y: 8
-    w: 6
+    w: 10
     h: 5
     snap: free
     title: AOV Comparison
