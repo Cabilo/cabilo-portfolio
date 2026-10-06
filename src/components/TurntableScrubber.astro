@@ -92,7 +92,11 @@ const frameDataString = JSON.stringify(frames);
   -->
   <div
     id="tt-status"
-    class="absolute z-30 flex items-center justify-center gap-5 rounded bg-cabilo-dark/60 px-4 py-2 text-[10px] font-mono tracking-widest text-text-silver pointer-events-none"
+    class:list={[
+      'z-30 flex items-center justify-center gap-5 rounded bg-cabilo-dark/60 px-4 py-2 text-[10px] font-mono tracking-widest text-text-silver',
+      statusPosition !== 'bottom' && 'absolute pointer-events-none',
+      statusPosition === 'bottom' && 'mt-3',
+    ]}
   >
     <span>
       FRAME
@@ -677,24 +681,11 @@ const frameDataString = JSON.stringify(frames);
     TurntableScrubber
   );
 <style>
-  turntable-scrubber[data-status-position="bottom"] {
-    padding-bottom: 0;
-  }
-
-  turntable-scrubber[data-status-position="top"] #tt-status,
-  turntable-scrubber[data-status-position="bottom"] #tt-status {
+  turntable-scrubber[data-status-position="top"] #tt-status {
+    top: 0;
     left: 50%;
     transform: translateX(-50%);
     white-space: nowrap;
-  }
-
-  turntable-scrubber[data-status-position="top"] #tt-status {
-    top: 0;
-  }
-
-  turntable-scrubber[data-status-position="bottom"] #tt-status {
-    top: 100%;
-    margin-top: 0.75rem;
   }
 
   turntable-scrubber[data-status-position="left"] #tt-status,
