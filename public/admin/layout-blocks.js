@@ -288,6 +288,12 @@
         block.fitToViewport === 'false'
           ? false
           : true,
+      assetAlignment:
+        block.assetAlignment === 'left' ||
+        block.assetAlignment === 'center' ||
+        block.assetAlignment === 'right'
+          ? block.assetAlignment
+          : 'auto',
       content: block.content || '',
       image: block.image || '',
       videoUrl: block.videoUrl || '',
@@ -723,6 +729,26 @@
               }, option[1]);
             })
           )),
+          selected.type !== 'text'
+            ? this.renderField('Asset alignment', h('select', {
+                value: selected.assetAlignment,
+                onChange: function (event) {
+                  this.updateSelectedField('assetAlignment', event.target.value);
+                }.bind(this),
+              },
+                [
+                  ['auto', 'Automatic'],
+                  ['left', 'Left'],
+                  ['center', 'Center'],
+                  ['right', 'Right'],
+                ].map(function (option) {
+                  return h('option', {
+                    key: option[0],
+                    value: option[0],
+                  }, option[1]);
+                })
+              }))
+            : null,
           selected.type !== 'text'
             ? this.renderField('Fit to viewport (max 75vh)', h('input', {
                 type: 'checkbox',
