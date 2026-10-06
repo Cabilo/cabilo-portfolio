@@ -22,11 +22,18 @@ export interface Props {
     image: string;
   }[];
   fitToViewport?: boolean;
+  /**
+   * Layout Blocks mode: the comparison viewport follows the
+   * first AOV asset's aspect ratio while the pass selectors
+   * remain in normal document flow below it.
+   */
+  fitToLayoutAspect?: boolean;
 }
 
 const {
   passes,
   fitToViewport = true,
+  fitToLayoutAspect = false,
 } = Astro.props;
 
 const defaultA = passes[0];
@@ -34,15 +41,20 @@ const defaultB = passes.length > 1 ? passes[1] : passes[0];
 ---
 
 <dynamic-aov
-  class:list={['block w-full', !fitToViewport && 'h-full min-h-0']}
+  class:list={[
+    'block w-full',
+    !fitToViewport && !fitToLayoutAspect && 'h-full min-h-0',
+  ]}
   data-fit-viewport={fitToViewport ? 'true' : 'false'}
+  data-fit-layout-aspect={fitToLayoutAspect ? 'true' : 'false'}
 >
-  <div class:list={['flex flex-col gap-6', !fitToViewport && 'h-full min-h-0']}>
+  <div class:list={['flex flex-col gap-6', !fitToViewport && !fitToLayoutAspect && 'h-full min-h-0']}>
 
     <div
       class:list={[
         'aov-container relative overflow-hidden max-w-full mx-auto bg-cabilo-obsidian',
-        !fitToViewport && 'flex-1 min-h-0',
+        !fitToViewport && !fitToLayoutAspect && 'flex-1 min-h-0',
+        fitToLayoutAspect && 'flex-none w-full',
       ]}
       style="touch-action: pan-y;"
     >
@@ -194,6 +206,7 @@ const defaultB = passes.length > 1 ? passes[1] : passes[0];
       if (!container || !clipperB || !slider || !imgA || !imgB) return;
 
       const fitViewport = this.dataset.fitViewport === 'true';
+      const fitLayoutAspect = this.dataset.fitLayoutAspect === 'true';
 
       let isDragging = false;
       let activePointerId: number | null = null;
@@ -241,17 +254,32 @@ const defaultB = passes.length > 1 ? passes[1] : passes[0];
 
         if (!fitViewport) {
           const width = container.clientWidth;
-          const height = container.clientHeight;
 
-          if (!width || !height) return;
+          if (!width) return;
 
-          container.style.width = '100%';
-          container.style.height = '100%';
+          if (fitLayoutAspect) {
+            const height = width / aspectRatio;
 
-          imgA.style.width = `${width}px`;
-          imgA.style.height = `${height}px`;
-          imgB.style.width = `${width}px`;
-          imgB.style.height = `${height}px`;
+            container.style.width = '100%';
+            container.style.height = `${height}px`;
+
+            imgA.style.width = `${width}px`;
+            imgA.style.height = `${height}px`;
+            imgB.style.width = `${width}px`;
+            imgB.style.height = `${height}px`;
+          } else {
+            const height = container.clientHeight;
+
+            if (!height) return;
+
+            container.style.width = '100%';
+            container.style.height = '100%';
+
+            imgA.style.width = `${width}px`;
+            imgA.style.height = `${height}px`;
+            imgB.style.width = `${width}px`;
+            imgB.style.height = `${height}px`;
+          }
 
           requestAnimationFrame(() => {
             applySliderPosition();
