@@ -9,7 +9,7 @@
  */
 
 :root {
-  --cabilo-cms-bg: #0d1117;
+  --cabilo-cms-bg: #21262d;
   --cabilo-cms-surface: #161b22;
   --cabilo-cms-field: #21262d;
   --cabilo-cms-field-hover: #292f38;
@@ -75,6 +75,7 @@ body {
   background: var(--cabilo-cms-field) !important;
   color: var(--cabilo-cms-text) !important;
   border-color: var(--cabilo-cms-border-strong) !important;
+  padding-left: 10px;
   color-scheme: dark !important;
   -webkit-text-fill-color: var(--cabilo-cms-text) !important;
 }
@@ -104,12 +105,14 @@ body {
 
 #nc-root option {
   background: var(--cabilo-cms-field) !important;
+  padding-left: 10px;
   color: var(--cabilo-cms-text) !important;
 }
 
 /* Decap react-select controls and dropdowns. */
 #nc-root [class*="ControlContainer"] div[class$="-control"] {
   background: var(--cabilo-cms-field) !important;
+  padding-left: 10px;
   border-color: var(--cabilo-cms-border-strong) !important;
   color: var(--cabilo-cms-text) !important;
 }
