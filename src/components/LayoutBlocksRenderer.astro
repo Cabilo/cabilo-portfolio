@@ -668,50 +668,50 @@ const maxBottom = Math.max(
            * comparison viewport, but the pass selector panel lives below
            * that viewport and can become taller when its buttons wrap.
            *
-           * The outer Layout Block frame has an authored CSS height, so its
-           * scrollHeight is not a reliable signal for content that visually
-           * extends beyond that fixed box. Measure the rendered DynamicAov
-           * itself instead. getBoundingClientRect() gives us the current
-           * physical border-box footprint after the AOV has sized its
-           * viewport and selector panel.
-           *
-           * The frame's bottom padding is added because the AOV sits inside
-           * the frame's padded content area. Other Height → Width blocks
-           * remain width-only.
+           * Preserve the existing AOV measurement model because it already
+           * handles that composite footprint correctly.
            */
-          if (
-            item.frame.dataset.assetType === 'aov' ||
-            item.frame.dataset.assetType === 'turntable'
-          ) {
-            const composite =
-              item.frame.dataset.assetType === 'aov'
-                ? item.frame.querySelector('dynamic-aov')
-                : item.frame.querySelector('turntable-scrubber');
+          if (item.frame.dataset.assetType === 'aov') {
+            const aov = item.frame.querySelector('dynamic-aov');
 
-            if (composite instanceof HTMLElement) {
+            if (aov instanceof HTMLElement) {
               const frameRect = item.frame.getBoundingClientRect();
-
-              /*
-               * Both AOV and Turntable are composite blocks: their visual
-               * controls live outside the main media viewport. Measure the
-               * rendered component footprint instead of assuming the
-               * authored viewport is the whole block.
-               *
-               * Turntable's frame/zoom readout is now in normal flow below
-               * the image, so scrollHeight includes it as part of the
-               * component's required vertical footprint.
-               */
-              const measuredHeightPx =
-                composite.scrollHeight +
-                composite.getBoundingClientRect().top -
-                frameRect.top;
-
+              const aovRect = aov.getBoundingClientRect();
               const paddingBottom = parseFloat(
                 getComputedStyle(item.frame).paddingBottom,
               ) || 0;
+              const measuredHeightPx =
+                aovRect.bottom - frameRect.top + paddingBottom;
+              const measuredHeight = measuredHeightPx / rowHeight * 2;
 
-              const measuredHeight =
-                (measuredHeightPx + paddingBottom) / rowHeight * 2;
+              if (Number.isFinite(measuredHeight) && measuredHeight > item.resolvedH) {
+                item.resolvedH = measuredHeight;
+              }
+            }
+          }
+
+          /*
+           * Turntable is also a composite block, but its controls are fixed
+           * and intentionally live below the image. Because the status
+           * readout is now in normal flow, scrollHeight includes it in the
+           * component footprint. This keeps it inside the Layout Block's
+           * measured height without giving it AOV-style dynamic growth.
+           */
+          if (item.frame.dataset.assetType === 'turntable') {
+            const turntable = item.frame.querySelector('turntable-scrubber');
+
+            if (turntable instanceof HTMLElement) {
+              const frameRect = item.frame.getBoundingClientRect();
+              const turntableRect = turntable.getBoundingClientRect();
+              const paddingBottom = parseFloat(
+                getComputedStyle(item.frame).paddingBottom,
+              ) || 0;
+              const measuredHeightPx =
+                turntableRect.top -
+                frameRect.top +
+                turntable.scrollHeight +
+                paddingBottom;
+              const measuredHeight = measuredHeightPx / rowHeight * 2;
 
               if (Number.isFinite(measuredHeight) && measuredHeight > item.resolvedH) {
                 item.resolvedH = measuredHeight;
@@ -802,10 +802,10 @@ const maxBottom = Math.max(
       observer.observe(frame);
 
       /*
-       * Composite blocks such as AOV can change their internal footprint
-       * without changing the authored frame itself. Observe the rendered
-       * AOV so selector wrapping, image loading, and internal reflow all
-       * trigger another elastic-row calculation.
+       * Composite blocks such as AOV and Turntable can change their internal
+       * footprint without changing the authored frame itself. Observe their
+       * rendered components so image loading and internal reflow can trigger
+       * another elastic-row calculation.
        */
       const dynamicAov = frame.querySelector('dynamic-aov');
 
