@@ -733,44 +733,43 @@ const maxBottom = Math.max(
             }
           }
 
-          /*
-           * Turntable has two different footprints:
-           * - resolvedH controls the media box and therefore its aspect ratio.
-           * - collisionH includes the readout below the media so later rows
-           *   stay clear of it.
-           *
-           * The readout is intentionally never fed back into resolvedH.
-           */
-          if (item.frame.dataset.assetType === 'turntable') {
-            const turntable = item.frame.querySelector('turntable-scrubber');
-            const container = item.frame.querySelector('#tt-container');
-            const status = item.frame.querySelector('#tt-status');
+        /*
+         * Turntable has two different footprints:
+         * - resolvedH controls the media box and therefore its aspect ratio.
+         * - collisionH includes the readout below the media so later rows
+         *   stay clear of it.
+         *
+         * The readout is intentionally never fed back into resolvedH.
+         */
+        if (item.frame.dataset.assetType === 'turntable') {
+          const turntable = item.frame.querySelector('turntable-scrubber');
+          const container = item.frame.querySelector('#tt-container');
+          const status = item.frame.querySelector('#tt-status');
 
-            if (
-              turntable instanceof HTMLElement &&
-              container instanceof HTMLElement &&
-              status instanceof HTMLElement
-            ) {
-              const frameRect = item.frame.getBoundingClientRect();
-              const mediaRect = container.getBoundingClientRect();
-              const statusRect = status.getBoundingClientRect();
-              const paddingBottom = parseFloat(
-                getComputedStyle(item.frame).paddingBottom,
-              ) || 0;
+          if (
+            turntable instanceof HTMLElement &&
+            container instanceof HTMLElement &&
+            status instanceof HTMLElement
+          ) {
+            const frameRect = item.frame.getBoundingClientRect();
+            const mediaRect = container.getBoundingClientRect();
+            const statusRect = status.getBoundingClientRect();
+            const paddingBottom = parseFloat(
+              getComputedStyle(item.frame).paddingBottom,
+            ) || 0;
 
-              const collisionBottomPx =
-                Math.max(mediaRect.bottom, statusRect.bottom) -
-                frameRect.top +
-                paddingBottom;
+            const collisionBottomPx =
+              Math.max(mediaRect.bottom, statusRect.bottom) -
+              frameRect.top +
+              paddingBottom;
 
-              const collisionHeight = collisionBottomPx / rowHeight * 2;
+            const collisionHeight = collisionBottomPx / rowHeight * 2;
 
-              if (Number.isFinite(collisionHeight)) {
-                item.collisionH = Math.max(
-                  item.resolvedH,
-                  collisionHeight,
-                );
-              }
+            if (Number.isFinite(collisionHeight)) {
+              item.collisionH = Math.max(
+                item.resolvedH,
+                collisionHeight,
+              );
             }
           }
         }
