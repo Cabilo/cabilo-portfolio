@@ -1,136 +1,269 @@
 /*
- * CABILO CMS DARK MODE
+ * CABILO CMS DARK THEME
  *
- * Decap CMS does not currently expose a reliable global dark-theme switch
- * for the CDN build used by this admin page. This stylesheet is intentionally
- * scoped to #nc-root so it cannot affect the public portfolio.
+ * Based on the community Decap/Netlify CMS dark-theme approach:
+ * semantic colors for the CMS UI instead of blanket css-* overrides.
+ *
+ * Decap CMS is mounted inside #nc-root, so this stylesheet is isolated to
+ * the admin application and cannot affect the public portfolio.
  */
+
+:root {
+  --cabilo-cms-bg: #0d1117;
+  --cabilo-cms-surface: #161b22;
+  --cabilo-cms-field: #21262d;
+  --cabilo-cms-field-hover: #292f38;
+  --cabilo-cms-border: #30363d;
+  --cabilo-cms-border-strong: #484f58;
+  --cabilo-cms-text: #f0f6fc;
+  --cabilo-cms-text-secondary: #8b949e;
+  --cabilo-cms-text-muted: #6e7681;
+  --cabilo-cms-accent: #fac018;
+  --cabilo-cms-accent-hover: #ffd34f;
+  --cabilo-cms-danger: #f85149;
+  --cabilo-cms-danger-bg: #3d1618;
+  --cabilo-cms-shadow: 0 16px 32px rgb(1 4 9 / 55%);
+}
 
 html,
 body,
 #nc-root {
+  min-height: 100%;
+  background: var(--cabilo-cms-bg) !important;
+  color: var(--cabilo-cms-text) !important;
   color-scheme: dark !important;
-  background: #050506 !important;
-  color: #e8e8ea !important;
 }
 
-#nc-root {
-  min-height: 100vh;
+body {
+  margin: 0;
 }
 
-/*
- * Decap's default UI is built with Emotion-generated classes. Those classes
- * contain "css-", so we use them as the boundary for the CMS components.
- * This keeps the override scoped to Decap without depending on unstable
- * component class names.
- */
-#nc-root [class*="css-"] {
-  background-color: #111216 !important;
-  color: #e8e8ea !important;
-  border-color: #303239 !important;
-  box-shadow: none !important;
+/* Decap application surfaces. */
+#nc-root,
+#nc-root [class*="App"],
+#nc-root [class*="EditorContainer"],
+#nc-root [class*="EditorControlPane"],
+#nc-root [class*="Sidebar"],
+#nc-root [class*="Collection"],
+#nc-root [class*="List"],
+#nc-root [class*="Entry"],
+#nc-root [class*="Card"] {
+  color: var(--cabilo-cms-text);
 }
 
-#nc-root [class*="css-"] h1,
-#nc-root [class*="css-"] h2,
-#nc-root [class*="css-"] h3,
-#nc-root [class*="css-"] h4,
-#nc-root [class*="css-"] h5,
-#nc-root [class*="css-"] h6,
-#nc-root [class*="css-"] p,
-#nc-root [class*="css-"] label,
-#nc-root [class*="css-"] span,
-#nc-root [class*="css-"] a {
-  color: inherit !important;
+#nc-root [class*="App"],
+#nc-root [class*="EditorContainer"],
+#nc-root [class*="EditorControlPane"] {
+  background: var(--cabilo-cms-bg);
 }
 
-#nc-root input,
+/* Decap widgets: field labels sit on a distinct surface. */
+#nc-root [class*="FieldLabel"] {
+  color: var(--cabilo-cms-text) !important;
+  background: var(--cabilo-cms-surface) !important;
+}
+
+#nc-root [class*="FieldLabel"]::after {
+  background: var(--cabilo-cms-bg) !important;
+}
+
+/* Text inputs, textareas and native selects. */
+#nc-root input:not([type="checkbox"]):not([type="radio"]),
 #nc-root textarea,
 #nc-root select {
-  background-color: #1a1b20 !important;
-  color: #f4f4f5 !important;
-  border-color: #464952 !important;
+  box-sizing: border-box;
+  background: var(--cabilo-cms-field) !important;
+  color: var(--cabilo-cms-text) !important;
+  border-color: var(--cabilo-cms-border-strong) !important;
   color-scheme: dark !important;
-  -webkit-text-fill-color: #f4f4f5 !important;
+  -webkit-text-fill-color: var(--cabilo-cms-text) !important;
+}
+
+#nc-root input:not([type="checkbox"]):not([type="radio"]):hover,
+#nc-root textarea:hover,
+#nc-root select:hover {
+  background: var(--cabilo-cms-field-hover) !important;
+  border-color: var(--cabilo-cms-border-strong) !important;
+}
+
+#nc-root input:not([type="checkbox"]):not([type="radio"]):focus,
+#nc-root textarea:focus,
+#nc-root select:focus {
+  background: var(--cabilo-cms-field-hover) !important;
+  color: var(--cabilo-cms-text) !important;
+  border-color: var(--cabilo-cms-accent) !important;
+  outline: none;
+  -webkit-text-fill-color: var(--cabilo-cms-text) !important;
 }
 
 #nc-root input::placeholder,
 #nc-root textarea::placeholder {
-  color: #8b8f99 !important;
+  color: var(--cabilo-cms-text-muted) !important;
+  -webkit-text-fill-color: var(--cabilo-cms-text-muted) !important;
 }
 
-#nc-root input,
-#nc-root textarea,
-#nc-root select,
 #nc-root option {
-  color: #f4f4f5 !important;
-  -webkit-text-fill-color: #f4f4f5 !important;
+  background: var(--cabilo-cms-field) !important;
+  color: var(--cabilo-cms-text) !important;
 }
 
-#nc-root select option {
-  background-color: #1a1b20 !important;
-  color: #f4f4f5 !important;
-  -webkit-text-fill-color: #f4f4f5 !important;
+/* Decap react-select controls and dropdowns. */
+#nc-root [class*="ControlContainer"] div[class$="-control"] {
+  background: var(--cabilo-cms-field) !important;
+  border-color: var(--cabilo-cms-border-strong) !important;
+  color: var(--cabilo-cms-text) !important;
 }
 
-/*
- * Form controls and custom widget buttons need an explicit light foreground.
- * This is intentionally stronger than the generic Decap override above so
- * controls remain readable even when their generated component styles supply
- * a dark text color.
- */
-#nc-root button,
-#nc-root [role="button"] {
-  background-color: #30343b !important;
-  color: #f4f4f5 !important;
-  border-color: #3f434b !important;
-  -webkit-text-fill-color: #f4f4f5 !important;
+#nc-root [class*="ControlContainer"] div[class$="-control"] [class*="-singleValue"],
+#nc-root [class*="ControlContainer"] div[class$="-control"] [class*="Input"] {
+  color: var(--cabilo-cms-text) !important;
+  -webkit-text-fill-color: var(--cabilo-cms-text) !important;
 }
 
-#nc-root button *,
-#nc-root [role="button"] * {
-  color: inherit !important;
-  -webkit-text-fill-color: inherit !important;
+#nc-root [class*="ControlContainer"] [class*="menu"],
+#nc-root [class*="ControlContainer"] [class*="MenuList"] {
+  background: var(--cabilo-cms-surface) !important;
+  border-color: var(--cabilo-cms-border) !important;
+  box-shadow: var(--cabilo-cms-shadow) !important;
+}
+
+#nc-root [class*="ControlContainer"] [class*="option"] {
+  background: transparent !important;
+  color: var(--cabilo-cms-text) !important;
+}
+
+#nc-root [class*="ControlContainer"] [class*="option"]:hover,
+#nc-root [class*="ControlContainer"] [class*="option"][aria-selected="true"] {
+  background: var(--cabilo-cms-field-hover) !important;
+  color: #fff !important;
+}
+
+/* Buttons. */
+#nc-root button {
+  color: var(--cabilo-cms-text) !important;
+  border-color: var(--cabilo-cms-border-strong);
+}
+
+#nc-root [class*="button-default-gray"],
+#nc-root button[class*="Button"] {
+  color: var(--cabilo-cms-text) !important;
 }
 
 #nc-root button:hover,
-#nc-root button:focus,
-#nc-root [role="button"]:hover,
-#nc-root [role="button"]:focus {
-  background-color: #41464f !important;
-  color: #ffffff !important;
-  -webkit-text-fill-color: #ffffff !important;
+#nc-root button:focus-visible {
+  color: #fff !important;
 }
 
-#nc-root a {
-  color: #aebcff !important;
+#nc-root [class*="ButtonRound"],
+#nc-root [class*="ToolbarButton"] {
+  background: var(--cabilo-cms-field) !important;
+  color: var(--cabilo-cms-text) !important;
+  border-color: var(--cabilo-cms-border) !important;
 }
 
-#nc-root [role="menu"],
-#nc-root [role="listbox"],
+#nc-root [class*="ButtonRound"]:hover,
+#nc-root [class*="ToolbarButton"]:hover {
+  background: var(--cabilo-cms-field-hover) !important;
+  color: #fff !important;
+}
+
+/* Lists / object widgets. */
+#nc-root [class*="listControlItem"],
+#nc-root [class*="StyledListItem"] {
+  background: var(--cabilo-cms-surface) !important;
+  border-color: var(--cabilo-cms-border) !important;
+}
+
+#nc-root [class*="TopBarContainer"],
+#nc-root [class*="StyledListItemTopBar"],
+#nc-root [class*="NestedObjectLabel"] {
+  background: var(--cabilo-cms-surface) !important;
+  color: var(--cabilo-cms-text) !important;
+  border-color: var(--cabilo-cms-border) !important;
+}
+
+/* Markdown editor. */
+#nc-root [class*="cms-editor"] {
+  background: var(--cabilo-cms-field) !important;
+  border-color: var(--cabilo-cms-border) !important;
+}
+
+#nc-root [class*="cms-editor"] [class*="ToolbarContainer"] {
+  background: var(--cabilo-cms-surface) !important;
+  border-color: var(--cabilo-cms-border) !important;
+}
+
+#nc-root [class*="cms-editor"] button,
+#nc-root [class*="cms-editor"] [class*="ToolbarDropdownWrapper"] {
+  color: var(--cabilo-cms-text-secondary) !important;
+}
+
+#nc-root [class*="cms-editor"] button:hover {
+  color: var(--cabilo-cms-text) !important;
+  background: var(--cabilo-cms-field-hover) !important;
+}
+
+/* Modals, menus and image/file dialogs. */
+#nc-root [class*="StyledModal"],
 #nc-root [role="dialog"],
-#nc-root [role="tooltip"] {
-  background-color: #111216 !important;
-  color: #e8e8ea !important;
-  border-color: #303239 !important;
+#nc-root [role="menu"],
+#nc-root [role="listbox"] {
+  background: var(--cabilo-cms-surface) !important;
+  color: var(--cabilo-cms-text) !important;
+  border-color: var(--cabilo-cms-border) !important;
+  box-shadow: var(--cabilo-cms-shadow) !important;
+}
+
+#nc-root [role="option"] {
+  color: var(--cabilo-cms-text) !important;
 }
 
 #nc-root [role="option"]:hover,
 #nc-root [role="option"][aria-selected="true"] {
-  background-color: #252a35 !important;
-  color: #ffffff !important;
+  background: var(--cabilo-cms-field-hover) !important;
+  color: #fff !important;
 }
 
-#nc-root [aria-selected="true"] {
-  color: #ffffff !important;
+/* Links and secondary text. */
+#nc-root a {
+  color: #8ab4f8;
 }
 
-/*
- * Keep the actual media previews untouched. Only their surrounding UI
- * receives the dark treatment.
- */
-#nc-root img,
-#nc-root video,
-#nc-root svg {
-  background-color: transparent !important;
+#nc-root [class*="Hint"],
+#nc-root [class*="hint"],
+#nc-root [class*="Help"],
+#nc-root [class*="help"] {
+  color: var(--cabilo-cms-text-secondary) !important;
+}
+
+/* Error state. */
+#nc-root [class*="ControlErrorsList"],
+#nc-root [class*="Error"] {
+  color: #ff7b72 !important;
+}
+
+/* Image/file checkerboards remain visible in dark mode. */
+#nc-root [class*="checkerboard"],
+#nc-root [class*="ImageWrapper-checkerboard"] {
+  background-color: #21262d !important;
+  border-color: var(--cabilo-cms-border) !important;
+}
+
+/* Scrollbars. */
+#nc-root ::-webkit-scrollbar {
+  width: 10px;
+  height: 10px;
+}
+
+#nc-root ::-webkit-scrollbar-track {
+  background: var(--cabilo-cms-bg) !important;
+}
+
+#nc-root ::-webkit-scrollbar-thumb {
+  background: var(--cabilo-cms-border-strong) !important;
+  border-radius: 5px;
+}
+
+#nc-root ::-webkit-scrollbar-thumb:hover {
+  background: #6e7681 !important;
 }

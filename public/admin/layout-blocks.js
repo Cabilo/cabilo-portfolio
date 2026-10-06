@@ -23,11 +23,16 @@
   var INITIAL_ROWS = 5;
 
   var styles = `
+    /*
+     * Layout Blocks has its own inspector, so it gets an explicit dark
+     * palette instead of relying on Decap's generated widget classes.
+     * Palette mirrors the main CMS theme: page -> panel -> field.
+     */
     .cabilo-layout-widget {
       font-family: inherit;
-      color: #f4f4f5;
-      background: #050506;
-      border: 1px solid #3f3f46;
+      color: #f0f6fc;
+      background: #0d1117;
+      border: 1px solid #30363d;
       border-radius: 6px;
       padding: 14px;
     }
@@ -42,23 +47,27 @@
 
     .cabilo-layout-button {
       appearance: none;
-      border: 1px solid #3f3f46;
+      border: 1px solid #484f58;
       border-radius: 5px;
-      background: #18181b;
-      color: #f4f4f5;
+      background: #21262d;
+      color: #f0f6fc;
       padding: 7px 10px;
       font-size: 12px;
       line-height: 1;
       cursor: pointer;
+      -webkit-text-fill-color: #f0f6fc;
     }
 
-    .cabilo-layout-button:hover {
-      background: #27272a;
-      border-color: #71717a;
+    .cabilo-layout-button:hover,
+    .cabilo-layout-button:focus {
+      background: #30363d;
+      border-color: #6e7681;
+      color: #fff;
+      -webkit-text-fill-color: #fff;
     }
 
     .cabilo-layout-help {
-      color: #a1a1aa;
+      color: #8b949e;
       font-size: 12px;
       line-height: 1.5;
       margin: 0 0 12px;
@@ -70,9 +79,9 @@
 
     .cabilo-layout-grid-wrap {
       overflow: hidden;
-      border: 1px solid #52525b;
+      border: 1px solid #484f58;
       border-radius: 6px;
-      background: #020204;
+      background: #090d13;
       padding: 0;
     }
 
@@ -80,12 +89,12 @@
       position: relative;
       width: 100%;
       aspect-ratio: 5 / var(--layout-visible-rows);
-      background-color: #07070a;
+      background-color: #0d1117;
       background-image:
-        repeating-linear-gradient(to right, rgba(212,212,216,.20) 0 1px, transparent 1px 10%),
-        repeating-linear-gradient(to bottom, rgba(212,212,216,.20) 0 1px, transparent 1px calc(100% / (2 * var(--layout-visible-rows)))),
-        repeating-linear-gradient(to right, rgba(244,244,245,.58) 0 2px, transparent 2px 20%),
-        repeating-linear-gradient(to bottom, rgba(244,244,245,.58) 0 2px, transparent 2px calc(100% / var(--layout-visible-rows)));
+        repeating-linear-gradient(to right, rgba(240,246,252,.16) 0 1px, transparent 1px 10%),
+        repeating-linear-gradient(to bottom, rgba(240,246,252,.16) 0 1px, transparent 1px calc(100% / (2 * var(--layout-visible-rows)))),
+        repeating-linear-gradient(to right, rgba(240,246,252,.44) 0 2px, transparent 2px 20%),
+        repeating-linear-gradient(to bottom, rgba(240,246,252,.44) 0 2px, transparent 2px calc(100% / var(--layout-visible-rows)));
     }
 
     .cabilo-layout-block {
@@ -94,7 +103,7 @@
       border: 1px solid #fac018;
       border-radius: 5px;
       background: rgba(250,192,24,.10);
-      color: #f4f4f5;
+      color: #f0f6fc;
       cursor: move;
       user-select: none;
       touch-action: none;
@@ -102,7 +111,7 @@
     }
 
     .cabilo-layout-block.is-selected {
-      box-shadow: 0 0 0 2px rgba(250,192,24,.25);
+      box-shadow: 0 0 0 2px rgba(250,192,24,.28);
     }
 
     .cabilo-layout-block-label {
@@ -117,7 +126,7 @@
 
     .cabilo-layout-block-meta {
       padding: 0 9px;
-      color: #a1a1aa;
+      color: #8b949e;
       font-size: 10px;
       pointer-events: none;
     }
@@ -127,7 +136,7 @@
       width: 10px;
       height: 10px;
       background: #fac018;
-      border: 2px solid #09090b;
+      border: 2px solid #0d1117;
       border-radius: 50%;
       z-index: 3;
       touch-action: none;
@@ -145,9 +154,9 @@
     .cabilo-layout-inspector {
       margin-top: 12px;
       padding: 14px;
-      border: 1px solid #3f3f46;
+      border: 1px solid #30363d;
       border-radius: 6px;
-      background: #121215;
+      background: #161b22;
     }
 
     .cabilo-layout-inspector-grid {
@@ -163,7 +172,7 @@
     }
 
     .cabilo-layout-field label {
-      color: #a1a1aa;
+      color: #c9d1d9;
       font-size: 10px;
       text-transform: uppercase;
       letter-spacing: .08em;
@@ -171,21 +180,49 @@
 
     .cabilo-layout-field input,
     .cabilo-layout-field select,
-    .cabilo-layout-field textarea {
+    .cabilo-layout-field textarea,
+    .cabilo-layout-aov-pass input {
       width: 100%;
       box-sizing: border-box;
-      border: 1px solid #3f3f46;
+      border: 1px solid #484f58;
       border-radius: 4px;
-      background: #1a1b20;
-      color: #f4f4f5;
+      background: #21262d;
+      color: #f0f6fc;
       padding: 7px 8px;
       font: inherit;
       font-size: 12px;
+      color-scheme: dark;
+      -webkit-text-fill-color: #f0f6fc;
+      caret-color: #fac018;
+    }
+
+    .cabilo-layout-field input:hover,
+    .cabilo-layout-field select:hover,
+    .cabilo-layout-field textarea:hover,
+    .cabilo-layout-aov-pass input:hover {
+      background: #292f38;
+      border-color: #6e7681;
+    }
+
+    .cabilo-layout-field input:focus,
+    .cabilo-layout-field select:focus,
+    .cabilo-layout-field textarea:focus,
+    .cabilo-layout-aov-pass input:focus {
+      background: #292f38;
+      border-color: #fac018;
+      outline: none;
+      color: #fff;
+      -webkit-text-fill-color: #fff;
     }
 
     .cabilo-layout-field textarea {
       min-height: 90px;
       resize: vertical;
+    }
+
+    .cabilo-layout-field select option {
+      background: #21262d;
+      color: #f0f6fc;
     }
 
     .cabilo-layout-inspector-actions {
@@ -196,8 +233,10 @@
     }
 
     .cabilo-layout-danger {
-      border-color: #7f1d1d;
-      color: #fecaca;
+      border-color: #7d1d1d;
+      background: #3d1618;
+      color: #ff7b72;
+      -webkit-text-fill-color: #ff7b72;
     }
 
     .cabilo-layout-aov-editor {
@@ -212,24 +251,14 @@
       margin-bottom: 8px;
     }
 
-    .cabilo-layout-aov-pass input {
-      width: 100%;
-      box-sizing: border-box;
-      border: 1px solid #3f3f46;
-      border-radius: 4px;
-      background: #09090b;
-      color: #f4f4f5;
-      padding: 7px 8px;
-      font: inherit;
-      font-size: 12px;
-    }
-
     .cabilo-layout-status {
-      color: #a1a1aa;
+      color: #8b949e;
       font-size: 11px;
       margin-top: 8px;
     }
   `;
+
+
 
   if (!document.getElementById('cabilo-layout-widget-styles')) {
     var style = document.createElement('style');
