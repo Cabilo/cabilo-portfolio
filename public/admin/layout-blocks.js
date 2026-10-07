@@ -283,6 +283,11 @@
     .cabilo-text-editor { display: flex; flex-direction: column; gap: 8px; }
     .cabilo-text-toolbar { display: flex; flex-wrap: wrap; gap: 4px; align-items: center; padding: 6px; border: 1px solid #484f58; border-radius: 4px; background: #21262d; }
     .cabilo-text-toolbar-button { appearance: none; border: 1px solid #484f58; border-radius: 4px; background: #30363d; color: #f0f6fc; min-width: 30px; height: 28px; padding: 0 7px; font: inherit; font-size: 12px; cursor: pointer; -webkit-text-fill-color: #f0f6fc; }
+    .cabilo-text-heading-select { appearance: none; box-sizing: border-box; width: 42px; min-width: 42px; height: 28px; padding: 0 4px; border: 1px solid #484f58; border-radius: 4px; background: #30363d; color: #f0f6fc; font: inherit; font-size: 12px; cursor: pointer; color-scheme: dark; -webkit-text-fill-color: #f0f6fc; }
+    .cabilo-text-heading-select:hover, .cabilo-text-heading-select:focus { background: #484f58; border-color: #6e7681; outline: none; }
+    .cabilo-text-rich ul, .cabilo-text-rich ol { padding-left: 28px; margin-left: 0; }
+    .cabilo-text-rich li { padding-left: 2px; }
+
     .cabilo-text-toolbar-button:hover, .cabilo-text-toolbar-button:focus { background: #484f58; border-color: #6e7681; color: #fff; -webkit-text-fill-color: #fff; outline: none; }
     .cabilo-text-toolbar-divider { width: 1px; height: 20px; background: #484f58; margin: 0 3px; }
     .cabilo-text-mode { margin-left: auto; display: flex; gap: 4px; }
@@ -575,7 +580,7 @@
       return {
         mode: 'rich_text',
         rawValue: this.props.value || '',
-        heading: '',
+        heading: 'h1',
       };
     },
 
@@ -737,11 +742,26 @@
       if (!this.richNode) return;
 
       this.focusEditor();
+      var selection = window.getSelection();
+      if (!selection || selection.rangeCount === 0) return;
+
+      var block = closestBlock(selection.getRangeAt(0).commonAncestorContainer, this.richNode);
+
       document.execCommand(
         ordered ? 'insertOrderedList' : 'insertUnorderedList',
         false,
         null
       );
+
+      /*
+       * Browsers place list markers outside the content box by default.
+       * The editor has its own clipped border, so keep the list structure
+       * but give the list content enough left padding for the markers.
+       */
+      if (block && (block.tagName === 'P' || block.tagName === 'LI')) {
+        this.rememberSelection();
+      }
+
       this.emitMarkdown();
     },
 
@@ -807,7 +827,7 @@
       return h('select', {
         className: 'cabilo-text-heading-select',
         value: this.state.heading,
-        title: 'Heading',
+        title: 'Heading level',
         disabled: this.state.mode === 'raw',
         onChange: function (event) {
           var value = event.target.value;
@@ -815,10 +835,9 @@
 
           this.rememberSelection();
           this.formatBlock(value);
-          this.setState({ heading: '' });
+          this.setState({ heading: value });
         }.bind(this),
       },
-        h('option', { value: '' }, 'Heading'),
         [1, 2, 3, 4, 5, 6].map(function (level) {
           return h('option', {
             key: level,
