@@ -152,28 +152,34 @@
     .cabilo-layout-handle-se { right: -6px; bottom: -6px; cursor: nwse-resize; }
 
     /*
-     * The inspector is kept in the widget's normal document flow so Decap
-     * can safely expand/collapse the Layout Blocks field. The controls
-     * themselves remain easy to reach while working through the canvas.
+     * The inspector uses the browser Popover API so it can live in the
+     * top layer without fighting Decap's scrolling/overflow containers.
+     * React still owns the same inspector element and its state.
      */
     .cabilo-layout-inspector {
-      margin-top: 12px;
+      margin: 0;
       padding: 14px;
+      box-sizing: border-box;
+      width: min(900px, calc(100vw - 24px));
+      max-width: calc(100vw - 24px);
+      max-height: 42vh;
+      overflow-y: auto;
       border: 1px solid #484f58;
       border-radius: 6px;
       background: #161b22;
+      color: #f0f6fc;
       box-shadow: 0 12px 28px rgba(1,4,9,.55);
+      position: fixed;
+      inset: auto;
+      left: 50%;
+      bottom: 12px;
+      transform: translateX(-50%);
+      z-index: 1000;
     }
 
-    .cabilo-layout-inspector {
-      margin-top: 12px;
-      padding: 14px;
-      border: 1px solid #484f58;
-      border-radius: 6px;
-      background: #161b22;
-      box-shadow: 0 12px 28px rgba(1,4,9,.55);
+    .cabilo-layout-inspector::backdrop {
+      background: transparent;
     }
-
 
     .cabilo-layout-inspector-grid {
       max-height: 34vh;
@@ -374,34 +380,35 @@
       document.addEventListener('keydown', this.handleKeyDown);
       document.addEventListener('pointermove', this.handlePointerMove);
       document.addEventListener('pointerup', this.handlePointerUp);
-      this.startInspectorFloating();
+      this.startInspectorPopover();
     },
 
-    startInspectorFloating: function () {
+    componentDidUpdate: function () {
+      this.updateInspectorPopover();
+    },
+
+    componentWillUnmount: function () {
+      this.stopInspectorPopover();
+      document.removeEventListener('keydown', this.handleKeyDown);
+      document.removeEventListener('pointermove', this.handlePointerMove);
+      document.removeEventListener('pointerup', this.handlePointerUp);
+    },
+
+    startInspectorPopover: function () {
       if (this.inspectorFrame) return;
 
-      this.updateInspectorFloating = this.updateInspectorFloating.bind(this);
-      this.inspectorObserver = new IntersectionObserver(function (entries) {
-        var entry = entries[0];
-        if (!entry || !this.inspectorNode) return;
+      this.updateInspectorPopover = this.updateInspectorPopover.bind(this);
+      this.inspectorScrollHandler = this.updateInspectorPopover;
 
-        this.inspectorVisible = entry.isIntersecting;
-        this.updateInspectorFloating();
-      }.bind(this), { threshold: [0, 0.01, 1] });
-
-      this.inspectorScrollHandler = this.updateInspectorFloating;
       window.addEventListener('scroll', this.inspectorScrollHandler, true);
       window.addEventListener('resize', this.inspectorScrollHandler);
 
-      this.inspectorFrame = requestAnimationFrame(this.updateInspectorFloating);
+      this.inspectorFrame = requestAnimationFrame(this.updateInspectorPopover);
     },
 
-    stopInspectorFloating: function () {
+    stopInspectorPopover: function () {
       if (this.inspectorFrame) cancelAnimationFrame(this.inspectorFrame);
       this.inspectorFrame = null;
-
-      if (this.inspectorObserver) this.inspectorObserver.disconnect();
-      this.inspectorObserver = null;
 
       if (this.inspectorScrollHandler) {
         window.removeEventListener('scroll', this.inspectorScrollHandler, true);
@@ -409,18 +416,52 @@
       }
 
       this.inspectorScrollHandler = null;
+
+      if (
+        this.inspectorNode &&
+        typeof this.inspectorNode.hidePopover === 'function' &&
+        this.inspectorNode.matches(':popover-open')
+      ) {
+        this.inspectorNode.hidePopover();
+      }
     },
 
-    updateInspectorFloating: function () {
-      if (!this.inspectorNode) return;
+    updateInspectorPopover: function () {
+      if (this.inspectorFrame) {
+        cancelAnimationFrame(this.inspectorFrame);
+      }
 
-      var widget = this.inspectorNode.closest('.cabilo-layout-widget');
-      if (!widget) return;
+      this.inspectorFrame = requestAnimationFrame(function () {
+        this.inspectorFrame = null;
 
-      var rect = widget.getBoundingClientRect();
-      var visible = rect.bottom > 0 && rect.top < window.innerHeight;
+        if (!this.inspectorNode) return;
 
-      widget.classList.toggle('is-inspector-floating', visible);
+        var widget = this.inspectorNode.closest('.cabilo-layout-widget');
+        if (!widget) return;
+
+        var rect = widget.getBoundingClientRect();
+        var visible =
+          rect.bottom > 0 &&
+          rect.top < window.innerHeight &&
+          rect.right > 0 &&
+          rect.left < window.innerWidth;
+
+        if (typeof this.inspectorNode.showPopover !== 'function') {
+          return;
+        }
+
+        if (visible) {
+          if (!this.inspectorNode.matches(':popover-open')) {
+            try {
+              this.inspectorNode.showPopover();
+            } catch (error) {
+              // The browser may already be transitioning the popover.
+            }
+          }
+        } else if (this.inspectorNode.matches(':popover-open')) {
+          this.inspectorNode.hidePopover();
+        }
+      }.bind(this));
     },
 
 
@@ -724,9 +765,10 @@
       if (!selected) {
         return h('div', {
         className: 'cabilo-layout-inspector',
+        popover: 'manual',
         ref: function (node) {
           this.inspectorNode = node;
-          if (node) this.updateInspectorFloating();
+          if (node) this.updateInspectorPopover();
         }.bind(this),
       },
           h('div', { className: 'cabilo-layout-help' },
@@ -799,7 +841,14 @@
         );
       }
 
-      return h('div', { className: 'cabilo-layout-inspector' },
+      return h('div', {
+        className: 'cabilo-layout-inspector',
+        popover: 'manual',
+        ref: function (node) {
+          this.inspectorNode = node;
+          if (node) this.updateInspectorPopover();
+        }.bind(this),
+      },
         h('div', { className: 'cabilo-layout-inspector-grid' },
           this.renderField('Type', h('select', {
             value: selected.type,
