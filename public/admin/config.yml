@@ -98,16 +98,6 @@ collections:
         hint: "Open the crop editor to position and zoom the thumbnail. The square editor controls the same crop values used by the site."
 
 
-      - label: "Showreel URL"
-        name: "showreelUrl"
-        widget: "string"
-        required: false
-      - label: "Fit showreel to viewport"
-        name: "showreelFitToViewport"
-        widget: "boolean"
-        required: false
-        default: true
-
       - label: "Role"
         name: "role"
         widget: "relation"
@@ -247,16 +237,6 @@ collections:
         image_field: "thumbnail"
         required: false
         hint: "Open the crop editor to position and zoom the thumbnail. The square editor controls the same crop values used by the site."
-
-      - label: "Video URL"
-        name: "videoUrl"
-        widget: "string"
-        required: false
-      - label: "Fit to viewport"
-        name: "fitToViewport"
-        widget: "boolean"
-        required: false
-        default: true
 
       - label: "Featured"
         name: "featured"
