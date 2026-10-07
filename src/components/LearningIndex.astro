@@ -1,0 +1,64 @@
+---
+import { getCollection, type CollectionEntry } from 'astro:content';
+import Layout from '../layouts/Layout.astro';
+import Thumbnail from './Thumbnail.astro';
+
+export interface Props {
+  type: 'Tutorial' | 'Breakdown';
+  heading: string;
+  description: string;
+  basePath: 'tutorials' | 'breakdowns';
+}
+
+const { type, heading, description, basePath } = Astro.props;
+
+const allLearning = await getCollection('learning');
+const entries = allLearning
+  .filter((doc): doc is CollectionEntry<'learning'> => doc.data.type === type)
+  .sort((a, b) => b.data.publishDate.valueOf() - a.data.publishDate.valueOf());
+---
+
+<Layout>
+  <main class="max-w-7xl mx-auto px-6 py-12 md:py-24">
+
+    <div class="mb-16 md:mb-24 text-center max-w-3xl mx-auto">
+      <h1 class="text-4xl md:text-5xl font-bold text-text-white uppercase tracking-wider mb-6">
+        {heading}
+      </h1>
+      <p class="text-lg text-text-silver leading-relaxed">
+        {description}
+      </p>
+    </div>
+
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+      {entries.map((entry) => (
+        <a
+          href={`/${basePath}/${entry.id}`}
+          class="group flex flex-col bg-cabilo-dark border border-cabilo-card rounded-md overflow-hidden hover:border-brand-amber transition-all duration-300 shadow-lg hover:shadow-[0_0_20px_rgba(230,115,0,0.15)]"
+        >
+
+          <div class="aspect-video relative overflow-hidden bg-cabilo-obsidian">
+            <Thumbnail
+              image={entry.data.thumbnail}
+              alt={entry.data.title}
+              crop={entry.data.thumbnailCrop}
+              compress={entry.data.compressThumbnail}
+              class="w-full h-full transition-transform duration-700 ease-out opacity-80 group-hover:opacity-100"
+            />
+          </div>
+
+          <div class="p-6 flex flex-col gap-3 flex-grow">
+            <div class="flex flex-wrap gap-2 mb-2">
+              {entry.data.tags.slice(0, 3).map(tag => (
+                <span class="text-[10px] font-bold tracking-widest uppercase text-brand-gold bg-brand-gold/10 px-2 py-1 rounded">{tag}</span>
+              ))}
+            </div>
+            <h3 class="text-xl font-medium text-text-white group-hover:text-brand-amber transition-colors duration-300 leading-snug">{entry.data.title}</h3>
+            <p class="text-sm text-text-silver line-clamp-2 mt-auto pt-4">{entry.data.description}</p>
+          </div>
+        </a>
+      ))}
+    </div>
+
+  </main>
+</Layout>
