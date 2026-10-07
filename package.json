@@ -7,7 +7,7 @@
   },
   "scripts": {
     "dev": "astro dev",
-    "prebuild": "node scripts/validate-taxonomy.mjs",
+    "prebuild": "node scripts/validate-taxonomy.mjs && node scripts/optimize-images.mjs",
     "build": "astro build",
     "preview": "astro preview",
     "astro": "astro"
@@ -23,6 +23,7 @@
     "esbuild": true
   },
   "devDependencies": {
-    "@types/marked": "^5.0.2"
+    "@types/marked": "^5.0.2",
+    "sharp": "^0.35.5"
   }
 }

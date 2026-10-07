@@ -14,6 +14,7 @@ import path from 'node:path';
 import { parse } from 'marked';
 import type { MediaBlock } from '../content.config';
 import { getVideoEmbed } from '../lib/video';
+import { getOptimizedImagePath } from '../lib/images';
 
 export interface Props {
   blocks: MediaBlock[];
@@ -31,11 +32,24 @@ const getTurntableFrames = (folder: string) => {
 
   if (!fs.existsSync(folderPath)) return [];
 
-  const files = fs.readdirSync(folderPath)
-    .filter(file => /\.(jpg|jpeg|png|webp)$/i.test(file))
+  const files = fs.readdirSync(folderPath);
+  const sources = files
+    .filter(file => /\.(jpg|jpeg|png)$/i.test(file))
     .sort((a, b) => a.localeCompare(b, undefined, { numeric: true }));
 
-  return files.map(file => `/${folder}/${file}`);
+  const sourceNames = new Set(
+    sources.map(file => file.replace(/\.(jpg|jpeg|png)$/i, '')),
+  );
+
+  const webpOnly = files
+    .filter(file => /\.webp$/i.test(file))
+    .filter(file => !sourceNames.has(file.replace(/\.webp$/i, '')))
+    .sort((a, b) => a.localeCompare(b, undefined, { numeric: true }));
+
+  return [
+    ...sources.map(file => getOptimizedImagePath(`/${folder}/${file}`)),
+    ...webpOnly.map(file => `/${folder}/${file}`),
+  ];
 };
 
 type Alignment = 'media-left' | 'center' | 'page-left' | 'page-right';
@@ -124,7 +138,7 @@ const getAlignmentClasses = (
             ]}
           >
             <img
-              src={block.image}
+              src={getOptimizedImagePath(block.image)}
               alt="Project Media"
               class:list={[
                 'block object-contain object-center select-none',
@@ -278,7 +292,7 @@ const getAlignmentClasses = (
         )}
 
         <DynamicAov
-          passes={block.aovPasses}
+          passes={block.aovPasses.map((pass) => ({ ...pass, image: getOptimizedImagePath(pass.image) }))}
           fitToViewport={block.fitToViewport}
         />
 
