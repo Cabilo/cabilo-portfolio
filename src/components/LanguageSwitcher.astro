@@ -8,9 +8,9 @@ const portugueseHref = cleanPath === '/' ? '/pt-br/' : `${getLocalePrefix('pt-br
 ---
 
 <div class="flex w-max shrink-0 items-center gap-1 whitespace-nowrap text-[10px] font-bold tracking-widest uppercase">
-  <a href={englishHref} data-language="en" class="whitespace-nowrap {locale === 'en' ? 'text-brand-gold' : 'text-text-silver hover:text-brand-gold transition-colors'}">EN</a>
+  <a href={englishHref} data-language="en" class={`whitespace-nowrap ${locale === 'en' ? 'text-brand-gold' : 'text-text-silver hover:text-brand-gold transition-colors'}`}>EN</a>
   <span class="text-text-silver/40">/</span>
-  <a href={portugueseHref} data-language="pt-br" class="whitespace-nowrap {locale === 'pt-br' ? 'text-brand-gold' : 'text-text-silver hover:text-brand-gold transition-colors'}">PT‑BR</a>
+  <a href={portugueseHref} data-language="pt-br" class={`whitespace-nowrap ${locale === 'pt-br' ? 'text-brand-gold' : 'text-text-silver hover:text-brand-gold transition-colors'}`}>PT‑BR</a>
 </div>
 
 <script>
