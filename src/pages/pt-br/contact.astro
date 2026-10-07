@@ -1,7 +1,7 @@
 ---
 import { getCollection } from 'astro:content';
-import { getLocalizedEntry } from '../lib/i18n';
-import Layout from '../layouts/Layout.astro';
+import { getLocalizedEntry } from '../../lib/i18n';
+import Layout from '../../layouts/Layout.astro';
 
 // Fetch the data from src/content/pages/contact.md
 const contactPage = await getLocalizedEntry(getCollection, 'pages', 'pt-br', 'contact');
