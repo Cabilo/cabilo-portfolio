@@ -13,7 +13,8 @@ export interface Props {
 
 const { type, heading, highlight, description, basePath } = Astro.props;
 
-const allLearning = await getCollection('learning');
+const locale = Astro.currentLocale === 'pt-br' ? 'pt-br' : 'en';
+const allLearning = (await getCollection('learning')).filter(doc => getLocaleFromId(doc.id) === locale);
 const entries = allLearning
   .filter(doc => doc.data.type === type)
   .sort((a, b) => b.data.publishDate.valueOf() - a.data.publishDate.valueOf());
@@ -34,7 +35,7 @@ const entries = allLearning
     <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
       {entries.map((entry) => (
         <a
-          href={`/${basePath}/${entry.id}`}
+          href={getLocalizedPath(locale, `${basePath}/${getLocalizedId(entry.id)}`)}
           class="group flex flex-col bg-cabilo-dark border border-cabilo-card rounded-md overflow-hidden hover:border-brand-amber transition-all duration-300 shadow-lg hover:shadow-[0_0_20px_rgba(230,115,0,0.15)]"
         >
 

@@ -4,6 +4,7 @@ import Layout from '../layouts/Layout.astro';
 import LayoutBlocksRenderer from './LayoutBlocksRenderer.astro';
 import { slugifyTaxonomyValue } from '../lib/taxonomy';
 import { getOptimizedImagePath } from '../lib/images';
+import { getLocaleFromId, getLocalizedPath } from '../lib/i18n';
 
 export interface Props {
   doc: CollectionEntry<'learning'>;
@@ -12,6 +13,7 @@ export interface Props {
 const { doc } = Astro.props;
 const { Content } = await render(doc);
 const layoutBlocks = doc.data.layoutBlocks ?? [];
+const locale = getLocaleFromId(doc.id);
 ---
 
 <Layout
@@ -25,7 +27,7 @@ const layoutBlocks = doc.data.layoutBlocks ?? [];
       <div class="flex flex-wrap justify-center gap-2 mb-6">
         {doc.data.tags.map((tag: string) => (
           <a
-            href={`/tags/${slugifyTaxonomyValue(tag)}`}
+            href={getLocalizedPath(locale, `tags/${slugifyTaxonomyValue(tag)}`)}
             class="text-xs font-bold tracking-widest uppercase text-brand-gold bg-brand-gold/10 px-3 py-1.5 rounded"
           >
             {tag}
@@ -56,7 +58,7 @@ const layoutBlocks = doc.data.layoutBlocks ?? [];
         <div class="flex flex-wrap gap-2">
           {doc.data.softwareUsed.map((software: string) => (
             <a
-              href={`/tags/${slugifyTaxonomyValue(software)}`}
+              href={getLocalizedPath(locale, `tags/${slugifyTaxonomyValue(software)}`)}
               class="px-3 py-2 bg-cabilo-dark border border-cabilo-card rounded-md text-sm text-text-silver"
             >
               {software}

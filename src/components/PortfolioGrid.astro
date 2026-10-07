@@ -2,8 +2,10 @@
 // src/components/PortfolioGrid.astro
 import ProjectCard from './ProjectCard.astro';
 import { getCollection } from 'astro:content';
+import { getLocaleFromId, getLocalizedId, getLocalizedPath } from '../lib/i18n';
 
-const allProjects = await getCollection('projects');
+const locale = Astro.currentLocale === 'pt-br' ? 'pt-br' : 'en';
+const allProjects = (await getCollection('projects')).filter(project => getLocaleFromId(project.id) === locale);
 
 // 1. Extract all unique categories from your projects
 const uniqueCategories = ["All", ...new Set(allProjects.map(project => project.data.category))];
@@ -13,7 +15,7 @@ const uniqueCategories = ["All", ...new Set(allProjects.map(project => project.d
   
   <div class="flex flex-col md:flex-row md:items-center justify-between gap-6 mb-12">
     <h2 class="text-3xl md:text-4xl font-bold text-text-white uppercase tracking-wider">
-      Selected <span class="text-text-silver font-light">Works</span>
+      {locale === 'pt-br' ? 'Trabalhos' : 'Selected'} <span class="text-text-silver font-light">{locale === 'pt-br' ? 'Selecionados' : 'Works'}</span>
     </h2>
     
     <!-- 2. Dynamically generate the filter buttons! -->
@@ -40,7 +42,7 @@ const uniqueCategories = ["All", ...new Set(allProjects.map(project => project.d
           image={project.data.thumbnail} 
           crop={project.data.thumbnailCrop}
           compress={project.data.compressThumbnail}
-          link={`/projects/${project.id}`} 
+          link={getLocalizedPath(locale, `projects/${getLocalizedId(project.id)}`)} 
         />
       </div>
     ))}
