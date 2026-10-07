@@ -68,8 +68,18 @@ const processFile = async (sourcePath) => {
     })
     .toFile(outputPath);
 
+  if (info.size >= sourceStat.size) {
+    await fs.rm(outputPath, { force: true });
+
+    const relative = path.relative(root, sourcePath);
+    console.log(
+      `WebP: ${relative} kept original (${formatBytes(info.size)} candidate was not smaller)`,
+    );
+    return;
+  }
+
   generated += 1;
-  savedBytes += Math.max(0, sourceStat.size - info.size);
+  savedBytes += sourceStat.size - info.size;
 
   const relative = path.relative(root, sourcePath);
   const reduction = Math.round((1 - info.size / sourceStat.size) * 100);
