@@ -9,6 +9,11 @@ backend:
 media_folder: "public/uploads"
 public_folder: "/uploads"
 
+i18n:
+  structure: multiple_folders
+  locales: [en, pt-br]
+  default_locale: en
+
 collections:
 
   # ============================================================
@@ -52,10 +57,33 @@ collections:
   # PROJECTS
   # ============================================================
 
+  - name: "site-settings"
+    label: "Site Settings"
+    files:
+      - label: "Global SEO"
+        name: "seo"
+        file: "src/content/settings/seo.md"
+        fields:
+          - label: "English SEO"
+            name: "en"
+            widget: "object"
+            fields:
+              - { label: "Title", name: "title", widget: "string" , i18n: true }
+              - { label: "Description", name: "description", widget: "text" , i18n: true }
+              - { label: "Image", name: "image", widget: "image" }
+          - label: "Brazilian Portuguese SEO"
+            name: "ptBr"
+            widget: "object"
+            fields:
+              - { label: "Title", name: "title", widget: "string" , i18n: true }
+              - { label: "Description", name: "description", widget: "text" , i18n: true }
+              - { label: "Image", name: "image", widget: "image" }
+
   - name: "projects"
     label: "Projects"
     folder: "src/content/projects"
     create: true
+    i18n: true
     slug: "{{slug}}"
     fields:
 
@@ -173,6 +201,7 @@ collections:
     label: "Learning"
     folder: "src/content/learning"
     create: true
+    i18n: true
     slug: "{{slug}}"
     fields:
 
