@@ -17,17 +17,57 @@ thumbnailCrop:
   positionX: 0
   positionY: 0
 featured: false
-mediaBlocks:
-  - type: image
+layoutBlocks:
+  - id: armor-breakdown-image
+    type: image
+    x: 0
+    y: 0
+    w: 10
+    h: 7
+    snap: grid
+    title: Image
+    fitMode: width-to-height
+    fitToViewport: true
+    assetAlignment: center
     image: https://www.sabornamesa.com.br/media/k2/items/cache/bc53d507c26770e8f294fcbf92ef0864_XL.jpg
-  - type: video
+  - id: armor-breakdown-video
+    type: video
+    x: 0
+    y: 7
+    w: 10
+    h: 6
+    snap: grid
+    title: Video
+    fitMode: width-to-height
+    fitToViewport: true
+    assetAlignment: center
     videoUrl: https://www.youtube.com/watch?v=vRMMimi6cKM&t=17s
-  - type: turntable
+  - id: armor-breakdown-turntable
+    type: turntable
+    x: 0
+    y: 13
+    w: 10
+    h: 8
+    snap: grid
+    title: Turntable
+    fitMode: width-to-height
+    fitToViewport: true
+    assetAlignment: center
     folder: turntables/testb
-  - type: aov
+  - id: armor-breakdown-aov
+    type: aov
+    x: 0
+    y: 21
+    w: 10
+    h: 8
+    snap: grid
+    title: AOV
+    fitMode: width-to-height
+    fitToViewport: true
+    assetAlignment: center
     aovPasses:
-      - image: https://cdnb.artstation.com/p/assets/images/images/017/488/445/large/lucas-cabilo-hex-big.jpg?1556184275
-        name: asd
+      - name: asd
+        image: https://cdnb.artstation.com/p/assets/images/images/017/488/445/large/lucas-cabilo-hex-big.jpg?1556184275
       - name: ggasgg
         image: https://cdna.artstation.com/p/assets/images/images/021/496/060/large/lucas-cabilo-screenshot037.jpg?1571899681
 ---
