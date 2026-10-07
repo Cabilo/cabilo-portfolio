@@ -611,12 +611,6 @@ collections:
                 default: []
                 fields:
 
-              - label: "Compress Images (WebP)"
-                name: "compress"
-                widget: "boolean"
-                required: false
-                default: true
-
                   - label: "Name"
                     name: "name"
                     widget: "string"
@@ -624,6 +618,12 @@ collections:
                   - label: "Image"
                     name: "image"
                     widget: "image"
+
+              - label: "Compress Images (WebP)"
+                name: "compress"
+                widget: "boolean"
+                required: false
+                default: true
 
               - label: "Fit to viewport"
                 name: "fitToViewport"
@@ -1178,12 +1178,6 @@ collections:
                 default: []
                 fields:
 
-              - label: "Compress Images (WebP)"
-                name: "compress"
-                widget: "boolean"
-                required: false
-                default: true
-
                   - label: "Name"
                     name: "name"
                     widget: "string"
@@ -1191,6 +1185,12 @@ collections:
                   - label: "Image"
                     name: "image"
                     widget: "image"
+
+              - label: "Compress Images (WebP)"
+                name: "compress"
+                widget: "boolean"
+                required: false
+                default: true
 
               - label: "Fit to viewport"
                 name: "fitToViewport"
