@@ -1,7 +1,6 @@
 ---
 import { getCollection, render } from 'astro:content';
 import Layout from '../../layouts/Layout.astro';
-import MediaBlocksRenderer from '../../components/MediaBlocksRenderer.astro';
 import LayoutBlocksRenderer from '../../components/LayoutBlocksRenderer.astro';
 import { getVideoEmbed } from '../../lib/video';
 import { slugifyTaxonomyValue } from '../../lib/taxonomy';
@@ -18,7 +17,6 @@ export async function getStaticPaths() {
 
 const { doc } = Astro.props;
 const { Content } = await render(doc);
-const mediaBlocks = doc.data.mediaBlocks ?? [];
 const layoutBlocks = doc.data.layoutBlocks ?? [];
 const topVideo = getVideoEmbed(doc.data.videoUrl);
 
