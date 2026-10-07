@@ -7,8 +7,7 @@ const publicDir = path.join(root, 'public');
 
 const SOURCE_EXTENSIONS = new Set(['.jpg', '.jpeg', '.png']);
 const CONCURRENCY = 4;
-const WEBP_QUALITY = 95;
-const WEBP_EFFORT = 5;
+const WEBP_EFFORT = 6;
 
 const walk = async (directory) => {
   const entries = await fs.readdir(directory, { withFileTypes: true });
@@ -62,9 +61,8 @@ const processFile = async (sourcePath) => {
 
   const info = await sharp(sourcePath)
     .webp({
-      quality: WEBP_QUALITY,
+      lossless: true,
       effort: WEBP_EFFORT,
-      smartSubsample: true,
     })
     .toFile(outputPath);
 
@@ -73,7 +71,7 @@ const processFile = async (sourcePath) => {
 
     const relative = path.relative(root, sourcePath);
     console.log(
-      `WebP: ${relative} kept original (${formatBytes(info.size)} candidate was not smaller)`,
+      `WebP: ${relative} kept original (${formatBytes(info.size)} lossless candidate was not smaller)`,
     );
     return;
   }
