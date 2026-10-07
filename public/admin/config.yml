@@ -607,16 +607,15 @@ collections:
 
               - label: "AOV Passes"
                 name: "aovPasses"
-
+                widget: "list"
+                default: []
+                fields:
 
               - label: "Compress Images (WebP)"
                 name: "compress"
                 widget: "boolean"
                 required: false
                 default: true
-                widget: "list"
-                default: []
-                fields:
 
                   - label: "Name"
                     name: "name"
@@ -1175,16 +1174,15 @@ collections:
 
               - label: "AOV Passes"
                 name: "aovPasses"
-
+                widget: "list"
+                default: []
+                fields:
 
               - label: "Compress Images (WebP)"
                 name: "compress"
                 widget: "boolean"
                 required: false
                 default: true
-                widget: "list"
-                default: []
-                fields:
 
                   - label: "Name"
                     name: "name"
