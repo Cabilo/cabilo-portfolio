@@ -213,11 +213,21 @@ const pagesCollection = defineCollection({
     headline: z.string().optional(),
     subheadline: z.string().optional(),
     showreelUrl: z.string().optional(),
+  }),
+});
 
-    // NEW: Global SEO pulled from Homepage
-    globalSeoTitle: z.string().optional(),
-    globalSeoDescription: z.string().optional(),
-    globalSeoImage: z.string().optional(),
+const seoSchema = z.object({
+  title: z.string(),
+  description: z.string(),
+  image: z.string(),
+});
+
+const settingsCollection = defineCollection({
+  loader: glob({ pattern: 'seo.md', base: './src/content/settings' }),
+  schema: z.object({
+    title: z.string(),
+    en: seoSchema,
+    ptBr: seoSchema,
   }),
 });
 
@@ -227,4 +237,5 @@ export const collections = {
   projects: projectCollection,
   learning: learningCollection,
   pages: pagesCollection,
+  settings: settingsCollection,
 };

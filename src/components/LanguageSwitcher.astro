@@ -1,0 +1,25 @@
+---
+import { getLocalePrefix } from '../lib/i18n';
+
+const locale = Astro.currentLocale === 'pt-br' ? 'pt-br' : 'en';
+const cleanPath = Astro.url.pathname.replace(/^\/pt-br(?=\/|$)/, '') || '/';
+const englishHref = cleanPath;
+const portugueseHref = cleanPath === '/' ? '/pt-br/' : `${getLocalePrefix('pt-br')}${cleanPath}`;
+---
+
+<div class="flex items-center gap-2 text-xs font-bold tracking-widest uppercase">
+  <a href={englishHref} data-language="en" class={locale === 'en' ? 'text-brand-gold' : 'text-text-silver hover:text-brand-gold transition-colors'}>EN</a>
+  <span class="text-text-silver/40">/</span>
+  <a href={portugueseHref} data-language="pt-br" class={locale === 'pt-br' ? 'text-brand-gold' : 'text-text-silver hover:text-brand-gold transition-colors'}>PT-BR</a>
+</div>
+
+<script>
+  document.addEventListener('astro:page-load', () => {
+    document.querySelectorAll('[data-language]').forEach((link) => {
+      link.addEventListener('click', () => {
+        const language = link.getAttribute('data-language');
+        if (language) localStorage.setItem('cabilo-language', language);
+      });
+    });
+  });
+</script>

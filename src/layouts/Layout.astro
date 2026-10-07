@@ -1,13 +1,11 @@
 ---
-// src/layouts/Layout.astro
 import { getEntry } from 'astro:content';
 import { ClientRouter } from 'astro:transitions';
 import '../styles/global.css';
-import Navbar from '../components/Navbar.astro'; 
-import Footer from '../components/Footer.astro'; 
+import Navbar from '../components/Navbar.astro';
+import Footer from '../components/Footer.astro';
 
-// Fetch the Global SEO defaults from the HOME page now!
-const homePage = await getEntry('pages', 'home');
+const seoSettings = await getEntry('settings', 'seo');
 
 export interface Props {
   title?: string;
@@ -15,49 +13,78 @@ export interface Props {
   image?: string;
 }
 
-// Fallbacks point to homePage.data
-const { 
-  title = homePage?.data.globalSeoTitle || "CABILO | Senior 3D Artist & Cinematics",
-  description = homePage?.data.globalSeoDescription || "Portfolio of CABILO, a Senior 3D Artist.",
-  image = homePage?.data.globalSeoImage || "/favicon.svg"
+const locale = Astro.currentLocale === 'pt-br' ? 'pt-br' : 'en';
+const defaultSeo = locale === 'pt-br' ? seoSettings?.data.ptBr : seoSettings?.data.en;
+
+const {
+  title = defaultSeo?.title || 'CABILO | Senior 3D Artist',
+  description = defaultSeo?.description || 'Portfolio of CABILO, a Senior 3D Artist.',
+  image = defaultSeo?.image || '/favicon.svg'
 } = Astro.props;
 
 const siteUrl = Astro.site ? Astro.site.origin : 'https://cabilo.vercel.app';
-const currentUrl = new URL(Astro.url.pathname, siteUrl).href;
-
-// Force absolute image URL for Discord/LinkedIn
+const pathname = Astro.url.pathname;
+const cleanPath = pathname.replace(/^\/pt-br(?=\/|$)/, '') || '/';
+const currentUrl = new URL(pathname, siteUrl).href;
+const englishUrl = new URL(cleanPath, siteUrl).href;
+const portugueseUrl = new URL(cleanPath === '/' ? '/pt-br/' : `/pt-br${cleanPath}`, siteUrl).href;
 const absoluteImageUrl = image.startsWith('http') ? image : new URL(image, siteUrl).href;
 ---
 
 <!DOCTYPE html>
-<html lang="en">
+<html lang={locale === 'pt-br' ? 'pt-BR' : 'en'}>
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    
+
     <title>{title}</title>
     <meta name="description" content={description} />
     <meta name="author" content="CABILO" />
-    
+    <link rel="canonical" href={currentUrl} />
+    <link rel="alternate" hreflang="en" href={englishUrl} />
+    <link rel="alternate" hreflang="pt-BR" href={portugueseUrl} />
+    <link rel="alternate" hreflang="x-default" href={englishUrl} />
+
     <meta property="og:title" content={title} />
     <meta property="og:description" content={description} />
     <meta property="og:type" content="website" />
     <meta property="og:url" content={currentUrl} />
+    <meta property="og:locale" content={locale === 'pt-br' ? 'pt_BR' : 'en_US'} />
     <meta property="og:image" content={absoluteImageUrl} />
-    
+
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+
+    <script is:inline>
+      (() => {
+        const path = window.location.pathname.replace(/\/+$/, '') || '/';
+        if (path !== '/' && path !== '/pt-br') return;
+
+        const stored = window.localStorage.getItem('cabilo-language');
+        const browserWantsPortuguese = navigator.languages?.some((language) => language.toLowerCase().startsWith('pt'))
+          || navigator.language.toLowerCase().startsWith('pt');
+
+        const preferred = stored === 'pt-br'
+          ? 'pt-br'
+          : stored === 'en'
+            ? 'en'
+            : browserWantsPortuguese
+              ? 'pt-br'
+              : 'en';
+
+        const target = preferred === 'pt-br' ? '/pt-br/' : '/';
+        const current = window.location.pathname.replace(/\/+$/, '') || '/';
+
+        if (target.replace(/\/+$/, '') !== current) window.location.replace(target);
+      })();
+    </script>
 
     <ClientRouter />
   </head>
   <body class="bg-cabilo-obsidian text-text-silver min-h-screen font-sans antialiased flex flex-col">
-    
     <Navbar />
-    
     <div class="pt-24 flex-grow">
       <slot />
     </div>
-
     <Footer />
-
   </body>
 </html>
