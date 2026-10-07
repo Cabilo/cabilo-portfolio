@@ -7,6 +7,7 @@
  */
 
 import { slugifyTaxonomyValue } from '../lib/taxonomy';
+import { getLocalizedPath } from '../lib/i18n';
 
 export interface Props {
   Content: any;
@@ -14,20 +15,21 @@ export interface Props {
 }
 
 const { Content, softwareUsed } = Astro.props;
+const locale = Astro.currentLocale === 'pt-br' ? 'pt-br' : 'en';
 ---
 
 <div class="cabilo-reading grid grid-cols-1 md:grid-cols-4 gap-12 border-t border-cabilo-card pt-12">
   <div class="md:col-span-3 prose prose-invert prose-p:text-text-silver prose-headings:text-text-white prose-a:text-brand-amber max-w-none">
-    <h3 class="text-2xl font-medium mb-6 uppercase tracking-wide">Project Breakdown</h3>
+    <h3 class="text-2xl font-medium mb-6 uppercase tracking-wide">{locale === 'pt-br' ? 'Análise do Projeto' : 'Project Breakdown'}</h3>
     <Content />
   </div>
 
   <div class="md:col-span-1">
-    <h4 class="text-xs uppercase tracking-widest text-text-white font-bold mb-4">Software Used</h4>
+    <h4 class="text-xs uppercase tracking-widest text-text-white font-bold mb-4">{locale === 'pt-br' ? 'Softwares Utilizados' : 'Software Used'}</h4>
     <div class="flex flex-col gap-2">
       {softwareUsed.map((software) => (
         <a
-          href={`/tags/${slugifyTaxonomyValue(software)}`}
+          href={getLocalizedPath(locale, `tags/${slugifyTaxonomyValue(software)}`)}
           class="px-3 py-2 bg-cabilo-dark border border-cabilo-card rounded-md text-sm text-text-silver"
         >
           {software}

@@ -35,7 +35,7 @@ const softwareList = await getCollection('software');
         <div class="bg-cabilo-dark p-8 rounded-md border border-cabilo-card shadow-lg mt-4">
           <h3 class="text-text-white uppercase tracking-widest text-sm mb-6 font-bold flex items-center gap-3">
             <svg class="w-5 h-5 text-brand-amber" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 20l4-16m4 4l4 4-4 4M6 16l-4-4 4-4"></path></svg>
-            Software Arsenal
+            Arsenal de Softwares
           </h3>
           <div class="flex flex-wrap gap-3">
             {softwareList.filter((software) => software.data.addToArsenal).map((software) => {
@@ -52,7 +52,7 @@ const softwareList = await getCollection('software');
         <div class="mt-8 flex justify-center lg:justify-start w-full">
           <a href="/CABILO_Resume.pdf" target="_blank" class="w-fit flex items-center justify-center gap-3 px-8 py-4 rounded-md bg-brand-amber text-text-white font-bold uppercase tracking-widest hover:bg-brand-gold transition-colors duration-300 shadow-lg hover:shadow-[0_0_20px_rgba(230,115,0,0.4)]">
             <svg class="w-5 h-5 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"></path></svg>
-            <span>Download Resume</span>
+            <span>Baixar Currículo</span>
           </a>
         </div>
 

@@ -1,20 +1,19 @@
 ---
 // src/components/Footer.astro
 const currentYear = new Date().getFullYear();
+const locale = Astro.currentLocale === 'pt-br' ? 'pt-br' : 'en';
 ---
 
 <footer class="w-full bg-cabilo-obsidian border-t border-cabilo-card mt-20 pt-4 pb-4 px-6">
-  <div class="max-w-7xl mx-auto flex flex-col md:flex-row justify-between items-center md:items-end gap-8">
-    
-    <!-- Left: Brand & Copyright -->
-    <div class="flex flex-col items-center md:items-start gap-2">
-      <img src="/logo-vertical.svg" alt="CABILO Cinematic 3D" class="h-24 w-auto opacity-70 grayscale hover:grayscale-0 hover:opacity-100 transition-all duration-500" />
-      <p class="text-xs text-text-silver/60 uppercase tracking-widest">
-        &copy; {currentYear} CABILO. All rights reserved.
-      </p>
-    </div>
+  <div class="max-w-7xl mx-auto flex flex-col gap-4">
+    <div class="flex flex-col md:flex-row justify-between items-center gap-8">
+      
+      <!-- Left: Brand -->
+      <div class="flex flex-col items-center md:items-start gap-2">
+        <img src="/logo-vertical.svg" alt="CABILO Cinematic 3D" class="h-24 w-auto opacity-70 grayscale hover:grayscale-0 hover:opacity-100 transition-all duration-500" />
+      </div>
 
-    <!-- Right: Social / Professional Links (SVG Icons) -->
+      <!-- Right: Social / Professional Links (SVG Icons) -->
     <div class="flex items-center gap-6">
       
       <!-- ArtStation (Placeholder: A) -->
@@ -46,6 +45,10 @@ const currentYear = new Date().getFullYear();
       </a>
 
     </div>
+
+    <p class="text-center text-xs text-text-silver/60 uppercase tracking-widest">
+      &copy; {currentYear} CABILO. {locale === 'pt-br' ? 'Todos os direitos reservados.' : 'All rights reserved.'}
+    </p>
 
   </div>
 </footer>

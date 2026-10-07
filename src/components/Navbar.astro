@@ -25,7 +25,7 @@ const localeHref = (path) => locale === 'en' ? path : `${getLocalePrefix(locale)
         href={localeHref("/")}
         class="nav-link desktop-nav-hover transition-colors duration-300 text-text-silver hover:text-brand-gold"
       >
-        Work
+        {locale === 'pt-br' ? 'Trabalhos' : 'Work'}
       </a>
 
       <div class="relative group h-full flex items-center">
@@ -37,7 +37,7 @@ const localeHref = (path) => locale === 'en' ? path : `${getLocalePrefix(locale)
           aria-haspopup="true"
           class="nav-link desktop-nav-hover flex items-center gap-1 uppercase font-medium transition-colors duration-300 cursor-pointer text-text-silver group-hover:text-brand-gold"
         >
-          LEARNING
+          {locale === 'pt-br' ? 'APRENDIZADO' : 'LEARNING'}
 
           <svg
             class="w-4 h-4 transition-transform duration-300 group-hover:rotate-180"
@@ -65,7 +65,7 @@ const localeHref = (path) => locale === 'en' ? path : `${getLocalePrefix(locale)
             href={localeHref("/tutorials")}
             class="nav-sub-link px-5 py-4 text-xs tracking-widest hover:bg-cabilo-card hover:text-brand-amber transition-colors border-b border-cabilo-card text-text-silver"
           >
-            Tutorials
+            {locale === 'pt-br' ? 'Tutoriais' : 'Tutorials'}
           </a>
 
           <a
@@ -73,7 +73,7 @@ const localeHref = (path) => locale === 'en' ? path : `${getLocalePrefix(locale)
             href={localeHref("/breakdowns")}
             class="nav-sub-link px-5 py-4 text-xs tracking-widest hover:bg-cabilo-card hover:text-brand-amber transition-colors text-text-silver"
           >
-            Breakdowns
+            {locale === 'pt-br' ? 'Análises' : 'Breakdowns'}
           </a>
 
         </div>
@@ -84,18 +84,20 @@ const localeHref = (path) => locale === 'en' ? path : `${getLocalePrefix(locale)
         href={localeHref("/about")}
         class="nav-link desktop-nav-hover transition-colors duration-300 text-text-silver hover:text-brand-gold"
       >
-        About
+        {locale === 'pt-br' ? 'Sobre' : 'About'}
       </a>
 
-      <LanguageSwitcher />
+      <div class="flex flex-col items-center gap-1">
+        <LanguageSwitcher />
 
-      <a
-        id="nav-contact"
+        <a
+          id="nav-contact"
         href={localeHref("/contact")}
         class="nav-link desktop-nav-hover transition-colors duration-300 text-text-silver hover:text-brand-gold"
       >
-        Contact
-      </a>
+          {locale === 'pt-br' ? 'Contato' : 'Contact'}
+        </a>
+      </div>
 
     </div>
 
@@ -137,7 +139,7 @@ const localeHref = (path) => locale === 'en' ? path : `${getLocalePrefix(locale)
     href={localeHref("/")}
     class="mobile-link text-2xl uppercase tracking-widest font-bold text-text-silver hover:text-brand-amber transition-colors"
   >
-    Work
+    {locale === 'pt-br' ? 'Trabalhos' : 'Work'}
   </a>
 
   <a
@@ -145,7 +147,7 @@ const localeHref = (path) => locale === 'en' ? path : `${getLocalePrefix(locale)
     href={localeHref("/tutorials")}
     class="mobile-link text-2xl uppercase tracking-widest font-bold text-text-silver hover:text-brand-amber transition-colors"
   >
-    Tutorials
+    {locale === 'pt-br' ? 'Tutoriais' : 'Tutorials'}
   </a>
 
   <a
@@ -153,7 +155,7 @@ const localeHref = (path) => locale === 'en' ? path : `${getLocalePrefix(locale)
     href={localeHref("/breakdowns")}
     class="mobile-link text-2xl uppercase tracking-widest font-bold text-text-silver hover:text-brand-amber transition-colors"
   >
-    Breakdowns
+    {locale === 'pt-br' ? 'Análises' : 'Breakdowns'}
   </a>
 
   <a
@@ -161,18 +163,20 @@ const localeHref = (path) => locale === 'en' ? path : `${getLocalePrefix(locale)
     href={localeHref("/about")}
     class="mobile-link text-2xl uppercase tracking-widest font-bold text-text-silver hover:text-brand-amber transition-colors"
   >
-    About
+    {locale === 'pt-br' ? 'Sobre' : 'About'}
   </a>
 
-  <LanguageSwitcher />
+  <div class="flex flex-col items-center gap-1">
+    <LanguageSwitcher />
 
-  <a
-    id="mobile-nav-contact"
+    <a
+      id="mobile-nav-contact"
     href={localeHref("/contact")}
     class="mobile-link text-2xl uppercase tracking-widest font-bold text-text-silver hover:text-brand-amber transition-colors"
   >
-    Contact
-  </a>
+      {locale === 'pt-br' ? 'Contato' : 'Contact'}
+    </a>
+  </div>
 </div>
 
 <script>

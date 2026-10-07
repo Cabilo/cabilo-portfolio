@@ -8,7 +8,7 @@ const locale = Astro.currentLocale === 'pt-br' ? 'pt-br' : 'en';
 const allProjects = (await getCollection('projects')).filter(project => getLocaleFromId(project.id) === locale);
 
 // 1. Extract all unique categories from your projects
-const uniqueCategories = ["All", ...new Set(allProjects.map(project => project.data.category))];
+const uniqueCategories = [locale === 'pt-br' ? 'Todos' : 'All', ...new Set(allProjects.map(project => project.data.category))];
 ---
 
 <section id="work" class="max-w-7xl mx-auto px-6 py-12 md:py-24">
@@ -74,7 +74,7 @@ const uniqueCategories = ["All", ...new Set(allProjects.map(project => project.d
         items.forEach(item => {
           const itemCategory = item.getAttribute('data-category');
           
-          if (selectedCategory === 'All' || itemCategory === selectedCategory) {
+          if (selectedCategory === (locale === 'pt-br' ? 'Todos' : 'All') || itemCategory === selectedCategory) {
             // Show the item
             (item as HTMLElement).style.display = 'block';
             // Slight delay for a smooth fade-in effect

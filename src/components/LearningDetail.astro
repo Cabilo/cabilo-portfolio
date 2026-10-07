@@ -54,7 +54,7 @@ const locale = getLocaleFromId(doc.id);
 
     {doc.data.softwareUsed?.length > 0 && (
       <div class="cabilo-reading mb-12 border-t border-cabilo-card pt-8">
-        <h4 class="text-xs uppercase tracking-widest text-text-white font-bold mb-4">Software Used</h4>
+        <h4 class="text-xs uppercase tracking-widest text-text-white font-bold mb-4">{locale === 'pt-br' ? 'Softwares Utilizados' : 'Software Used'}</h4>
         <div class="flex flex-wrap gap-2">
           {doc.data.softwareUsed.map((software: string) => (
             <a

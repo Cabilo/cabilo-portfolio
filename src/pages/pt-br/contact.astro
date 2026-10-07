@@ -29,32 +29,32 @@ const contactPage = await getLocalizedEntry(getCollection, 'pages', 'pt-br', 'co
 
           <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
             <div class="flex flex-col gap-3">
-              <label for="name" class="text-xs uppercase tracking-widest text-text-silver font-bold">Name</label>
-              <input type="text" id="name" name="name" required placeholder="John Doe" class="w-full bg-cabilo-obsidian border border-cabilo-card rounded-md p-4 text-text-white placeholder:text-text-silver/30 focus:outline-none focus:border-brand-amber transition-colors" />
+              <label for="name" class="text-xs uppercase tracking-widest text-text-silver font-bold">Nome</label>
+              <input type="text" id="name" name="name" required placeholder="João da Silva" class="w-full bg-cabilo-obsidian border border-cabilo-card rounded-md p-4 text-text-white placeholder:text-text-silver/30 focus:outline-none focus:border-brand-amber transition-colors" />
             </div>
             <div class="flex flex-col gap-3">
-              <label for="email" class="text-xs uppercase tracking-widest text-text-silver font-bold">Email</label>
-              <input type="email" id="email" name="email" required placeholder="john@studio.com" class="w-full bg-cabilo-obsidian border border-cabilo-card rounded-md p-4 text-text-white placeholder:text-text-silver/30 focus:outline-none focus:border-brand-amber transition-colors" />
+              <label for="email" class="text-xs uppercase tracking-widest text-text-silver font-bold">E-mail</label>
+              <input type="email" id="email" name="email" required placeholder="joao@studio.com" class="w-full bg-cabilo-obsidian border border-cabilo-card rounded-md p-4 text-text-white placeholder:text-text-silver/30 focus:outline-none focus:border-brand-amber transition-colors" />
             </div>
           </div>
 
           <div class="flex flex-col gap-3">
-            <label for="subject" class="text-xs uppercase tracking-widest text-text-silver font-bold">Project Type</label>
+            <label for="subject" class="text-xs uppercase tracking-widest text-text-silver font-bold">Tipo de Projeto</label>
             <select id="subject" name="subject" class="w-full bg-cabilo-obsidian border border-cabilo-card rounded-md p-4 text-text-white/80 focus:outline-none focus:border-brand-amber transition-colors appearance-none">
               <option value="Cinematics">Cinematics</option>
-              <option value="Lookdev / Lighting">Lookdev / Lighting</option>
-              <option value="Animation">Animation</option>
-              <option value="Other">Other / General Inquiry</option>
+              <option value="Lookdev / Lighting">Lookdev / Iluminação</option>
+              <option value="Animation">Animação</option>
+              <option value="Other">Outro / Consulta Geral</option>
             </select>
           </div>
 
           <div class="flex flex-col gap-3">
-            <label for="message" class="text-xs uppercase tracking-widest text-text-silver font-bold">Message</label>
-            <textarea id="message" name="message" required rows="5" placeholder="Tell me about your project..." class="w-full bg-cabilo-obsidian border border-cabilo-card rounded-md p-4 text-text-white placeholder:text-text-silver/30 focus:outline-none focus:border-brand-amber transition-colors resize-none"></textarea>
+            <label for="message" class="text-xs uppercase tracking-widest text-text-silver font-bold">Mensagem</label>
+            <textarea id="message" name="message" required rows="5" placeholder="Conte-me sobre seu projeto..." class="w-full bg-cabilo-obsidian border border-cabilo-card rounded-md p-4 text-text-white placeholder:text-text-silver/30 focus:outline-none focus:border-brand-amber transition-colors resize-none"></textarea>
           </div>
 
           <button type="submit" class="mt-4 w-full flex items-center justify-center gap-3 px-8 py-4 rounded-md bg-brand-amber text-text-white font-bold uppercase tracking-widest hover:bg-brand-gold transition-colors duration-300 shadow-lg hover:shadow-[0_0_20px_rgba(230,115,0,0.4)]">
-            Send Message
+            Enviar Mensagem
           </button>
         </form>
       </div>
