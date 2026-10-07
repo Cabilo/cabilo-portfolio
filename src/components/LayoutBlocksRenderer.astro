@@ -20,7 +20,7 @@ const normalizeFolder = (folder: string) =>
     .replace(/^\/+/, '')
     .replace(/^public\//i, '');
 
-const getTurntableFrames = (folder: string) => {
+const getTurntableFrames = (folder: string, compress: boolean) => {
   const normalizedFolder = normalizeFolder(folder);
   const folderPath = path.join(process.cwd(), 'public', normalizedFolder);
 
@@ -41,7 +41,7 @@ const getTurntableFrames = (folder: string) => {
     .sort((a, b) => a.localeCompare(b, undefined, { numeric: true }));
 
   return [
-    ...sources.map(file => getOptimizedImagePath(`/${normalizedFolder}/${file}`)),
+    ...sources.map(file => getOptimizedImagePath(`/${normalizedFolder}/${file}`, compress)),
     ...webpOnly.map(file => `/${normalizedFolder}/${file}`),
   ];
 };
@@ -111,7 +111,7 @@ const maxBottom = Math.max(
           return (
             <div class="cabilo-layout-media">
               <img
-                src={getOptimizedImagePath(block.image)}
+                src={getOptimizedImagePath(block.image, block.compress)}
                 alt={block.title || 'Project media'}
                 loading="lazy"
                 draggable="false"
@@ -170,10 +170,10 @@ const maxBottom = Math.max(
           return (
             <div
               class="cabilo-layout-aov"
-              data-layout-asset-src={getOptimizedImagePath(block.aovPasses[0]?.image || '')}
+              data-layout-asset-src={getOptimizedImagePath(block.aovPasses[0]?.image || '', block.compress)}
             >
               <DynamicAov
-                passes={block.aovPasses.map((pass) => ({ ...pass, image: getOptimizedImagePath(pass.image) }))}
+                passes={block.aovPasses.map((pass) => ({ ...pass, image: getOptimizedImagePath(pass.image, block.compress) }))}
                 fitToViewport={block.fitToViewport}
                 fitToLayoutAspect={!block.fitToViewport}
               />
@@ -182,7 +182,7 @@ const maxBottom = Math.max(
         }
 
         if (block.type === 'turntable') {
-          const frames = getTurntableFrames(block.folder);
+          const frames = getTurntableFrames(block.folder, block.compress);
 
           if (frames.length === 0) {
             return (
