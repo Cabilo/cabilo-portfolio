@@ -367,6 +367,10 @@
         block.fitToViewport === 'false'
           ? false
           : true,
+      compress:
+        block.compress === false || block.compress === 'false'
+          ? false
+          : true,
       assetAlignment:
         block.assetAlignment === 'left' ||
         block.assetAlignment === 'center' ||
@@ -1494,6 +1498,21 @@
                   this.updateSelectedField('fitToViewport', event.target.checked);
                 }.bind(this),
               }))
+            : null,
+          (selected.type === 'image' || selected.type === 'turntable' || selected.type === 'aov')
+            ? this.renderField(
+                selected.type === 'image' ? 'Compress image (WebP)' :
+                selected.type === 'turntable' ? 'Compress frames (WebP)' :
+                'Compress images (WebP)',
+                h('input', {
+                  type: 'checkbox',
+                  checked: selected.compress !== false,
+                  style: { width: 'auto' },
+                  onChange: function (event) {
+                    this.updateSelectedField('compress', event.target.checked);
+                  }.bind(this),
+                })
+              )
             : null,
           this.renderField('Snap mode', h('select', {
             value: selected.snap,
