@@ -92,6 +92,7 @@ const layoutBlockBaseSchema = z.object({
   title: z.string().optional(),
   fitMode: z.enum(['none', 'width-to-height', 'height-to-width']).default('none'),
   fitToViewport: z.boolean().default(true),
+  compress: z.boolean().default(true),
   assetAlignment: z.enum(['auto', 'left', 'center', 'right']).default('auto'),
 });
 
