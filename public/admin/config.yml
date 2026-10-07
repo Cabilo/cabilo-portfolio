@@ -79,6 +79,46 @@ collections:
               - { label: "Description", name: "description", widget: "text" , i18n: true }
               - { label: "Image", name: "image", widget: "image" }
 
+  # ============================================================
+  # PAGES
+  # ============================================================
+
+  - name: "pages"
+    label: "Pages"
+    folder: "src/content/pages"
+    create: false
+    i18n: true
+    fields:
+
+      - label: "Title"
+        name: "title"
+        widget: "string"
+        i18n: true
+
+      - label: "Headline"
+        name: "headline"
+        widget: "string"
+        required: false
+        i18n: true
+
+      - label: "Subheadline"
+        name: "subheadline"
+        widget: "text"
+        required: false
+        i18n: true
+
+      - label: "Showreel URL"
+        name: "showreelUrl"
+        widget: "string"
+        required: false
+
+      - label: "Body"
+        name: "body"
+        widget: "markdown"
+        required: false
+        i18n: true
+        i18n: true
+
   - name: "projects"
     label: "Projects"
     folder: "src/content/projects"
@@ -184,6 +224,7 @@ collections:
         name: "layoutBlocks"
         widget: "layoutBlocks"
         required: false
+        i18n: true
         default: []
         hint: "Production ∞ × 5 layout matrix. Drag and resize blocks; Constrained snaps to full grid units, Free snaps to half-grid units."
 
