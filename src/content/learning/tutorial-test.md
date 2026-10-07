@@ -50,7 +50,7 @@ layoutBlocks:
   - id: tutorial-test-video
     type: video
     x: 0
-    y: 17
+    y: 18
     w: 10
     h: 6
     snap: grid
@@ -62,7 +62,7 @@ layoutBlocks:
   - id: tutorial-test-turntable
     type: turntable
     x: 0
-    y: 23
+    y: 24
     w: 10
     h: 8
     snap: grid
@@ -74,7 +74,7 @@ layoutBlocks:
   - id: tutorial-test-aov
     type: aov
     x: 0
-    y: 31
+    y: 32
     w: 10
     h: 8
     snap: grid
