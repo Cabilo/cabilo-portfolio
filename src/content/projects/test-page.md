@@ -17,8 +17,6 @@ thumbnailCrop:
   zoom: 1.448847077901617
   positionX: 50
   positionY: 60.781671159029656
-showreelUrl: https://www.youtube.com/watch?v=vRMMimi6cKM
-showreelFitToViewport: false
 role: Lead 3D Artist
 client: Personal Project
 tags:
