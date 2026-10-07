@@ -23,7 +23,7 @@ layoutBlocks:
     x: 0
     y: 0
     w: 10
-    h: 7
+    h: 8
     snap: grid
     title: Image
     fitMode: width-to-height
@@ -33,7 +33,7 @@ layoutBlocks:
   - id: armor-breakdown-video
     type: video
     x: 0
-    y: 7
+    y: 8
     w: 10
     h: 6
     snap: grid
@@ -45,7 +45,7 @@ layoutBlocks:
   - id: armor-breakdown-turntable
     type: turntable
     x: 0
-    y: 13
+    y: 14
     w: 10
     h: 8
     snap: grid
@@ -57,7 +57,7 @@ layoutBlocks:
   - id: armor-breakdown-aov
     type: aov
     x: 0
-    y: 21
+    y: 22
     w: 10
     h: 8
     snap: grid
