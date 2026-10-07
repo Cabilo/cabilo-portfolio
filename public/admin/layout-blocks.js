@@ -432,6 +432,7 @@
       } else if (unordered || ordered) {
         var nextList = unordered ? 'ul' : 'ol';
         var item = unordered ? unordered[1] : ordered[1];
+        var itemHeading = item.match(/^(#{1,6})\\s+(.+)$/);
 
         if (list !== nextList) {
           closeList();
@@ -439,7 +440,14 @@
           list = nextList;
         }
 
-        html.push('<li>' + inline(item) + '</li>');
+        if (itemHeading) {
+          var itemLevel = itemHeading[1].length;
+          html.push('<li><h' + itemLevel + '>' + inline(itemHeading[2]) + '</h' + itemLevel + '></li>');
+        } else if (/^>\\s?/.test(item)) {
+          html.push('<li><blockquote>' + inline(item.replace(/^>\\s?/, '')) + '</blockquote></li>');
+        } else {
+          html.push('<li>' + inline(item) + '</li>');
+        }
       } else if (/^>\s?/.test(line)) {
         closeList();
         html.push('<blockquote>' + inline(line.replace(/^>\s?/, '')) + '</blockquote>');
@@ -764,20 +772,32 @@
 
       var block = closestBlock(selection.getRangeAt(0).commonAncestorContainer, this.richNode);
 
+      /*
+       * Preserve block semantics when a list is created from a heading or
+       * quote. execCommand may otherwise replace the block with a plain LI.
+       */
+      if (
+        block &&
+        block !== this.richNode &&
+        /^(H[1-6]|BLOCKQUOTE)$/.test(block.tagName) &&
+        block.parentNode === this.richNode
+      ) {
+        var list = document.createElement(ordered ? 'ol' : 'ul');
+        var item = document.createElement('li');
+
+        block.parentNode.insertBefore(list, block);
+        list.appendChild(item);
+        item.appendChild(block);
+
+        this.emitMarkdown();
+        return;
+      }
+
       document.execCommand(
         ordered ? 'insertOrderedList' : 'insertUnorderedList',
         false,
         null
       );
-
-      /*
-       * Browsers place list markers outside the content box by default.
-       * The editor has its own clipped border, so keep the list structure
-       * but give the list content enough left padding for the markers.
-       */
-      if (block && (block.tagName === 'P' || block.tagName === 'LI')) {
-        this.rememberSelection();
-      }
 
       this.emitMarkdown();
     },
