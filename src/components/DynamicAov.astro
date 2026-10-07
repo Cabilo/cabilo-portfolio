@@ -25,6 +25,7 @@ export interface Props {
     image: string;
   }[];
   fitToViewport?: boolean;
+  compress?: boolean;
   /**
    * Layout Blocks mode: the comparison viewport follows the
    * first AOV asset's aspect ratio while the pass selectors
@@ -36,12 +37,13 @@ export interface Props {
 const {
   passes,
   fitToViewport = true,
+  compress = true,
   fitToLayoutAspect = false,
 } = Astro.props;
 
 const optimizedPasses = passes.map((pass) => ({
   ...pass,
-  image: getOptimizedImagePath(pass.image),
+  image: getOptimizedImagePath(pass.image, compress),
 }));
 
 const defaultA = optimizedPasses[0];
