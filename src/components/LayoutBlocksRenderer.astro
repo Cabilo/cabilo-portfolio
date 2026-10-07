@@ -173,7 +173,8 @@ const maxBottom = Math.max(
               data-layout-asset-src={getOptimizedImagePath(block.aovPasses[0]?.image || '', block.compress)}
             >
               <DynamicAov
-                passes={block.aovPasses.map((pass) => ({ ...pass, image: getOptimizedImagePath(pass.image, block.compress) }))}
+                passes={block.aovPasses}
+          compress={block.compress}
                 fitToViewport={block.fitToViewport}
                 fitToLayoutAspect={!block.fitToViewport}
               />
