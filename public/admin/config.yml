@@ -160,9 +160,7 @@ collections:
         display_fields:
           - "values.*.name"
 
-      # Experimental Layout Blocks system.
-      # This is intentionally separate from Media Blocks while the new
-      # matrix-based layout editor is being tested.
+      # Production Layout Blocks system.
       - label: "Layout Blocks"
         name: "layoutBlocks"
         widget: "layoutBlocks"
@@ -265,4 +263,9 @@ collections:
         widget: "boolean"
         default: false
 
-      # LEGACY: Media Blocks are retired. Use Layout Blocks for page media and composition.
+      - label: "Layout Blocks"
+        name: "layoutBlocks"
+        widget: "layoutBlocks"
+        required: false
+        default: []
+        hint: "Production ∞ × 5 layout matrix. Drag and resize blocks; Constrained snaps to full grid units, Free snaps to half-grid units."

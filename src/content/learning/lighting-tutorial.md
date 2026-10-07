@@ -10,8 +10,20 @@ tags:
 softwareUsed:
   - Unreal Engine 5
 thumbnail: https://images.unsplash.com/photo-1605379399642-870262d3d051?w=800
-videoUrl: https://www.youtube.com/watch?v=doUDJFKLyZs
 featured: true
+layoutBlocks:
+  - id: lighting-tutorial-video
+    type: video
+    x: 0
+    y: 0
+    w: 10
+    h: 6
+    snap: grid
+    title: Tutorial Video
+    fitMode: width-to-height
+    fitToViewport: true
+    assetAlignment: center
+    videoUrl: https://www.youtube.com/watch?v=doUDJFKLyZs
 ---
 
 Lighting is the cornerstone of any cinematic shot. In this tutorial, we will break down how to properly expose your virtual camera and utilize Unreal Engine 5's Lumen system to achieve realistic bounce lighting.
