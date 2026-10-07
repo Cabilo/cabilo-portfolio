@@ -41,7 +41,7 @@ const softwareList = await getCollection('software');
             {softwareList.filter((software) => software.data.addToArsenal).map((software) => {
               const link = slugifyTaxonomyValue(software.data.name);
               return (
-                <a href={getLocalizedPath("en", `tags/${link}`)} class="px-5 py-2.5 border border-cabilo-card rounded-md text-sm font-medium text-text-silver bg-cabilo-obsidian hover:border-brand-amber hover:text-text-white transition-all shadow-md">
+                <a href={getLocalizedPath("pt-br", `tags/${link}`)} class="px-5 py-2.5 border border-cabilo-card rounded-md text-sm font-medium text-text-silver bg-cabilo-obsidian hover:border-brand-amber hover:text-text-white transition-all shadow-md">
                   {software.data.name}
                 </a>
               )

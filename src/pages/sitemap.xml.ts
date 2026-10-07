@@ -15,7 +15,7 @@ export const GET: APIRoute = async () => {
     getCollection('software'),
   ]);
 
-  const paths = new Set<string>(['/', '/about', '/contact', '/tutorials', '/breakdowns']);
+  const paths = new Set<string>(['/', '/about', '/contact', '/tutorials', '/breakdowns', '/pt-br/', '/pt-br/about', '/pt-br/contact', '/pt-br/tutorials', '/pt-br/breakdowns']);
 
   for (const project of projects) {
     paths.add(getLocalizedPath(getLocaleFromId(project.id), `projects/${getLocalizedId(project.id)}`));

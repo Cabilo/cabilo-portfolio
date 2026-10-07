@@ -1,10 +1,10 @@
 ---
 import { getCollection } from 'astro:content';
-import Layout from '../../layouts/Layout.astro';
+import Layout from '../../../layouts/Layout.astro';
 import ProjectCard from '../../../components/ProjectCard.astro';
-import Thumbnail from '../../components/Thumbnail.astro';
+import Thumbnail from '../../../components/Thumbnail.astro';
 import { normalizeTaxonomyValue, slugifyTaxonomyValue } from '../../../lib/taxonomy';
-import { getLocaleFromId, getLocalizedId, getLocalizedPath } from '../../lib/i18n';
+import { getLocaleFromId, getLocalizedId, getLocalizedPath } from '../../../lib/i18n';
 
 export async function getStaticPaths() {
   const [allTags, allSoftware, allProjectsRaw, allLearningRaw] = await Promise.all([
@@ -15,7 +15,7 @@ export async function getStaticPaths() {
   ]);
 
   const allProjects = allProjectsRaw.filter(project => getLocaleFromId(project.id) === 'pt-br');
-  const allLearning = allLearningRaw.filter(doc => getLocaleFromId(doc.id) === 'en');
+  const allLearning = allLearningRaw.filter(doc => getLocaleFromId(doc.id) === 'pt-br');
   const paths: any[] = [];
 
   const addPoolPaths = (
