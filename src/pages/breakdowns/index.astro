@@ -1,47 +1,10 @@
 ---
-import { getCollection } from 'astro:content';
-import Layout from '../../layouts/Layout.astro';
-import Thumbnail from '../../components/Thumbnail.astro';
-
-// Fetch all learning docs, filter ONLY for 'Breakdowns', sort by date
-const allLearning = await getCollection('learning');
-const breakdowns = allLearning
-  .filter(doc => doc.data.type === 'Breakdown')
-  .sort((a, b) => b.data.publishDate.valueOf() - a.data.publishDate.valueOf());
+import LearningIndex from '../../components/LearningIndex.astro';
 ---
 
-<Layout>
-  <main class="max-w-7xl mx-auto px-6 py-12 md:py-24">
-    
-    <div class="mb-16 md:mb-24 text-center max-w-3xl mx-auto">
-      <h1 class="text-4xl md:text-5xl font-bold text-text-white uppercase tracking-wider mb-6">
-        Project <span class="bg-gradient-to-r from-brand-gold to-brand-amber bg-clip-text text-transparent">Breakdowns</span>
-      </h1>
-      <p class="text-lg text-text-silver leading-relaxed">
-        Deep dives into the topology, lighting, and compositing pipelines behind my cinematic realities.
-      </p>
-    </div>
-
-    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-      {breakdowns.map((breakdown) => (
-        <a href={`/breakdowns/${breakdown.id}`} class="group flex flex-col bg-cabilo-dark border border-cabilo-card rounded-md overflow-hidden hover:border-brand-amber transition-all duration-300 shadow-lg hover:shadow-[0_0_20px_rgba(230,115,0,0.15)]">
-          
-          <div class="aspect-video relative overflow-hidden bg-cabilo-obsidian">
-            <Thumbnail image={breakdown.data.thumbnail} alt={breakdown.data.title} crop={breakdown.data.thumbnailCrop} compress={breakdown.data.compressThumbnail} class="w-full h-full transition-transform duration-700 ease-out opacity-80 group-hover:opacity-100" />
-          </div>
-
-          <div class="p-6 flex flex-col gap-3 flex-grow">
-            <div class="flex flex-wrap gap-2 mb-2">
-              {breakdown.data.tags.slice(0, 3).map(tag => (
-                <span class="text-[10px] font-bold tracking-widest uppercase text-brand-gold bg-brand-gold/10 px-2 py-1 rounded">{tag}</span>
-              ))}
-            </div>
-            <h3 class="text-xl font-medium text-text-white group-hover:text-brand-amber transition-colors duration-300 leading-snug">{breakdown.data.title}</h3>
-            <p class="text-sm text-text-silver line-clamp-2 mt-auto pt-4">{breakdown.data.description}</p>
-          </div>
-        </a>
-      ))}
-    </div>
-
-  </main>
-</Layout>
+<LearningIndex
+  type="Breakdown"
+  basePath="breakdowns"
+  heading={<>Project <span class="bg-gradient-to-r from-brand-gold to-brand-amber bg-clip-text text-transparent">Breakdowns</span></>}
+  description="Deep dives into the topology, lighting, and compositing pipelines behind my cinematic realities."
+/>
