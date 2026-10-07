@@ -4,8 +4,11 @@ export type Locale = (typeof LOCALES)[number];
 export const getLocaleFromId = (id: string): Locale =>
   id.startsWith('pt-br/') ? 'pt-br' : 'en';
 
-export const getLocalizedId = (id: string) =>
-  id.startsWith('pt-br/') ? id.slice('pt-br/'.length) : id;
+export const getLocalizedId = (id: string) => {
+  if (id.startsWith('pt-br/')) return id.slice('pt-br/'.length);
+  if (id.startsWith('en/')) return id.slice('en/'.length);
+  return id;
+};
 
 export const getLocalePrefix = (locale: Locale) =>
   locale === 'pt-br' ? '/pt-br' : '';
