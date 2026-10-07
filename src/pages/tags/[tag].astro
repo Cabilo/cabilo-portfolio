@@ -90,7 +90,7 @@ const { tagName, projects, learning } = Astro.props;
         <h2 class="text-2xl font-bold text-text-white uppercase tracking-widest mb-8 border-b border-cabilo-card pb-4">Projects</h2>
         <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
           {projects.map((project) => (
-            <ProjectCard title={project.data.title} category={project.data.category} image={project.data.thumbnail} crop={project.data.thumbnailCrop} link={`/projects/${project.id}`} />
+            <ProjectCard title={project.data.title} category={project.data.category} image={project.data.thumbnail} crop={project.data.thumbnailCrop} compress={project.data.compressThumbnail} link={`/projects/${project.id}`} />
           ))}
         </div>
       </div>
@@ -103,7 +103,7 @@ const { tagName, projects, learning } = Astro.props;
           {learning.map((doc) => (
             <a href={`/${doc.data.type.toLowerCase()}s/${doc.id}`} class="group flex flex-col bg-cabilo-dark border border-cabilo-card rounded-md overflow-hidden hover:border-brand-amber transition-all duration-300 shadow-lg">
               <div class="aspect-video relative overflow-hidden bg-cabilo-obsidian">
-                <Thumbnail image={doc.data.thumbnail} alt={doc.data.title} crop={doc.data.thumbnailCrop} class="w-full h-full transition-transform duration-700 ease-out opacity-80 group-hover:opacity-100" />
+                <Thumbnail image={doc.data.thumbnail} alt={doc.data.title} crop={doc.data.thumbnailCrop} compress={doc.data.compressThumbnail} class="w-full h-full transition-transform duration-700 ease-out opacity-80 group-hover:opacity-100" />
               </div>
               <div class="p-6 flex flex-col gap-3 flex-grow">
                 <span class="text-[10px] font-bold tracking-widest uppercase text-brand-gold">{doc.data.type}</span>

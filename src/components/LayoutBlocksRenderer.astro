@@ -6,6 +6,7 @@ import type { LayoutBlock } from '../content.config';
 import { getVideoEmbed } from '../lib/video';
 import TurntableScrubber from './TurntableScrubber.astro';
 import DynamicAov from './DynamicAov.astro';
+import { getOptimizedImagePath } from '../lib/images';
 
 export interface Props {
   blocks: LayoutBlock[];
@@ -19,17 +20,30 @@ const normalizeFolder = (folder: string) =>
     .replace(/^\/+/, '')
     .replace(/^public\//i, '');
 
-const getTurntableFrames = (folder: string) => {
+const getTurntableFrames = (folder: string, compress: boolean) => {
   const normalizedFolder = normalizeFolder(folder);
   const folderPath = path.join(process.cwd(), 'public', normalizedFolder);
 
   if (!fs.existsSync(folderPath)) return [];
 
-  const files = fs.readdirSync(folderPath)
-    .filter(file => /\.(jpg|jpeg|png|webp)$/i.test(file))
+  const files = fs.readdirSync(folderPath);
+  const sources = files
+    .filter(file => /\.(jpg|jpeg|png)$/i.test(file))
     .sort((a, b) => a.localeCompare(b, undefined, { numeric: true }));
 
-  return files.map(file => `/${normalizedFolder}/${file}`);
+  const sourceNames = new Set(
+    sources.map(file => file.replace(/\.(jpg|jpeg|png)$/i, '')),
+  );
+
+  const webpOnly = files
+    .filter(file => /\.webp$/i.test(file))
+    .filter(file => !sourceNames.has(file.replace(/\.webp$/i, '')))
+    .sort((a, b) => a.localeCompare(b, undefined, { numeric: true }));
+
+  return [
+    ...sources.map(file => getOptimizedImagePath(`/${normalizedFolder}/${file}`, compress)),
+    ...webpOnly.map(file => `/${normalizedFolder}/${file}`),
+  ];
 };
 
 const normalizedBlocks = blocks.map((block) => ({
@@ -97,7 +111,7 @@ const maxBottom = Math.max(
           return (
             <div class="cabilo-layout-media">
               <img
-                src={block.image}
+                src={getOptimizedImagePath(block.image, block.compress)}
                 alt={block.title || 'Project media'}
                 loading="lazy"
                 draggable="false"
@@ -156,10 +170,11 @@ const maxBottom = Math.max(
           return (
             <div
               class="cabilo-layout-aov"
-              data-layout-asset-src={block.aovPasses[0]?.image || ''}
+              data-layout-asset-src={getOptimizedImagePath(block.aovPasses[0]?.image || '', block.compress)}
             >
               <DynamicAov
                 passes={block.aovPasses}
+          compress={block.compress}
                 fitToViewport={block.fitToViewport}
                 fitToLayoutAspect={!block.fitToViewport}
               />
@@ -168,7 +183,7 @@ const maxBottom = Math.max(
         }
 
         if (block.type === 'turntable') {
-          const frames = getTurntableFrames(block.folder);
+          const frames = getTurntableFrames(block.folder, block.compress);
 
           if (frames.length === 0) {
             return (

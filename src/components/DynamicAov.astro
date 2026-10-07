@@ -17,12 +17,15 @@
  * - AOV pass selection stays inside the comparison viewport as compact dropdown controls.
  */
 
+import { getOptimizedImagePath } from '../lib/images';
+
 export interface Props {
   passes: {
     name: string;
     image: string;
   }[];
   fitToViewport?: boolean;
+  compress?: boolean;
   /**
    * Layout Blocks mode: the comparison viewport follows the
    * first AOV asset's aspect ratio while the pass selectors
@@ -34,11 +37,17 @@ export interface Props {
 const {
   passes,
   fitToViewport = true,
+  compress = true,
   fitToLayoutAspect = false,
 } = Astro.props;
 
-const defaultA = passes[0];
-const defaultB = passes.length > 1 ? passes[1] : passes[0];
+const optimizedPasses = passes.map((pass) => ({
+  ...pass,
+  image: getOptimizedImagePath(pass.image, compress),
+}));
+
+const defaultA = optimizedPasses[0];
+const defaultB = optimizedPasses.length > 1 ? optimizedPasses[1] : optimizedPasses[0];
 ---
 
 <dynamic-aov
@@ -130,7 +139,7 @@ const defaultB = passes.length > 1 ? passes[1] : passes[0];
           class="aov-pass-select-control"
           aria-label="Choose left AOV pass"
         >
-          {passes.map((pass, index) => (
+          {optimizedPasses.map((pass, index) => (
             <option value={index} data-image={pass.image} data-name={pass.name}>{pass.name}</option>
           ))}
         </select>
@@ -152,7 +161,7 @@ const defaultB = passes.length > 1 ? passes[1] : passes[0];
           class="aov-pass-select-control"
           aria-label="Choose right AOV pass"
         >
-          {passes.map((pass, index) => (
+          {optimizedPasses.map((pass, index) => (
             <option
             value={index}
             data-image={pass.image}

@@ -6,6 +6,7 @@ export interface Props {
   category: string;
   image: string;
   link: string;
+  compress?: boolean;
   crop?: {
     zoom?: number;
     positionX?: number;
@@ -16,7 +17,7 @@ export interface Props {
 // This extracts the variables so we can use them in the HTML below
 import Thumbnail from './Thumbnail.astro';
 
-const { title, category, image, link, crop } = Astro.props;
+const { title, category, image, link, crop, compress = true } = Astro.props;
 ---
 
 <!-- 
@@ -31,6 +32,7 @@ const { title, category, image, link, crop } = Astro.props;
       image={image}
       alt={title}
       crop={crop}
+      compress={compress}
       class="w-full h-full transition-transform duration-700 ease-out opacity-80 group-hover:opacity-100"
     />
   </div>
