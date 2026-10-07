@@ -59,7 +59,7 @@ Tutorials and Breakdowns currently share very similar page structures. That dupl
 
 # Media Block System
 
-## MediaBlocksRenderer
+## MediaBlocksRenderer (Legacy)
 
 `src/components/MediaBlocksRenderer.astro` is the master media rendering engine.
 
@@ -182,7 +182,7 @@ The public renderer lives in:
 
 `src/components/LayoutBlocksRenderer.astro`
 
-Projects and Learning expose the optional `layoutBlocks` field, while the existing `mediaBlocks` field remains unchanged.
+Projects and Learning use the production `layoutBlocks` field. The former `mediaBlocks` system is retained only as legacy reference code.
 
 This system is experimental. It should be evaluated for authoring experience, responsive behavior, collision/spacing rules, and media-library integration before it replaces or absorbs any part of the existing Media Block architecture.
 
