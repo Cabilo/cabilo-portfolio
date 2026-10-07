@@ -2,6 +2,7 @@
 import { getCollection, type CollectionEntry } from 'astro:content';
 import Layout from '../layouts/Layout.astro';
 import Thumbnail from './Thumbnail.astro';
+import { getLocaleFromId, getLocalizedId, getLocalizedPath } from '../lib/i18n';
 
 export interface Props {
   type: 'Tutorial' | 'Breakdown';
