@@ -1,11 +1,12 @@
 ---
-import { getEntry } from 'astro:content';
+import { getCollection } from 'astro:content';
+import { getLocalizedEntry } from '../lib/i18n';
 import Layout from '../layouts/Layout.astro';
 import Hero from '../components/Hero.astro';
 import PortfolioGrid from '../components/PortfolioGrid.astro';
 
 // We fetch the text from src/content/pages/home.md
-const homePage = await getEntry('pages', 'home');
+const homePage = await getLocalizedEntry(getCollection, 'pages', 'en', 'home');
 ---
 
 <Layout>

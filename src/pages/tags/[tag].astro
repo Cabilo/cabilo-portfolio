@@ -4,15 +4,18 @@ import Layout from '../../layouts/Layout.astro';
 import ProjectCard from '../../components/ProjectCard.astro';
 import Thumbnail from '../../components/Thumbnail.astro';
 import { normalizeTaxonomyValue, slugifyTaxonomyValue } from '../../lib/taxonomy';
+import { getLocaleFromId, getLocalizedId, getLocalizedPath } from '../../lib/i18n';
 
 export async function getStaticPaths() {
-  const [allTags, allSoftware, allProjects, allLearning] = await Promise.all([
+  const [allTags, allSoftware, allProjectsRaw, allLearningRaw] = await Promise.all([
     getCollection('tags'),
     getCollection('software'),
     getCollection('projects'),
     getCollection('learning'),
   ]);
 
+  const allProjects = allProjectsRaw.filter(project => getLocaleFromId(project.id) === 'en');
+  const allLearning = allLearningRaw.filter(doc => getLocaleFromId(doc.id) === 'en');
   const paths: any[] = [];
 
   const addPoolPaths = (
@@ -101,7 +104,7 @@ const { tagName, projects, learning } = Astro.props;
         <h2 class="text-2xl font-bold text-text-white uppercase tracking-widest mb-8 border-b border-cabilo-card pb-4">Learning & Breakdowns</h2>
         <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
           {learning.map((doc) => (
-            <a href={`/${doc.data.type.toLowerCase()}s/${doc.id}`} class="group flex flex-col bg-cabilo-dark border border-cabilo-card rounded-md overflow-hidden hover:border-brand-amber transition-all duration-300 shadow-lg">
+            <a href={getLocalizedPath("en", `${doc.data.type.toLowerCase()}s/${getLocalizedId(doc.id)}`)} class="group flex flex-col bg-cabilo-dark border border-cabilo-card rounded-md overflow-hidden hover:border-brand-amber transition-all duration-300 shadow-lg">
               <div class="aspect-video relative overflow-hidden bg-cabilo-obsidian">
                 <Thumbnail image={doc.data.thumbnail} alt={doc.data.title} crop={doc.data.thumbnailCrop} compress={doc.data.compressThumbnail} class="w-full h-full transition-transform duration-700 ease-out opacity-80 group-hover:opacity-100" />
               </div>

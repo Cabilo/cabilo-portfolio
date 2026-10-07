@@ -4,11 +4,12 @@ import Layout from '../../layouts/Layout.astro';
 import LayoutBlocksRenderer from '../../components/LayoutBlocksRenderer.astro';
 import { slugifyTaxonomyValue } from '../../lib/taxonomy';
 import ProjectBreakdown from '../../components/ProjectBreakdown.astro';
+import { getLocaleFromId, getLocalizedId, getLocalizedPath } from '../../lib/i18n';
 
 export async function getStaticPaths() {
-  const projects = await getCollection('projects');
+  const projects = (await getCollection('projects')).filter(project => getLocaleFromId(project.id) === 'en');
   return projects.map(project => ({
-    params: { id: project.id },
+    params: { id: getLocalizedId(project.id) },
     props: { project },
   }));
 }
@@ -40,7 +41,7 @@ const layoutBlocks = project.data.layoutBlocks ?? [];
         <div class="flex flex-wrap gap-2 mt-5">
           {project.data.tags.map((tag) => (
             <a
-              href={`/tags/${slugifyTaxonomyValue(tag)}`}
+              href={getLocalizedPath("en", `tags/${slugifyTaxonomyValue(tag)}`)}
               class="text-xs font-bold tracking-widest uppercase text-brand-gold bg-brand-gold/10 px-3 py-1.5 rounded"
             >
               {tag}

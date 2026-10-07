@@ -1,10 +1,11 @@
 ---
-import { getCollection, getEntry, render } from 'astro:content';
+import { getCollection, render } from 'astro:content';
+import { getLocalizedEntry, getLocalizedPath } from '../lib/i18n';
 import Layout from '../layouts/Layout.astro';
 import { slugifyTaxonomyValue } from '../lib/taxonomy';
 
 // Fetch the data from src/content/pages/about.md
-const aboutPage = await getEntry('pages', 'about');
+const aboutPage = await getLocalizedEntry(getCollection, 'pages', 'en', 'about');
 const { Content } = await render(aboutPage);
 
 const softwareList = await getCollection('software');
@@ -40,7 +41,7 @@ const softwareList = await getCollection('software');
             {softwareList.filter((software) => software.data.addToArsenal).map((software) => {
               const link = slugifyTaxonomyValue(software.data.name);
               return (
-                <a href={`/tags/${link}`} class="px-5 py-2.5 border border-cabilo-card rounded-md text-sm font-medium text-text-silver bg-cabilo-obsidian hover:border-brand-amber hover:text-text-white transition-all shadow-md">
+                <a href={getLocalizedPath("en", `tags/${link}`)} class="px-5 py-2.5 border border-cabilo-card rounded-md text-sm font-medium text-text-silver bg-cabilo-obsidian hover:border-brand-amber hover:text-text-white transition-all shadow-md">
                   {software.data.name}
                 </a>
               )
