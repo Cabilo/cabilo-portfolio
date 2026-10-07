@@ -90,6 +90,7 @@ collections:
       - label: "Title"
         name: "title"
         widget: "string"
+        i18n: true
 
       - label: "Category"
         name: "category"
@@ -190,6 +191,7 @@ collections:
       - label: "Project Breakdown"
         name: "body"
         widget: "markdown"
+        i18n: true
         required: false
         hint: "Main project breakdown content. This is the Markdown content shown below the project media."
 
@@ -208,10 +210,12 @@ collections:
       - label: "Title"
         name: "title"
         widget: "string"
+        i18n: true
 
       - label: "Description"
         name: "description"
         widget: "text"
+        i18n: true
 
       - label: "Publish Date"
         name: "publishDate"
