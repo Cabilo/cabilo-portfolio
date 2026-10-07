@@ -8,7 +8,8 @@ import path from 'node:path';
  * Remote URLs and already-optimized WebP files are left untouched.
  */
 
-export const getOptimizedImagePath = (src: string) => {
+export const getOptimizedImagePath = (src: string, compress = true) => {
+  if (!compress) return src;
   if (!src || src.startsWith('//') || /^https?:\/\//i.test(src)) return src;
 
   const match = src.match(/^([^?#]*)([?#].*)?$/);
