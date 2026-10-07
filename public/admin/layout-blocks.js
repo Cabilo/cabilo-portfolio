@@ -174,12 +174,6 @@
       box-shadow: 0 12px 28px rgba(1,4,9,.55);
     }
 
-    .cabilo-layout-inspector.is-floating-overlay {
-      position: fixed;
-      box-sizing: border-box;
-      z-index: 2147483640;
-      margin: 0;
-    }
 
     .cabilo-layout-inspector-grid {
       max-height: 34vh;
@@ -399,12 +393,6 @@
       window.addEventListener('scroll', this.inspectorScrollHandler, true);
       window.addEventListener('resize', this.inspectorScrollHandler);
 
-      this.inspectorPortal = document.createElement('div');
-      this.inspectorPortal.className = 'cabilo-layout-inspector-portal';
-      document.body.appendChild(this.inspectorPortal);
-
-      this.setState({ inspectorPortalReady: true });
-
       this.inspectorFrame = requestAnimationFrame(this.updateInspectorFloating);
     },
 
@@ -424,7 +412,7 @@
     },
 
     updateInspectorFloating: function () {
-      if (!this.inspectorNode || !this.inspectorPortal) return;
+      if (!this.inspectorNode) return;
 
       var widget = this.inspectorNode.closest('.cabilo-layout-widget');
       if (!widget) return;
@@ -432,33 +420,9 @@
       var rect = widget.getBoundingClientRect();
       var visible = rect.bottom > 0 && rect.top < window.innerHeight;
 
-      if (!visible) {
-        this.inspectorPortal.style.display = 'none';
-        return;
-      }
-
-      var width = Math.min(rect.width, window.innerWidth - 24);
-      var left = Math.max(12, Math.min(rect.left, window.innerWidth - width - 12));
-      var bottom = 12;
-
-      this.inspectorPortal.style.display = 'block';
-      this.inspectorPortal.style.position = 'fixed';
-      this.inspectorPortal.style.left = left + 'px';
-      this.inspectorPortal.style.bottom = bottom + 'px';
-      this.inspectorPortal.style.width = width + 'px';
-      this.inspectorPortal.style.zIndex = '2147483640';
+      widget.classList.toggle('is-inspector-floating', visible);
     },
 
-    componentWillUnmount: function () {
-      this.stopInspectorFloating();
-      if (this.inspectorPortal && this.inspectorPortal.parentNode) {
-        this.inspectorPortal.parentNode.removeChild(this.inspectorPortal);
-      }
-      this.inspectorPortal = null;
-      document.removeEventListener('keydown', this.handleKeyDown);
-      document.removeEventListener('pointermove', this.handlePointerMove);
-      document.removeEventListener('pointerup', this.handlePointerUp);
-    },
 
     getBlocks: function () {
       return toPlainValue(this.props.value).map(normalizeBlock);
@@ -1013,12 +977,7 @@
               onClick: this.addRows,
             }, '+ Add 1 Row')
           : null,
-        this.state.inspectorPortalReady && this.inspectorPortal
-          ? window.ReactDOM.createPortal(
-              this.renderInspector(selected),
-              this.inspectorPortal
-            )
-          : null
+        this.renderInspector(selected)
       );
     },
   });
