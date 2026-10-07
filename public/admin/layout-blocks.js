@@ -385,7 +385,11 @@
 
 
   function escapeHtml(value) {
-    return String(value || '').replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
+    return String(value || '')
+      .replace(/&/g, '&amp;')
+      .replace(/</g, '&lt;')
+      .replace(/>/g, '&gt;')
+      .replace(/"/g, '&quot;');
   }
 
   function markdownToHtml(markdown) {
@@ -401,12 +405,15 @@
       text = text.replace(/~~([^~]+)~~/g, '<s>$1</s>');
       text = text.replace(/\*([^*]+)\*/g, '<em>$1</em>');
       text = text.replace(/_([^_]+)_/g, '<em>$1</em>');
-      text = text.replace(/\`([^\`]+)\`/g, '<code>$1</code>');
+      text = text.replace(/\x60([^\x60]+)\x60/g, '<code>$1</code>');
       return text;
     }
 
     function closeList() {
-      if (list) { html.push('</' + list + '>'); list = null; }
+      if (list) {
+        html.push('</' + list + '>');
+        list = null;
+      }
     }
 
     source.split('\n').forEach(function (line) {
@@ -420,11 +427,20 @@
       } else if (unordered || ordered) {
         var nextList = unordered ? 'ul' : 'ol';
         var item = unordered ? unordered[1] : ordered[1];
-        if (list !== nextList) { closeList(); html.push('<' + nextList + '>'); list = nextList; }
+
+        if (list !== nextList) {
+          closeList();
+          html.push('<' + nextList + '>');
+          list = nextList;
+        }
+
         html.push('<li>' + inline(item) + '</li>');
       } else if (/^>\s?/.test(line)) {
         closeList();
         html.push('<blockquote>' + inline(line.replace(/^>\s?/, '')) + '</blockquote>');
+      } else if (/^ {4}/.test(line)) {
+        closeList();
+        html.push('<pre><code>' + inline(line.slice(4)) + '</code></pre>');
       } else if (line.trim() === '') {
         closeList();
       } else {
@@ -441,32 +457,57 @@
     function inline(node) {
       if (node.nodeType === 3) return node.nodeValue;
       if (node.nodeType !== 1) return '';
+
       var tag = node.tagName.toLowerCase();
       var text = Array.prototype.map.call(node.childNodes, inline).join('');
+
       if (tag === 'strong' || tag === 'b') return '**' + text + '**';
       if (tag === 'em' || tag === 'i') return '*' + text + '*';
       if (tag === 's' || tag === 'strike' || tag === 'del') return '~~' + text + '~~';
-      if (tag === 'code') return '\`' + text + '\`';
+      if (tag === 'code') return '\x60' + text + '\x60';
       if (tag === 'a') return '[' + text + '](' + (node.getAttribute('href') || '') + ')';
       if (tag === 'br') return '\n';
+
       return text;
     }
 
     function block(node) {
       if (node.nodeType === 3) return node.nodeValue;
       if (node.nodeType !== 1) return '';
+
       var tag = node.tagName.toLowerCase();
-      var children = Array.prototype.map.call(node.childNodes, inline).join('');
-      if (/^h[1-6]$/.test(tag)) return '#'.repeat(Number(tag.charAt(1))) + ' ' + children.trim();
-      if (tag === 'blockquote') return children.trim().split('\n').map(function (line) { return '> ' + line; }).join('\n');
-      if (tag === 'ul' || tag === 'ol') {
-        var ordered = tag === 'ol';
-        return Array.prototype.map.call(node.children, function (item, index) {
-          return (ordered ? (index + 1) + '. ' : '- ') + item.textContent.trim();
+
+      if (/^h[1-6]$/.test(tag)) {
+        return '#'.repeat(Number(tag.charAt(1))) + ' ' +
+          Array.prototype.map.call(node.childNodes, inline).join('').trim();
+      }
+
+      if (tag === 'blockquote') {
+        var quote = Array.prototype.map.call(node.childNodes, inline).join('').trim();
+        return quote.split('\n').map(function (line) {
+          return '> ' + line;
         }).join('\n');
       }
-      if (tag === 'pre') return '    ' + node.textContent.trim().replace(/\n/g, '\n    ');
-      if (tag === 'p' || tag === 'div') return children.trim();
+
+      if (tag === 'ul' || tag === 'ol') {
+        var ordered = tag === 'ol';
+
+        return Array.prototype.map.call(node.children, function (item, index) {
+          var itemText = Array.prototype.map.call(item.childNodes, inline).join('').trim();
+          return (ordered ? (index + 1) + '. ' : '- ') + itemText;
+        }).join('\n');
+      }
+
+      if (tag === 'pre') {
+        return node.textContent.split('\n').map(function (line) {
+          return '    ' + line;
+        }).join('\n').trim();
+      }
+
+      if (tag === 'p' || tag === 'div') {
+        return Array.prototype.map.call(node.childNodes, inline).join('').trim();
+      }
+
       return inline(node).trim();
     }
 
@@ -476,89 +517,394 @@
       .join('\n\n');
   }
 
+  function closestBlock(node, root) {
+    var current = node && node.nodeType === 3 ? node.parentNode : node;
+
+    while (current && current !== root) {
+      if (
+        current.nodeType === 1 &&
+        /^(P|DIV|H1|H2|H3|H4|H5|H6|BLOCKQUOTE|LI|PRE)$/.test(current.tagName)
+      ) {
+        return current;
+      }
+      current = current.parentNode;
+    }
+
+    return root;
+  }
+
+  function saveSelection(root) {
+    var selection = window.getSelection();
+
+    if (!selection || selection.rangeCount === 0 || !root.contains(selection.anchorNode)) {
+      return null;
+    }
+
+    return selection.getRangeAt(0).cloneRange();
+  }
+
+  function restoreSelection(range) {
+    if (!range) return;
+
+    var selection = window.getSelection();
+    selection.removeAllRanges();
+    selection.addRange(range);
+  }
+
+  function selectionInside(root) {
+    var selection = window.getSelection();
+    if (!selection || selection.rangeCount === 0) return false;
+
+    return root.contains(selection.getRangeAt(0).commonAncestorContainer);
+  }
+
+  function linkSelectedText(root) {
+    if (!selectionInside(root)) return;
+
+    var selection = window.getSelection();
+    if (!selection.toString()) return;
+
+    var url = window.prompt('Link URL', 'https://');
+    if (!url) return;
+
+    document.execCommand('createLink', false, url);
+  }
+
   var CabiloTextEditor = createClass({
-    getInitialState: function () { return { mode: 'rich_text' }; },
+    getInitialState: function () {
+      return {
+        mode: 'rich_text',
+        rawValue: this.props.value || '',
+        heading: '',
+      };
+    },
 
-    componentDidMount: function () { this.syncRichText(); },
+    componentDidMount: function () {
+      this.syncRichText();
+    },
 
-    componentDidUpdate: function () {
-      if (this.state.mode === 'rich_text' && !this.isEditing) this.syncRichText();
+    componentDidUpdate: function (previousProps, previousState) {
+      if (this.state.mode === 'rich_text' && !this.isEditing) {
+        if (
+          previousProps.value !== this.props.value ||
+          previousState.mode !== this.state.mode
+        ) {
+          this.syncRichText();
+        }
+      }
     },
 
     syncRichText: function () {
       if (!this.richNode) return;
+
       var html = markdownToHtml(this.props.value || '');
-      if (this.richNode.innerHTML !== html) this.richNode.innerHTML = html;
+
+      if (this.richNode.innerHTML !== html) {
+        this.richNode.innerHTML = html;
+      }
     },
 
     setMode: function (mode) {
       if (mode === this.state.mode) return;
-      this.setState({ mode: mode }, function () {
-        if (mode === 'rich_text') this.syncRichText();
+
+      if (mode === 'raw') {
+        this.setState({
+          mode: 'raw',
+          rawValue: this.props.value || '',
+        });
+        return;
+      }
+
+      this.setState({
+        mode: 'rich_text',
+        rawValue: this.props.value || '',
+      }, function () {
+        this.syncRichText();
       });
     },
 
     emitMarkdown: function () {
-      if (this.richNode) this.props.onChange(htmlToMarkdown(this.richNode));
+      if (!this.richNode) return;
+      this.props.onChange(htmlToMarkdown(this.richNode));
     },
 
-    exec: function (command, value) {
+    rememberSelection: function () {
+      if (this.richNode && selectionInside(this.richNode)) {
+        this.savedSelection = saveSelection(this.richNode);
+      }
+    },
+
+    focusEditor: function () {
       if (!this.richNode) return;
+
       this.richNode.focus();
+
+      if (this.savedSelection) {
+        restoreSelection(this.savedSelection);
+      }
+    },
+
+    execInline: function (command, value) {
+      this.focusEditor();
       document.execCommand(command, false, value || null);
+      this.emitMarkdown();
+    },
+
+    formatBlock: function (tagName) {
+      if (!this.richNode) return;
+
+      this.focusEditor();
+
+      var selection = window.getSelection();
+      if (!selection || selection.rangeCount === 0) return;
+
+      var range = selection.getRangeAt(0);
+      var block = closestBlock(range.commonAncestorContainer, this.richNode);
+
+      if (
+        /^h[1-6]$/.test(tagName) &&
+        block &&
+        block !== this.richNode &&
+        block.tagName === 'P' &&
+        !range.collapsed &&
+        range.startContainer === range.endContainer
+      ) {
+        var selected = range.toString();
+
+        if (selected) {
+          var textNode = range.startContainer;
+
+          if (textNode.nodeType === 3) {
+            var parent = block.parentNode;
+            var beforeText = textNode.nodeValue.slice(0, range.startOffset);
+            var afterText = textNode.nodeValue.slice(range.endOffset);
+
+            var fragmentBefore = document.createDocumentFragment();
+            var fragmentAfter = document.createDocumentFragment();
+
+            if (beforeText) {
+              var beforeP = document.createElement('p');
+              beforeP.textContent = beforeText;
+              fragmentBefore.appendChild(beforeP);
+            }
+
+            var heading = document.createElement(tagName);
+            heading.textContent = selected;
+            fragmentBefore.appendChild(heading);
+
+            if (afterText) {
+              var afterP = document.createElement('p');
+              afterP.textContent = afterText;
+              fragmentAfter.appendChild(afterP);
+            }
+
+            parent.insertBefore(fragmentBefore, block);
+            if (fragmentAfter.firstChild) {
+              parent.insertBefore(fragmentAfter, block);
+            }
+            parent.removeChild(block);
+
+            this.emitMarkdown();
+            return;
+          }
+        }
+      }
+
+      document.execCommand('formatBlock', false, tagName);
+      this.emitMarkdown();
+    },
+
+    toggleQuote: function () {
+      if (!this.richNode) return;
+
+      this.focusEditor();
+
+      var selection = window.getSelection();
+      if (!selection || selection.rangeCount === 0) return;
+
+      var block = closestBlock(selection.getRangeAt(0).commonAncestorContainer, this.richNode);
+
+      if (block && block.tagName === 'BLOCKQUOTE') {
+        document.execCommand('formatBlock', false, 'p');
+      } else {
+        document.execCommand('formatBlock', false, 'blockquote');
+      }
+
+      this.emitMarkdown();
+    },
+
+    toggleList: function (ordered) {
+      if (!this.richNode) return;
+
+      this.focusEditor();
+      document.execCommand(
+        ordered ? 'insertOrderedList' : 'insertUnorderedList',
+        false,
+        null
+      );
+      this.emitMarkdown();
+    },
+
+    toggleCode: function () {
+      if (!this.richNode) return;
+
+      this.focusEditor();
+
+      var selection = window.getSelection();
+      if (!selection || selection.rangeCount === 0) return;
+
+      var block = closestBlock(selection.getRangeAt(0).commonAncestorContainer, this.richNode);
+
+      if (block && block.tagName === 'PRE') {
+        document.execCommand('formatBlock', false, 'p');
+      } else {
+        document.execCommand('formatBlock', false, 'pre');
+      }
+
+      this.emitMarkdown();
+    },
+
+    clearFormatting: function () {
+      if (!this.richNode) return;
+
+      this.focusEditor();
+      document.execCommand('removeFormat', false, null);
+      document.execCommand('formatBlock', false, 'p');
       this.emitMarkdown();
     },
 
     handleInput: function () {
       this.isEditing = true;
+      this.rememberSelection();
       this.emitMarkdown();
       this.isEditing = false;
     },
 
-    handleRawChange: function (event) { this.props.onChange(event.target.value); },
+    handleRawChange: function (event) {
+      var value = event.target.value;
+      this.setState({ rawValue: value });
+      this.props.onChange(value);
+    },
 
-    renderButton: function (label, command, value, title) {
+    renderToolbarButton: function (label, title, handler) {
       return h('button', {
         type: 'button',
         className: 'cabilo-text-toolbar-button',
-        title: title || label,
+        title: title,
+        disabled: this.state.mode === 'raw',
         onMouseDown: function (event) {
           event.preventDefault();
-          this.exec(command, value);
+
+          if (this.state.mode === 'rich_text') {
+            this.rememberSelection();
+            handler();
+          }
         }.bind(this),
       }, label);
     },
 
+    renderHeadingSelect: function () {
+      return h('select', {
+        className: 'cabilo-text-heading-select',
+        value: this.state.heading,
+        title: 'Heading',
+        disabled: this.state.mode === 'raw',
+        onChange: function (event) {
+          var value = event.target.value;
+          if (!value) return;
+
+          this.rememberSelection();
+          this.formatBlock(value);
+          this.setState({ heading: '' });
+        }.bind(this),
+      },
+        h('option', { value: '' }, 'Heading'),
+        [1, 2, 3, 4, 5, 6].map(function (level) {
+          return h('option', {
+            key: level,
+            value: 'h' + level,
+          }, 'H' + level);
+        })
+      );
+    },
+
     render: function () {
       var raw = this.state.mode === 'raw';
+
       return h('div', { className: 'cabilo-text-editor' },
         h('div', { className: 'cabilo-text-toolbar' },
-          this.renderButton('B', 'bold', null, 'Bold'),
-          this.renderButton('I', 'italic', null, 'Italic'),
-          this.renderButton('S', 'strikeThrough', null, 'Strikethrough'),
+          this.renderToolbarButton('B', 'Bold', function () {
+            this.execInline('bold');
+          }.bind(this)),
+          this.renderToolbarButton('I', 'Italic', function () {
+            this.execInline('italic');
+          }.bind(this)),
+          this.renderToolbarButton('S', 'Strikethrough', function () {
+            this.execInline('strikeThrough');
+          }.bind(this)),
           h('div', { className: 'cabilo-text-toolbar-divider' }),
-          this.renderButton('H1', 'formatBlock', 'h1', 'Heading 1'),
-          this.renderButton('H2', 'formatBlock', 'h2', 'Heading 2'),
-          this.renderButton('H3', 'formatBlock', 'h3', 'Heading 3'),
-          this.renderButton('Quote', 'formatBlock', 'blockquote', 'Quote'),
-          this.renderButton('• List', 'insertUnorderedList', null, 'Bulleted list'),
-          this.renderButton('1. List', 'insertOrderedList', null, 'Numbered list'),
-          this.renderButton('Code', 'formatBlock', 'pre', 'Code block'),
+          this.renderHeadingSelect(),
+          this.renderToolbarButton('Quote', 'Toggle quote', function () {
+            this.toggleQuote();
+          }.bind(this)),
+          this.renderToolbarButton('• List', 'Bulleted list', function () {
+            this.toggleList(false);
+          }.bind(this)),
+          this.renderToolbarButton('1. List', 'Numbered list', function () {
+            this.toggleList(true);
+          }.bind(this)),
+          this.renderToolbarButton('Code', 'Toggle code block', function () {
+            this.toggleCode();
+          }.bind(this)),
+          this.renderToolbarButton('Link', 'Add link', function () {
+            linkSelectedText(this.richNode);
+            this.emitMarkdown();
+          }.bind(this)),
+          this.renderToolbarButton('Clear', 'Clear formatting', function () {
+            this.clearFormatting();
+          }.bind(this)),
           h('div', { className: 'cabilo-text-mode' },
-            h('button', { type: 'button', className: 'cabilo-text-mode-button' + (raw ? '' : ' is-active'), onClick: function () { this.setMode('rich_text'); }.bind(this) }, 'Rich text'),
-            h('button', { type: 'button', className: 'cabilo-text-mode-button' + (raw ? ' is-active' : ''), onClick: function () { this.setMode('raw'); }.bind(this) }, 'Markdown')
+            h('button', {
+              type: 'button',
+              className: 'cabilo-text-mode-button' + (raw ? '' : ' is-active'),
+              onClick: function () {
+                this.setMode('rich_text');
+              }.bind(this),
+            }, 'Rich text'),
+            h('button', {
+              type: 'button',
+              className: 'cabilo-text-mode-button' + (raw ? ' is-active' : ''),
+              onClick: function () {
+                this.setMode('raw');
+              }.bind(this),
+            }, 'Markdown')
           )
         ),
         raw
-          ? h('textarea', { className: 'cabilo-text-raw', value: this.props.value || '', onChange: this.handleRawChange, spellCheck: false })
+          ? h('textarea', {
+              className: 'cabilo-text-raw',
+              value: this.state.rawValue,
+              onChange: this.handleRawChange,
+              spellCheck: false,
+            })
           : h('div', {
               className: 'cabilo-text-rich',
               contentEditable: true,
               suppressContentEditableWarning: true,
-              ref: function (node) { this.richNode = node; }.bind(this),
+              ref: function (node) {
+                this.richNode = node;
+              }.bind(this),
               onInput: this.handleInput,
-              onFocus: function () { this.isEditing = true; },
-              onBlur: function () { this.isEditing = false; },
+              onMouseUp: this.rememberSelection,
+              onKeyUp: this.rememberSelection,
+              onFocus: function () {
+                this.isEditing = true;
+                this.rememberSelection();
+              }.bind(this),
+              onBlur: function () {
+                this.isEditing = false;
+                this.rememberSelection();
+              }.bind(this),
             })
       );
     },
