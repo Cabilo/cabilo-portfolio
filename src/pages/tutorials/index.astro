@@ -1,54 +1,10 @@
 ---
-import { getCollection } from 'astro:content';
-import Layout from '../../layouts/Layout.astro';
-import Thumbnail from '../../components/Thumbnail.astro';
-
-// Fetch all learning docs, but filter ONLY for 'Tutorials', then sort by date
-const allLearning = await getCollection('learning');
-const tutorials = allLearning
-  .filter(doc => doc.data.type === 'Tutorial')
-  .sort((a, b) => b.data.publishDate.valueOf() - a.data.publishDate.valueOf());
+import LearningIndex from '../../components/LearningIndex.astro';
 ---
 
-<Layout>
-  <main class="max-w-7xl mx-auto px-6 py-12 md:py-24">
-    
-    <div class="mb-16 md:mb-24 text-center max-w-3xl mx-auto">
-      <h1 class="text-4xl md:text-5xl font-bold text-text-white uppercase tracking-wider mb-6">
-        Free <span class="bg-gradient-to-r from-brand-gold to-brand-amber bg-clip-text text-transparent">Tutorials</span>
-      </h1>
-      <p class="text-lg text-text-silver leading-relaxed">
-        Educational breakdowns, software techniques, and cinematic lighting workflows for the 3D community.
-      </p>
-    </div>
-
-    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-      {tutorials.map((tutorial) => (
-        <a href={`/tutorials/${tutorial.id}`} class="group flex flex-col bg-cabilo-dark border border-cabilo-card rounded-md overflow-hidden hover:border-brand-amber transition-all duration-300 shadow-lg hover:shadow-[0_0_20px_rgba(230,115,0,0.15)]">
-          
-          <div class="aspect-video relative overflow-hidden bg-cabilo-obsidian">
-            <Thumbnail image={tutorial.data.thumbnail} alt={tutorial.data.title} crop={tutorial.data.thumbnailCrop} compress={tutorial.data.compressThumbnail} class="w-full h-full transition-transform duration-700 ease-out opacity-80 group-hover:opacity-100" />
-            {Boolean(tutorial.data.videoUrl) && (
-              <div class="absolute inset-0 flex items-center justify-center pointer-events-none">
-                <div class="w-12 h-12 bg-brand-amber/90 backdrop-blur rounded-full flex items-center justify-center text-text-white shadow-[0_0_20px_rgba(230,115,0,0.5)]">
-                  <svg class="w-6 h-6 ml-1" fill="currentColor" viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>
-                </div>
-              </div>
-            )}
-          </div>
-
-          <div class="p-6 flex flex-col gap-3 flex-grow">
-            <div class="flex flex-wrap gap-2 mb-2">
-              {tutorial.data.tags.slice(0, 2).map(tag => (
-                <span class="text-[10px] font-bold tracking-widest uppercase text-brand-gold bg-brand-gold/10 px-2 py-1 rounded">{tag}</span>
-              ))}
-            </div>
-            <h3 class="text-xl font-medium text-text-white group-hover:text-brand-amber transition-colors duration-300 leading-snug">{tutorial.data.title}</h3>
-            <p class="text-sm text-text-silver line-clamp-2 mt-auto pt-4">{tutorial.data.description}</p>
-          </div>
-        </a>
-      ))}
-    </div>
-
-  </main>
-</Layout>
+<LearningIndex
+  type="Tutorial"
+  basePath="tutorials"
+  heading={<>Free <span class="bg-gradient-to-r from-brand-gold to-brand-amber bg-clip-text text-transparent">Tutorials</span></>}
+  description="Educational breakdowns, software techniques, and cinematic lighting workflows for the 3D community."
+/>
