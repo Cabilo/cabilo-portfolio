@@ -1,3 +1,6 @@
+import fs from 'node:fs';
+import path from 'node:path';
+
 /**
  * src/lib/images.ts
  *
@@ -16,5 +19,11 @@ export const getOptimizedImagePath = (src: string) => {
 
   if (!/\.(jpe?g|png)$/i.test(pathPart)) return src;
 
-  return pathPart.replace(/\.(jpe?g|png)$/i, '.webp') + suffix;
+  const relativePath = pathPart.replace(/^\/+/, '');
+  const webpRelativePath = relativePath.replace(/\.(jpe?g|png)$/i, '.webp');
+  const webpPath = path.join(process.cwd(), 'public', webpRelativePath);
+
+  return fs.existsSync(webpPath)
+    ? pathPart.replace(/\.(jpe?g|png)$/i, '.webp') + suffix
+    : src;
 };
