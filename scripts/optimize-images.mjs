@@ -7,7 +7,7 @@ const publicDir = path.join(root, 'public');
 
 const SOURCE_EXTENSIONS = new Set(['.jpg', '.jpeg', '.png']);
 const CONCURRENCY = 4;
-const WEBP_QUALITY = 82;
+const WEBP_QUALITY = 95;
 const WEBP_EFFORT = 5;
 
 const walk = async (directory) => {
