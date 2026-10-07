@@ -7,7 +7,7 @@ const englishHref = cleanPath;
 const portugueseHref = cleanPath === '/' ? '/pt-br/' : `${getLocalePrefix('pt-br')}${cleanPath}`;
 ---
 
-<div class="flex items-center gap-1 text-[10px] font-bold tracking-widest uppercase">
+<div class="flex items-center gap-1 whitespace-nowrap text-[10px] font-bold tracking-widest uppercase">
   <a href={englishHref} data-language="en" class={locale === 'en' ? 'text-brand-gold' : 'text-text-silver hover:text-brand-gold transition-colors'}>EN</a>
   <span class="text-text-silver/40">/</span>
   <a href={portugueseHref} data-language="pt-br" class={locale === 'pt-br' ? 'text-brand-gold' : 'text-text-silver hover:text-brand-gold transition-colors'}>PT-BR</a>
