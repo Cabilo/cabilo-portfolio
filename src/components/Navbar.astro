@@ -87,14 +87,16 @@ const localeHref = (path) => locale === 'en' ? path : `${getLocalePrefix(locale)
         {locale === 'pt-br' ? 'Sobre' : 'About'}
       </a>
 
-      <div class="flex flex-col items-center gap-1">
-        <LanguageSwitcher />
+      <div class="relative h-full flex items-center">
+        <div class="absolute left-1/2 top-2 -translate-x-1/2">
+          <LanguageSwitcher />
+        </div>
 
         <a
           id="nav-contact"
-        href={localeHref("/contact")}
-        class="nav-link desktop-nav-hover transition-colors duration-300 text-text-silver hover:text-brand-gold"
-      >
+          href={localeHref("/contact")}
+          class="nav-link desktop-nav-hover transition-colors duration-300 text-text-silver hover:text-brand-gold"
+        >
           {locale === 'pt-br' ? 'Contato' : 'Contact'}
         </a>
       </div>
