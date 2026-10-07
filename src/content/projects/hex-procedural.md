@@ -10,8 +10,18 @@ softwareUsed:
   - Houdini
   - Redshift
   - Nuke
-mediaBlocks:
-  - type: image
+layoutBlocks:
+  - id: hex-procedural-image
+    type: image
+    x: 0
+    y: 0
+    w: 10
+    h: 8
+    snap: grid
+    title: Image
+    fitMode: width-to-height
+    fitToViewport: true
+    assetAlignment: center
     image: https://cdnb.artstation.com/p/assets/images/images/017/488/445/large/lucas-cabilo-hex-big.jpg?1556184275
 ---
 
