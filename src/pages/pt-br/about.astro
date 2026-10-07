@@ -2,7 +2,7 @@
 import { getCollection, render } from 'astro:content';
 import { getLocalizedEntry, getLocalizedPath } from '../../lib/i18n';
 import Layout from '../../layouts/Layout.astro';
-import { slugifyTaxonomyValue } from '../lib/taxonomy';
+import { slugifyTaxonomyValue } from '../../lib/taxonomy';
 
 // Fetch the data from src/content/pages/about.md
 const aboutPage = await getLocalizedEntry(getCollection, 'pages', 'pt-br', 'about');
