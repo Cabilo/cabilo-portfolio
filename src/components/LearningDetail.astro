@@ -2,7 +2,6 @@
 import { render, type CollectionEntry } from 'astro:content';
 import Layout from '../layouts/Layout.astro';
 import LayoutBlocksRenderer from './LayoutBlocksRenderer.astro';
-import { getVideoEmbed } from '../lib/video';
 import { slugifyTaxonomyValue } from '../lib/taxonomy';
 import { getOptimizedImagePath } from '../lib/images';
 
@@ -13,7 +12,6 @@ export interface Props {
 const { doc } = Astro.props;
 const { Content } = await render(doc);
 const layoutBlocks = doc.data.layoutBlocks ?? [];
-const topVideo = getVideoEmbed(doc.data.videoUrl);
 ---
 
 <Layout
@@ -44,21 +42,11 @@ const topVideo = getVideoEmbed(doc.data.videoUrl);
       </div>
     ) : (
       <div class="cabilo-media mb-16 rounded-md overflow-hidden shadow-2xl border border-cabilo-card relative aspect-video bg-cabilo-obsidian">
-        {topVideo ? (
-          topVideo.type === 'youtube' || topVideo.type === 'vimeo' ? (
-            <iframe class="absolute inset-0 w-full h-full" src={topVideo.src} frameborder="0" allow="autoplay; fullscreen; picture-in-picture" allowfullscreen></iframe>
-          ) : topVideo.type === 'direct' ? (
-            <video class="absolute inset-0 w-full h-full object-cover" src={topVideo.src} controls playsinline></video>
-          ) : (
-            <div class="absolute inset-0 flex items-center justify-center p-8"><p class="text-text-silver">Video URL not recognized.</p></div>
-          )
-        ) : (
-          <img
-            src={getOptimizedImagePath(doc.data.thumbnail, doc.data.compressThumbnail)}
-            alt={doc.data.title}
-            class="absolute inset-0 w-full h-full object-cover"
-          />
-        )}
+        <img
+          src={getOptimizedImagePath(doc.data.thumbnail, doc.data.compressThumbnail)}
+          alt={doc.data.title}
+          class="absolute inset-0 w-full h-full object-cover"
+        />
       </div>
     )}
 
