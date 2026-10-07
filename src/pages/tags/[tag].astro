@@ -93,7 +93,7 @@ const { tagName, projects, learning } = Astro.props;
         <h2 class="text-2xl font-bold text-text-white uppercase tracking-widest mb-8 border-b border-cabilo-card pb-4">Projects</h2>
         <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
           {projects.map((project) => (
-            <ProjectCard title={project.data.title} category={project.data.category} image={project.data.thumbnail} crop={project.data.thumbnailCrop} compress={project.data.compressThumbnail} link={`/projects/${project.id}`} />
+            <ProjectCard title={project.data.title} category={project.data.category} image={project.data.thumbnail} crop={project.data.thumbnailCrop} compress={project.data.compressThumbnail} link={getLocalizedPath("en", `projects/${getLocalizedId(project.id)}`)} />
           ))}
         </div>
       </div>
