@@ -84,6 +84,12 @@ collections:
         name: "thumbnail"
         widget: "image"
 
+      - label: "Compress Thumbnail (WebP)"
+        name: "compressThumbnail"
+        widget: "boolean"
+        required: false
+        default: true
+
       - label: "Thumbnail Crop"
         name: "thumbnailCrop"
         widget: "thumbnailCrop"
@@ -445,6 +451,12 @@ collections:
                 name: "image"
                 widget: "image"
 
+              - label: "Compress Image (WebP)"
+                name: "compress"
+                widget: "boolean"
+                required: false
+                default: true
+
               - label: "Fit to viewport"
                 name: "fitToViewport"
                 widget: "boolean"
@@ -538,6 +550,12 @@ collections:
                 name: "folder"
                 widget: "string"
 
+              - label: "Compress Frames (WebP)"
+                name: "compress"
+                widget: "boolean"
+                required: false
+                default: true
+
               - label: "Fit to viewport"
                 name: "fitToViewport"
                 widget: "boolean"
@@ -583,6 +601,13 @@ collections:
 
               - label: "AOV Passes"
                 name: "aovPasses"
+
+
+              - label: "Compress Images (WebP)"
+                name: "compress"
+                widget: "boolean"
+                required: false
+                default: true
                 widget: "list"
                 default: []
                 fields:
@@ -683,6 +708,12 @@ collections:
       - label: "Thumbnail"
         name: "thumbnail"
         widget: "image"
+
+      - label: "Compress Thumbnail (WebP)"
+        name: "compressThumbnail"
+        widget: "boolean"
+        required: false
+        default: true
 
       - label: "Thumbnail Crop"
         name: "thumbnailCrop"
@@ -987,6 +1018,12 @@ collections:
                 name: "image"
                 widget: "image"
 
+              - label: "Compress Image (WebP)"
+                name: "compress"
+                widget: "boolean"
+                required: false
+                default: true
+
               - label: "Fit to viewport"
                 name: "fitToViewport"
                 widget: "boolean"
@@ -1075,6 +1112,12 @@ collections:
                 name: "folder"
                 widget: "string"
 
+              - label: "Compress Frames (WebP)"
+                name: "compress"
+                widget: "boolean"
+                required: false
+                default: true
+
               - label: "Fit to viewport"
                 name: "fitToViewport"
                 widget: "boolean"
@@ -1120,6 +1163,13 @@ collections:
 
               - label: "AOV Passes"
                 name: "aovPasses"
+
+
+              - label: "Compress Images (WebP)"
+                name: "compress"
+                widget: "boolean"
+                required: false
+                default: true
                 widget: "list"
                 default: []
                 fields:
