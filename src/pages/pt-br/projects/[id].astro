@@ -1,0 +1,66 @@
+---
+import { getCollection, render } from 'astro:content';
+import Layout from '../../layouts/Layout.astro';
+import LayoutBlocksRenderer from '../../../components/LayoutBlocksRenderer.astro';
+import { slugifyTaxonomyValue } from '../../../lib/taxonomy';
+import ProjectBreakdown from '../../components/ProjectBreakdown.astro';
+import { getLocaleFromId, getLocalizedId, getLocalizedPath } from '../../lib/i18n';
+
+export async function getStaticPaths() {
+  const projects = (await getCollection('projects')).filter(project => getLocaleFromId(project.id) === 'pt-br');
+  return projects.map(project => ({
+    params: { id: getLocalizedId(project.id) },
+    props: { project },
+  }));
+}
+
+const { project } = Astro.props;
+const { Content } = await render(project);
+const layoutBlocks = project.data.layoutBlocks ?? [];
+
+---
+
+<Layout
+  title={`${project.data.title} | CABILO`}
+  description={`Breakdown of ${project.data.title} - ${project.data.category} by CABILO.`}
+  image={project.data.thumbnail}
+>
+  <main class="px-4 py-12 md:py-20">
+
+    <div class="cabilo-reading mb-12">
+      <h1 class="text-4xl md:text-5xl font-bold text-text-white mb-4 uppercase">{project.data.title}</h1>
+      <div class="flex flex-wrap gap-4 text-sm tracking-widest text-brand-gold uppercase">
+        <span>{project.data.category}</span>
+        <span>•</span>
+        <span>{project.data.role}</span>
+        <span>•</span>
+        <span>{project.data.client}</span>
+      </div>
+
+      {project.data.tags?.length > 0 && (
+        <div class="flex flex-wrap gap-2 mt-5">
+          {project.data.tags.map((tag) => (
+            <a
+              href={getLocalizedPath("en", `tags/${slugifyTaxonomyValue(tag)}`)}
+              class="text-xs font-bold tracking-widest uppercase text-brand-gold bg-brand-gold/10 px-3 py-1.5 rounded"
+            >
+              {tag}
+            </a>
+          ))}
+        </div>
+      )}
+    </div>
+
+    {layoutBlocks.length > 0 && (
+      <div class="cabilo-media mb-16">
+        <LayoutBlocksRenderer blocks={layoutBlocks} />
+      </div>
+    )}
+
+    <ProjectBreakdown
+      Content={Content}
+      softwareUsed={project.data.softwareUsed}
+    />
+
+  </main>
+</Layout>

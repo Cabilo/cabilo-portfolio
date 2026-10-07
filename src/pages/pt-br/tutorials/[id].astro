@@ -1,0 +1,19 @@
+---
+import { getCollection } from 'astro:content';
+import LearningDetail from '../../../components/LearningDetail.astro';
+import { getLocaleFromId, getLocalizedId } from '../../../lib/i18n';
+
+export async function getStaticPaths() {
+  const learningDocs = await getCollection('learning');
+  const tutorials = learningDocs.filter(doc => getLocaleFromId(doc.id) === 'pt-br' && doc.data.type === 'Tutorial');
+
+  return tutorials.map(doc => ({
+    params: { id: getLocalizedId(doc.id) },
+    props: { doc },
+  }));
+}
+
+const { doc } = Astro.props;
+---
+
+<LearningDetail doc={doc} />

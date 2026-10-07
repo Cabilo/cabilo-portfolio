@@ -1,0 +1,64 @@
+---
+import { getCollection } from 'astro:content';
+import { getLocalizedEntry } from '../lib/i18n';
+import Layout from '../layouts/Layout.astro';
+
+// Fetch the data from src/content/pages/contact.md
+const contactPage = await getLocalizedEntry(getCollection, 'pages', 'pt-br', 'contact');
+---
+
+<Layout>
+  <main class="max-w-7xl mx-auto px-6 py-20">
+    <div class="max-w-3xl mx-auto">
+      
+      <!-- CMS Headlines -->
+      <div class="text-center mb-16">
+        <h1 class="text-4xl md:text-5xl font-bold text-text-white uppercase tracking-wide mb-4">
+          {contactPage.data.headline || "Let's Connect"}
+        </h1>
+        <p class="text-lg text-text-silver">
+          {contactPage.data.subheadline}
+        </p>
+      </div>
+
+      <div class="bg-cabilo-dark p-10 md:p-16 rounded-md border border-cabilo-card shadow-2xl">
+        <form action="https://api.web3forms.com/submit" method="POST" class="flex flex-col gap-8">
+          
+          <input type="hidden" name="access_key" value="d110d489-6486-4def-b65a-cf6946a3371b">
+          <input type="checkbox" name="botcheck" class="hidden" style="display: none;">
+
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+            <div class="flex flex-col gap-3">
+              <label for="name" class="text-xs uppercase tracking-widest text-text-silver font-bold">Name</label>
+              <input type="text" id="name" name="name" required placeholder="John Doe" class="w-full bg-cabilo-obsidian border border-cabilo-card rounded-md p-4 text-text-white placeholder:text-text-silver/30 focus:outline-none focus:border-brand-amber transition-colors" />
+            </div>
+            <div class="flex flex-col gap-3">
+              <label for="email" class="text-xs uppercase tracking-widest text-text-silver font-bold">Email</label>
+              <input type="email" id="email" name="email" required placeholder="john@studio.com" class="w-full bg-cabilo-obsidian border border-cabilo-card rounded-md p-4 text-text-white placeholder:text-text-silver/30 focus:outline-none focus:border-brand-amber transition-colors" />
+            </div>
+          </div>
+
+          <div class="flex flex-col gap-3">
+            <label for="subject" class="text-xs uppercase tracking-widest text-text-silver font-bold">Project Type</label>
+            <select id="subject" name="subject" class="w-full bg-cabilo-obsidian border border-cabilo-card rounded-md p-4 text-text-white/80 focus:outline-none focus:border-brand-amber transition-colors appearance-none">
+              <option value="Cinematics">Cinematics</option>
+              <option value="Lookdev / Lighting">Lookdev / Lighting</option>
+              <option value="Animation">Animation</option>
+              <option value="Other">Other / General Inquiry</option>
+            </select>
+          </div>
+
+          <div class="flex flex-col gap-3">
+            <label for="message" class="text-xs uppercase tracking-widest text-text-silver font-bold">Message</label>
+            <textarea id="message" name="message" required rows="5" placeholder="Tell me about your project..." class="w-full bg-cabilo-obsidian border border-cabilo-card rounded-md p-4 text-text-white placeholder:text-text-silver/30 focus:outline-none focus:border-brand-amber transition-colors resize-none"></textarea>
+          </div>
+
+          <button type="submit" class="mt-4 w-full flex items-center justify-center gap-3 px-8 py-4 rounded-md bg-brand-amber text-text-white font-bold uppercase tracking-widest hover:bg-brand-gold transition-colors duration-300 shadow-lg hover:shadow-[0_0_20px_rgba(230,115,0,0.4)]">
+            Send Message
+          </button>
+        </form>
+      </div>
+
+    </div>
+  </main>
+</Layout>

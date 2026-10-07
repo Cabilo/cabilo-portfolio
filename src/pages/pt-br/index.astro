@@ -1,0 +1,19 @@
+---
+import { getCollection } from 'astro:content';
+import { getLocalizedEntry } from '../lib/i18n';
+import Layout from '../layouts/Layout.astro';
+import Hero from '../components/Hero.astro';
+import PortfolioGrid from '../components/PortfolioGrid.astro';
+
+// We fetch the text from src/content/pages/home.md
+const homePage = await getLocalizedEntry(getCollection, 'pages', 'pt-br', 'home');
+---
+
+<Layout>
+  <Hero 
+    headline={homePage.data.headline || "Crafting Cinematic Realities"} 
+    subheadline={homePage.data.subheadline} 
+    showreelUrl={homePage.data.showreelUrl} 
+  />
+  <PortfolioGrid />
+</Layout>

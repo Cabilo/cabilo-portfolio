@@ -1,0 +1,62 @@
+---
+import { getCollection, render } from 'astro:content';
+import { getLocalizedEntry, getLocalizedPath } from '../lib/i18n';
+import Layout from '../layouts/Layout.astro';
+import { slugifyTaxonomyValue } from '../lib/taxonomy';
+
+// Fetch the data from src/content/pages/about.md
+const aboutPage = await getLocalizedEntry(getCollection, 'pages', 'pt-br', 'about');
+const { Content } = await render(aboutPage);
+
+const softwareList = await getCollection('software');
+---
+
+<Layout>
+  <main class="max-w-7xl mx-auto px-6 py-20">
+    <div class="grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-24 items-start">
+      
+      <div class="lg:col-span-5 aspect-[4/5] bg-cabilo-dark border border-cabilo-card rounded-md overflow-hidden shadow-2xl relative lg:sticky lg:top-32">
+        <img src="https://images.unsplash.com/photo-1535295972055-1c762f4483e5?q=80&w=800&auto=format&fit=crop" alt="CABILO Profile" class="absolute inset-0 w-full h-full object-cover opacity-80 [mask-image:linear-gradient(to_top,transparent_0%,black_28%,black_100%)]" />
+      </div>
+
+      <div class="lg:col-span-7 flex flex-col gap-10 pt-4">
+        
+        <div class="flex flex-col gap-2 border-b border-cabilo-card pb-8">
+          <h1 class="text-4xl md:text-6xl font-bold text-text-white uppercase tracking-wide">{aboutPage.data.headline || "About CABILO"}</h1>
+          <h2 class="text-lg md:text-xl text-brand-amber tracking-widest uppercase font-medium">{aboutPage.data.subheadline}</h2>
+        </div>
+        
+        <!-- CMS Markdown Biography -->
+        <div class="prose prose-invert prose-p:text-text-silver prose-lg max-w-none leading-relaxed">
+          <Content />
+        </div>
+
+        <!-- CMS Software Arsenal Tags -->
+        <div class="bg-cabilo-dark p-8 rounded-md border border-cabilo-card shadow-lg mt-4">
+          <h3 class="text-text-white uppercase tracking-widest text-sm mb-6 font-bold flex items-center gap-3">
+            <svg class="w-5 h-5 text-brand-amber" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 20l4-16m4 4l4 4-4 4M6 16l-4-4 4-4"></path></svg>
+            Software Arsenal
+          </h3>
+          <div class="flex flex-wrap gap-3">
+            {softwareList.filter((software) => software.data.addToArsenal).map((software) => {
+              const link = slugifyTaxonomyValue(software.data.name);
+              return (
+                <a href={getLocalizedPath("en", `tags/${link}`)} class="px-5 py-2.5 border border-cabilo-card rounded-md text-sm font-medium text-text-silver bg-cabilo-obsidian hover:border-brand-amber hover:text-text-white transition-all shadow-md">
+                  {software.data.name}
+                </a>
+              )
+            })}
+          </div>
+        </div>
+
+        <div class="mt-8 flex justify-center lg:justify-start w-full">
+          <a href="/CABILO_Resume.pdf" target="_blank" class="w-fit flex items-center justify-center gap-3 px-8 py-4 rounded-md bg-brand-amber text-text-white font-bold uppercase tracking-widest hover:bg-brand-gold transition-colors duration-300 shadow-lg hover:shadow-[0_0_20px_rgba(230,115,0,0.4)]">
+            <svg class="w-5 h-5 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"></path></svg>
+            <span>Download Resume</span>
+          </a>
+        </div>
+
+      </div>
+    </div>
+  </main>
+</Layout>

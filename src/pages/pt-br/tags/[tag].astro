@@ -1,0 +1,122 @@
+---
+import { getCollection } from 'astro:content';
+import Layout from '../../layouts/Layout.astro';
+import ProjectCard from '../../../components/ProjectCard.astro';
+import Thumbnail from '../../components/Thumbnail.astro';
+import { normalizeTaxonomyValue, slugifyTaxonomyValue } from '../../../lib/taxonomy';
+import { getLocaleFromId, getLocalizedId, getLocalizedPath } from '../../lib/i18n';
+
+export async function getStaticPaths() {
+  const [allTags, allSoftware, allProjectsRaw, allLearningRaw] = await Promise.all([
+    getCollection('tags'),
+    getCollection('software'),
+    getCollection('projects'),
+    getCollection('learning'),
+  ]);
+
+  const allProjects = allProjectsRaw.filter(project => getLocaleFromId(project.id) === 'pt-br');
+  const allLearning = allLearningRaw.filter(doc => getLocaleFromId(doc.id) === 'en');
+  const paths: any[] = [];
+
+  const addPoolPaths = (
+    pool: typeof allTags,
+    kind: 'tag' | 'software',
+  ) => {
+    pool.forEach((entry) => {
+      const value = entry.data.name;
+      const slug = slugifyTaxonomyValue(value);
+
+      const filteredProjects = allProjects.filter((project) => {
+        const values =
+          kind === 'tag'
+            ? [
+                project.data.category,
+                project.data.role,
+                project.data.client,
+                ...(project.data.tags ?? []),
+              ]
+            : project.data.softwareUsed ?? [];
+
+        return values.some(
+          (item) =>
+            normalizeTaxonomyValue(item) === normalizeTaxonomyValue(value),
+        );
+      });
+
+      const filteredLearning = allLearning.filter((doc) => {
+        const values =
+          kind === 'tag'
+            ? doc.data.tags ?? []
+            : doc.data.softwareUsed ?? [];
+
+        return values.some(
+          (item) =>
+            normalizeTaxonomyValue(item) === normalizeTaxonomyValue(value),
+        );
+      });
+
+      paths.push({
+        params: { tag: slug },
+        props: {
+          tagName: value,
+          projects: filteredProjects,
+          learning: filteredLearning,
+        },
+      });
+    });
+  };
+
+  addPoolPaths(allTags, 'tag');
+  addPoolPaths(allSoftware, 'software');
+
+  return paths;
+}
+
+const { tagName, projects, learning } = Astro.props;
+---
+
+<Layout>
+  <main class="max-w-7xl mx-auto px-6 py-12 md:py-24">
+    
+    <div class="mb-16 md:mb-24 text-center max-w-3xl mx-auto">
+      <h4 class="text-brand-gold font-bold tracking-widest uppercase mb-2">Tag Filter</h4>
+      <h1 class="text-4xl md:text-5xl font-bold text-text-white uppercase tracking-wider mb-6">
+        {tagName}
+      </h1>
+      <p class="text-lg text-text-silver leading-relaxed">
+        Showing all projects, tutorials, and breakdowns featuring {tagName}.
+      </p>
+    </div>
+
+    {projects.length > 0 && (
+      <div class="mb-20">
+        <h2 class="text-2xl font-bold text-text-white uppercase tracking-widest mb-8 border-b border-cabilo-card pb-4">Projects</h2>
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+          {projects.map((project) => (
+            <ProjectCard title={project.data.title} category={project.data.category} image={project.data.thumbnail} crop={project.data.thumbnailCrop} compress={project.data.compressThumbnail} link={`/projects/${project.id}`} />
+          ))}
+        </div>
+      </div>
+    )}
+
+    {learning.length > 0 && (
+      <div class="mb-20">
+        <h2 class="text-2xl font-bold text-text-white uppercase tracking-widest mb-8 border-b border-cabilo-card pb-4">Learning & Breakdowns</h2>
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+          {learning.map((doc) => (
+            <a href={getLocalizedPath("pt-br", `${doc.data.type.toLowerCase()}s/${getLocalizedId(doc.id)}`)} class="group flex flex-col bg-cabilo-dark border border-cabilo-card rounded-md overflow-hidden hover:border-brand-amber transition-all duration-300 shadow-lg">
+              <div class="aspect-video relative overflow-hidden bg-cabilo-obsidian">
+                <Thumbnail image={doc.data.thumbnail} alt={doc.data.title} crop={doc.data.thumbnailCrop} compress={doc.data.compressThumbnail} class="w-full h-full transition-transform duration-700 ease-out opacity-80 group-hover:opacity-100" />
+              </div>
+              <div class="p-6 flex flex-col gap-3 flex-grow">
+                <span class="text-[10px] font-bold tracking-widest uppercase text-brand-gold">{doc.data.type}</span>
+                <h3 class="text-xl font-medium text-text-white group-hover:text-brand-amber transition-colors duration-300 leading-snug">{doc.data.title}</h3>
+              </div>
+            </a>
+          ))}
+        </div>
+      </div>
+    )}
+
+  </main>
+</Layout>
