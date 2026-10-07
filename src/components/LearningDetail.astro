@@ -1,0 +1,86 @@
+---
+import { render, type CollectionEntry } from 'astro:content';
+import Layout from '../layouts/Layout.astro';
+import LayoutBlocksRenderer from './LayoutBlocksRenderer.astro';
+import { getVideoEmbed } from '../lib/video';
+import { slugifyTaxonomyValue } from '../lib/taxonomy';
+import { getOptimizedImagePath } from '../lib/images';
+
+export interface Props {
+  doc: CollectionEntry<'learning'>;
+}
+
+const { doc } = Astro.props;
+const { Content } = await render(doc);
+const layoutBlocks = doc.data.layoutBlocks ?? [];
+const topVideo = getVideoEmbed(doc.data.videoUrl);
+---
+
+<Layout
+  title={`${doc.data.title} | CABILO Learning`}
+  description={doc.data.description}
+  image={doc.data.thumbnail}
+>
+  <main class="px-4 py-12 md:py-20">
+
+    <div class="cabilo-reading mb-12 text-center flex flex-col items-center">
+      <div class="flex flex-wrap justify-center gap-2 mb-6">
+        {doc.data.tags.map((tag: string) => (
+          <a
+            href={`/tags/${slugifyTaxonomyValue(tag)}`}
+            class="text-xs font-bold tracking-widest uppercase text-brand-gold bg-brand-gold/10 px-3 py-1.5 rounded"
+          >
+            {tag}
+          </a>
+        ))}
+      </div>
+      <h1 class="text-3xl md:text-5xl font-bold text-text-white mb-6 leading-tight uppercase">{doc.data.title}</h1>
+      <p class="text-text-silver text-lg max-w-2xl">{doc.data.description}</p>
+    </div>
+
+    <div class="cabilo-media mb-16 rounded-md overflow-hidden shadow-2xl border border-cabilo-card relative aspect-video bg-cabilo-obsidian">
+      {topVideo ? (
+        topVideo.type === 'youtube' || topVideo.type === 'vimeo' ? (
+          <iframe class="absolute inset-0 w-full h-full" src={topVideo.src} frameborder="0" allow="autoplay; fullscreen; picture-in-picture" allowfullscreen></iframe>
+        ) : topVideo.type === 'direct' ? (
+          <video class="absolute inset-0 w-full h-full object-cover" src={topVideo.src} controls playsinline></video>
+        ) : (
+          <div class="absolute inset-0 flex items-center justify-center p-8"><p class="text-text-silver">Video URL not recognized.</p></div>
+        )
+      ) : (
+        <img
+          src={getOptimizedImagePath(doc.data.thumbnail, doc.data.compressThumbnail)}
+          alt={doc.data.title}
+          class="absolute inset-0 w-full h-full object-cover"
+        />
+      )}
+    </div>
+
+    {layoutBlocks.length > 0 && (
+      <div class="cabilo-media mb-16">
+        <LayoutBlocksRenderer blocks={layoutBlocks} />
+      </div>
+    )}
+
+    {doc.data.softwareUsed?.length > 0 && (
+      <div class="cabilo-reading mb-12 border-t border-cabilo-card pt-8">
+        <h4 class="text-xs uppercase tracking-widest text-text-white font-bold mb-4">Software Used</h4>
+        <div class="flex flex-wrap gap-2">
+          {doc.data.softwareUsed.map((software: string) => (
+            <a
+              href={`/tags/${slugifyTaxonomyValue(software)}`}
+              class="px-3 py-2 bg-cabilo-dark border border-cabilo-card rounded-md text-sm text-text-silver"
+            >
+              {software}
+            </a>
+          ))}
+        </div>
+      </div>
+    )}
+
+    <div class="cabilo-reading prose prose-invert prose-p:text-text-silver prose-headings:text-text-white prose-a:text-brand-amber max-w-none prose-img:rounded-md prose-img:border prose-img:border-cabilo-card prose-hr:border-cabilo-card border-t border-cabilo-card pt-12">
+      <Content />
+    </div>
+
+  </main>
+</Layout>
