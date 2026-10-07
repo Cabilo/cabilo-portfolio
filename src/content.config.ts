@@ -19,6 +19,8 @@ const thumbnailCropSchema = z.object({
   positionY: z.number().min(0).max(100).default(50),
 });
 
+// LEGACY: Media Blocks are retained only for the legacy renderer and rollback reference.
+// Active Projects and Learning content now use Layout Blocks.
 const mediaBlockItemSchema = z.discriminatedUnion('type', [
   z.object({
     type: z.literal('image'),
@@ -70,6 +72,7 @@ const mediaBlockItemSchema = z.discriminatedUnion('type', [
   }),
 ]);
 
+/** @deprecated Legacy Media Blocks. New content should use layoutBlockSchema. */
 export const mediaBlockSchema = z.union([
   mediaBlockItemSchema,
 
@@ -181,7 +184,6 @@ const projectCollection = defineCollection({
     client: z.string().default('Personal Project'),
     tags: z.array(z.string()).min(1),
     softwareUsed: z.array(z.string()).min(1),
-    mediaBlocks: z.array(mediaBlockSchema).optional(),
     layoutBlocks: z.array(layoutBlockSchema).optional(),
   }),
 });
@@ -205,7 +207,6 @@ const learningCollection = defineCollection({
     featured: z.boolean().default(false),
 
     // Shared media-block system used by Projects, Tutorials, and Breakdowns.
-    mediaBlocks: z.array(mediaBlockSchema).optional(),
     layoutBlocks: z.array(layoutBlockSchema).optional(),
   }),
 });
