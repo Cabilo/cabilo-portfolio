@@ -178,8 +178,6 @@ const projectCollection = defineCollection({
     thumbnail: z.string(),
     compressThumbnail: z.boolean().default(true),
     thumbnailCrop: thumbnailCropSchema.optional(),
-    showreelUrl: z.string().optional(),
-    showreelFitToViewport: z.boolean().default(true),
     role: z.string().default('Lead 3D Artist'),
     client: z.string().default('Personal Project'),
     tags: z.array(z.string()).min(1),
@@ -200,9 +198,6 @@ const learningCollection = defineCollection({
     thumbnail: z.string(),
     compressThumbnail: z.boolean().default(true),
     thumbnailCrop: thumbnailCropSchema.optional(),
-
-    // FIXED: Universal video URL for the optional top video.
-    videoUrl: z.string().optional(),
 
     featured: z.boolean().default(false),
 
