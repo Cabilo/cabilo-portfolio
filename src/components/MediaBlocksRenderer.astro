@@ -27,7 +27,7 @@ const { blocks, compact = false } = Astro.props;
 // HELPER FUNCTIONS
 // ------------------------------------------------------------
 
-const getTurntableFrames = (folder: string) => {
+const getTurntableFrames = (folder: string, compress: boolean) => {
   const folderPath = path.join(process.cwd(), 'public', folder);
 
   if (!fs.existsSync(folderPath)) return [];
@@ -47,7 +47,7 @@ const getTurntableFrames = (folder: string) => {
     .sort((a, b) => a.localeCompare(b, undefined, { numeric: true }));
 
   return [
-    ...sources.map(file => getOptimizedImagePath(`/${folder}/${file}`)),
+    ...sources.map(file => getOptimizedImagePath(`/${folder}/${file}`, compress)),
     ...webpOnly.map(file => `/${folder}/${file}`),
   ];
 };
@@ -138,7 +138,7 @@ const getAlignmentClasses = (
             ]}
           >
             <img
-              src={getOptimizedImagePath(block.image)}
+              src={getOptimizedImagePath(block.image, block.compress)}
               alt="Project Media"
               class:list={[
                 'block object-contain object-center select-none',
@@ -239,7 +239,7 @@ const getAlignmentClasses = (
   }
 
   if (block.type === 'turntable') {
-    const frames = getTurntableFrames(block.folder);
+    const frames = getTurntableFrames(block.folder, block.compress);
 
     if (frames.length === 0) return null;
 
@@ -292,7 +292,7 @@ const getAlignmentClasses = (
         )}
 
         <DynamicAov
-          passes={block.aovPasses.map((pass) => ({ ...pass, image: getOptimizedImagePath(pass.image) }))}
+          passes={block.aovPasses.map((pass) => ({ ...pass, image: getOptimizedImagePath(pass.image, block.compress) }))}
           fitToViewport={block.fitToViewport}
         />
 
