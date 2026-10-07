@@ -12,13 +12,32 @@ category: Lookdev
 thumbnail: https://cdna.artstation.com/p/assets/images/images/046/504/170/large/lucas-cabilo-ls-portraitheadscans-square-v001-0001.jpg?1645275374
 role: Senior 3D Artist
 client: Personal Project
-mediaBlocks:
-  - type: image
+layoutBlocks:
+  - id: cinematic-headscan-image
+    type: image
+    x: 0
+    y: 0
+    w: 10
+    h: 8
+    snap: grid
+    title: Image
+    fitMode: width-to-height
+    fitToViewport: true
+    assetAlignment: center
     image: https://cdna.artstation.com/p/assets/images/images/046/504/170/large/lucas-cabilo-ls-portraitheadscans-square-v001-0001.jpg?1645275374
-  - type: text_block
+  - id: cinematic-headscan-text
+    type: text
+    x: 0
+    y: 8
+    w: 10
+    h: 10
+    snap: grid
+    title: Lorem Ipsum
+    fitMode: none
+    fitToViewport: true
+    assetAlignment: auto
     content: >-
       # Where does it come from?
-
 
       > # **Contrary** to popular belief, *Lorem ~~Ipsum is **not**~~ **simply*** **random text. It has roots in** a piece of classical Latin literature from 45 BC, making it over 2000 years old. Richard McClintock, a Latin 
 
@@ -32,13 +51,22 @@ mediaBlocks:
 
       >
 
-      > ###  book is a treatise on the theory of ethics, very popular during the Renaissance. The first line of Lorem 
+      > ### book is a treatise on the theory of ethics, very popular during the Renaissance. The first line of Lorem 
 
       >
 
       > ## Ipsum, "Lorem ipsum dolor sit amet..", comes from a line in section 1.10.32.
-    title: Lorem Ipsum
-  - type: aov
+  - id: cinematic-headscan-aov
+    type: aov
+    x: 0
+    y: 18
+    w: 10
+    h: 8
+    snap: grid
+    title: AOV
+    fitMode: width-to-height
+    fitToViewport: true
+    assetAlignment: center
     aovPasses:
       - name: Viewport
         image: https://cdna.artstation.com/p/assets/images/images/046/500/860/large/lucas-cabilo-xgen.jpg?1645267427
