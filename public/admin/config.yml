@@ -239,6 +239,12 @@ collections:
                         name: "image"
                         widget: "image"
 
+                      - label: "Compress Image (WebP)"
+                        name: "compress"
+                        widget: "boolean"
+                        required: false
+                        default: true
+
                       - label: "Fit to viewport"
                         name: "fitToViewport"
                         widget: "boolean"
@@ -805,6 +811,12 @@ collections:
                       - label: "Image"
                         name: "image"
                         widget: "image"
+
+                      - label: "Compress Image (WebP)"
+                        name: "compress"
+                        widget: "boolean"
+                        required: false
+                        default: true
 
                       - label: "Fit to viewport"
                         name: "fitToViewport"
