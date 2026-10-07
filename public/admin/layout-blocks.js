@@ -498,9 +498,26 @@
         var ordered = tag === 'ol';
 
         return Array.prototype.map.call(node.children, function (item, index) {
+          var marker = ordered ? (index + 1) + '. ' : '- ';
+          var childBlocks = Array.prototype.filter.call(item.childNodes, function (child) {
+            return child.nodeType === 1 && /^(H[1-6]|BLOCKQUOTE|PRE|P|DIV|UL|OL)$/.test(child.tagName);
+          });
+
+          if (childBlocks.length === 1 && /^H[1-6]$/.test(childBlocks[0].tagName)) {
+            var heading = childBlocks[0];
+            var level = Number(heading.tagName.charAt(1));
+            var headingText = Array.prototype.map.call(heading.childNodes, inline).join('').trim();
+            return marker + '#'.repeat(level) + ' ' + headingText;
+          }
+
+          if (childBlocks.length === 1 && childBlocks[0].tagName === 'BLOCKQUOTE') {
+            var quote = Array.prototype.map.call(childBlocks[0].childNodes, inline).join('').trim();
+            return marker + '> ' + quote;
+          }
+
           var itemText = Array.prototype.map.call(item.childNodes, inline).join('').trim();
-          return (ordered ? (index + 1) + '. ' : '- ') + itemText;
-        }).join('\n');
+          return marker + itemText;
+        }).join('\\n');
       }
 
       if (tag === 'pre') {
@@ -823,28 +840,10 @@
       }, label);
     },
 
-    renderHeadingSelect: function () {
-      return h('select', {
-        className: 'cabilo-text-heading-select',
-        value: this.state.heading,
-        title: 'Heading level',
-        disabled: this.state.mode === 'raw',
-        onChange: function (event) {
-          var value = event.target.value;
-          if (!value) return;
-
-          this.rememberSelection();
-          this.formatBlock(value);
-          this.setState({ heading: value });
-        }.bind(this),
-      },
-        [1, 2, 3, 4, 5, 6].map(function (level) {
-          return h('option', {
-            key: level,
-            value: 'h' + level,
-          }, 'H' + level);
-        })
-      );
+    renderHeadingButton: function (level) {
+      return this.renderToolbarButton('H' + level, 'Heading ' + level, function () {
+        this.formatBlock('h' + level);
+      }.bind(this));
     },
 
     render: function () {
@@ -862,7 +861,13 @@
             this.execInline('strikeThrough');
           }.bind(this)),
           h('div', { className: 'cabilo-text-toolbar-divider' }),
-          this.renderHeadingSelect(),
+          this.renderHeadingButton(1),
+          this.renderHeadingButton(2),
+          this.renderHeadingButton(3),
+          this.renderHeadingButton(4),
+          this.renderHeadingButton(5),
+          this.renderHeadingButton(6),
+          h('div', { className: 'cabilo-text-toolbar-divider' }),
           this.renderToolbarButton('Quote', 'Toggle quote', function () {
             this.toggleQuote();
           }.bind(this)),
