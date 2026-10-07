@@ -14,11 +14,19 @@ softwareUsed:
   - ZBrush
   - Substance Painter
   - Unreal Engine 5
-mediaBlocks:
-  - type: turntable
-    folder: turntables/test/
+layoutBlocks:
+  - id: hard-surface-armor-1-turntable
+    type: turntable
+    x: 0
+    y: 0
+    w: 10
+    h: 8
+    snap: grid
     title: Turntable Body and Close-up
-turntable: ""
+    fitMode: width-to-height
+    fitToViewport: true
+    assetAlignment: center
+    folder: turntables/test/
 ---
 
 A hard surface design project focusing on mechanical articulation, weathering, and optimized topology for real-time cinematic rendering in Unreal Engine 5. 
