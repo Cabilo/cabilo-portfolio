@@ -1,6 +1,7 @@
 ---
 import Layout from '../layouts/Layout.astro';
 import LayoutBlocksRenderer from '../components/LayoutBlocksRenderer.astro';
+import type { LayoutBlock } from '../content.config';
 
 const images = {
   portrait: 'https://cdna.artstation.com/p/assets/images/images/046/504/170/large/lucas-cabilo-ls-portraitheadscans-square-v001-0001.jpg?1645275374',
@@ -8,7 +9,7 @@ const images = {
   topology: 'https://cdnb.artstation.com/p/assets/images/images/046/504/715/large/lucas-cabilo-uv-and-topo.jpg?1645276624',
 };
 
-const layoutBlocks = [
+const layoutBlocks: LayoutBlock[] = [
   {
     id: 'layout-test-two-column-a',
     type: 'image',
@@ -135,7 +136,7 @@ const layoutBlocks = [
     assetAlignment: 'center',
     image: images.portrait,
   },
-] as const;
+ ];
 ---
 
 <Layout title="Layout Test | CABILO" description="Temporary visual test page for CABILO media width and side-by-side layouts.">
@@ -152,7 +153,7 @@ const layoutBlocks = [
     </div>
 
     <div class="cabilo-media">
-      <LayoutBlocksRenderer blocks={layoutBlocks as any} />
+      <LayoutBlocksRenderer blocks={layoutBlocks} />
     </div>
   </main>
 </Layout>
