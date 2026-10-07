@@ -279,6 +279,23 @@
       margin-bottom: 8px;
     }
 
+
+    .cabilo-text-editor { display: flex; flex-direction: column; gap: 8px; }
+    .cabilo-text-toolbar { display: flex; flex-wrap: wrap; gap: 4px; align-items: center; padding: 6px; border: 1px solid #484f58; border-radius: 4px; background: #21262d; }
+    .cabilo-text-toolbar-button { appearance: none; border: 1px solid #484f58; border-radius: 4px; background: #30363d; color: #f0f6fc; min-width: 30px; height: 28px; padding: 0 7px; font: inherit; font-size: 12px; cursor: pointer; -webkit-text-fill-color: #f0f6fc; }
+    .cabilo-text-toolbar-button:hover, .cabilo-text-toolbar-button:focus { background: #484f58; border-color: #6e7681; color: #fff; -webkit-text-fill-color: #fff; outline: none; }
+    .cabilo-text-toolbar-divider { width: 1px; height: 20px; background: #484f58; margin: 0 3px; }
+    .cabilo-text-mode { margin-left: auto; display: flex; gap: 4px; }
+    .cabilo-text-mode-button { appearance: none; border: 1px solid #484f58; border-radius: 4px; background: transparent; color: #8b949e; padding: 5px 7px; font: inherit; font-size: 10px; cursor: pointer; -webkit-text-fill-color: #8b949e; }
+    .cabilo-text-mode-button.is-active { background: #484f58; color: #f0f6fc; -webkit-text-fill-color: #f0f6fc; }
+    .cabilo-text-rich { min-height: 140px; padding: 10px; border: 1px solid #484f58; border-radius: 4px; background: #21262d; color: #f0f6fc; font: inherit; font-size: 13px; line-height: 1.55; outline: none; overflow-y: auto; }
+    .cabilo-text-rich:focus { border-color: #fac018; background: #292f38; }
+    .cabilo-text-rich h1, .cabilo-text-rich h2, .cabilo-text-rich h3 { margin: 0 0 8px; }
+    .cabilo-text-rich p, .cabilo-text-rich blockquote, .cabilo-text-rich pre, .cabilo-text-rich ul, .cabilo-text-rich ol { margin: 0 0 8px; }
+    .cabilo-text-rich blockquote { margin-left: 0; padding-left: 10px; border-left: 3px solid #6e7681; color: #c9d1d9; }
+    .cabilo-text-rich code { font-family: ui-monospace, SFMono-Regular, Consolas, monospace; background: #161b22; padding: 1px 4px; border-radius: 3px; }
+    .cabilo-text-rich pre { padding: 8px; overflow-x: auto; background: #161b22; border-radius: 4px; }
+    .cabilo-text-raw { width: 100%; min-height: 140px; box-sizing: border-box; resize: vertical; font-family: ui-monospace, SFMono-Regular, Consolas, monospace; font-size: 12px; line-height: 1.5; }
     .cabilo-layout-status {
       color: #8b949e;
       font-size: 11px;
@@ -365,6 +382,187 @@
 
     return defaults;
   }
+
+
+  function escapeHtml(value) {
+    return String(value || '').replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
+  }
+
+  function markdownToHtml(markdown) {
+    var source = String(markdown || '').replace(/\r\n?/g, '\n');
+    var html = [];
+    var list = null;
+
+    function inline(value) {
+      var text = escapeHtml(value);
+      text = text.replace(/\[([^\]]+)\]\(([^)]+)\)/g, '<a href="$2">$1</a>');
+      text = text.replace(/\*\*([^*]+)\*\*/g, '<strong>$1</strong>');
+      text = text.replace(/__([^_]+)__/g, '<strong>$1</strong>');
+      text = text.replace(/~~([^~]+)~~/g, '<s>$1</s>');
+      text = text.replace(/\*([^*]+)\*/g, '<em>$1</em>');
+      text = text.replace(/_([^_]+)_/g, '<em>$1</em>');
+      text = text.replace(/\`([^\`]+)\`/g, '<code>$1</code>');
+      return text;
+    }
+
+    function closeList() {
+      if (list) { html.push('</' + list + '>'); list = null; }
+    }
+
+    source.split('\n').forEach(function (line) {
+      var heading = line.match(/^(#{1,6})\s+(.+)$/);
+      var unordered = line.match(/^\s*[-*+]\s+(.+)$/);
+      var ordered = line.match(/^\s*\d+[.)]\s+(.+)$/);
+
+      if (heading) {
+        closeList();
+        html.push('<h' + heading[1].length + '>' + inline(heading[2]) + '</h' + heading[1].length + '>');
+      } else if (unordered || ordered) {
+        var nextList = unordered ? 'ul' : 'ol';
+        var item = unordered ? unordered[1] : ordered[1];
+        if (list !== nextList) { closeList(); html.push('<' + nextList + '>'); list = nextList; }
+        html.push('<li>' + inline(item) + '</li>');
+      } else if (/^>\s?/.test(line)) {
+        closeList();
+        html.push('<blockquote>' + inline(line.replace(/^>\s?/, '')) + '</blockquote>');
+      } else if (line.trim() === '') {
+        closeList();
+      } else {
+        closeList();
+        html.push('<p>' + inline(line) + '</p>');
+      }
+    });
+
+    closeList();
+    return html.join('');
+  }
+
+  function htmlToMarkdown(root) {
+    function inline(node) {
+      if (node.nodeType === 3) return node.nodeValue;
+      if (node.nodeType !== 1) return '';
+      var tag = node.tagName.toLowerCase();
+      var text = Array.prototype.map.call(node.childNodes, inline).join('');
+      if (tag === 'strong' || tag === 'b') return '**' + text + '**';
+      if (tag === 'em' || tag === 'i') return '*' + text + '*';
+      if (tag === 's' || tag === 'strike' || tag === 'del') return '~~' + text + '~~';
+      if (tag === 'code') return '\`' + text + '\`';
+      if (tag === 'a') return '[' + text + '](' + (node.getAttribute('href') || '') + ')';
+      if (tag === 'br') return '\n';
+      return text;
+    }
+
+    function block(node) {
+      if (node.nodeType === 3) return node.nodeValue;
+      if (node.nodeType !== 1) return '';
+      var tag = node.tagName.toLowerCase();
+      var children = Array.prototype.map.call(node.childNodes, inline).join('');
+      if (/^h[1-6]$/.test(tag)) return '#'.repeat(Number(tag.charAt(1))) + ' ' + children.trim();
+      if (tag === 'blockquote') return children.trim().split('\n').map(function (line) { return '> ' + line; }).join('\n');
+      if (tag === 'ul' || tag === 'ol') {
+        var ordered = tag === 'ol';
+        return Array.prototype.map.call(node.children, function (item, index) {
+          return (ordered ? (index + 1) + '. ' : '- ') + item.textContent.trim();
+        }).join('\n');
+      }
+      if (tag === 'pre') return '    ' + node.textContent.trim().replace(/\n/g, '\n    ');
+      if (tag === 'p' || tag === 'div') return children.trim();
+      return inline(node).trim();
+    }
+
+    return Array.prototype.map.call(root.childNodes, block)
+      .map(function (value) { return value.trim(); })
+      .filter(Boolean)
+      .join('\n\n');
+  }
+
+  var CabiloTextEditor = createClass({
+    getInitialState: function () { return { mode: 'rich_text' }; },
+
+    componentDidMount: function () { this.syncRichText(); },
+
+    componentDidUpdate: function () {
+      if (this.state.mode === 'rich_text' && !this.isEditing) this.syncRichText();
+    },
+
+    syncRichText: function () {
+      if (!this.richNode) return;
+      var html = markdownToHtml(this.props.value || '');
+      if (this.richNode.innerHTML !== html) this.richNode.innerHTML = html;
+    },
+
+    setMode: function (mode) {
+      if (mode === this.state.mode) return;
+      this.setState({ mode: mode }, function () {
+        if (mode === 'rich_text') this.syncRichText();
+      });
+    },
+
+    emitMarkdown: function () {
+      if (this.richNode) this.props.onChange(htmlToMarkdown(this.richNode));
+    },
+
+    exec: function (command, value) {
+      if (!this.richNode) return;
+      this.richNode.focus();
+      document.execCommand(command, false, value || null);
+      this.emitMarkdown();
+    },
+
+    handleInput: function () {
+      this.isEditing = true;
+      this.emitMarkdown();
+      this.isEditing = false;
+    },
+
+    handleRawChange: function (event) { this.props.onChange(event.target.value); },
+
+    renderButton: function (label, command, value, title) {
+      return h('button', {
+        type: 'button',
+        className: 'cabilo-text-toolbar-button',
+        title: title || label,
+        onMouseDown: function (event) {
+          event.preventDefault();
+          this.exec(command, value);
+        }.bind(this),
+      }, label);
+    },
+
+    render: function () {
+      var raw = this.state.mode === 'raw';
+      return h('div', { className: 'cabilo-text-editor' },
+        h('div', { className: 'cabilo-text-toolbar' },
+          this.renderButton('B', 'bold', null, 'Bold'),
+          this.renderButton('I', 'italic', null, 'Italic'),
+          this.renderButton('S', 'strikeThrough', null, 'Strikethrough'),
+          h('div', { className: 'cabilo-text-toolbar-divider' }),
+          this.renderButton('H1', 'formatBlock', 'h1', 'Heading 1'),
+          this.renderButton('H2', 'formatBlock', 'h2', 'Heading 2'),
+          this.renderButton('H3', 'formatBlock', 'h3', 'Heading 3'),
+          this.renderButton('Quote', 'formatBlock', 'blockquote', 'Quote'),
+          this.renderButton('• List', 'insertUnorderedList', null, 'Bulleted list'),
+          this.renderButton('1. List', 'insertOrderedList', null, 'Numbered list'),
+          this.renderButton('Code', 'formatBlock', 'pre', 'Code block'),
+          h('div', { className: 'cabilo-text-mode' },
+            h('button', { type: 'button', className: 'cabilo-text-mode-button' + (raw ? '' : ' is-active'), onClick: function () { this.setMode('rich_text'); }.bind(this) }, 'Rich text'),
+            h('button', { type: 'button', className: 'cabilo-text-mode-button' + (raw ? ' is-active' : ''), onClick: function () { this.setMode('raw'); }.bind(this) }, 'Markdown')
+          )
+        ),
+        raw
+          ? h('textarea', { className: 'cabilo-text-raw', value: this.props.value || '', onChange: this.handleRawChange, spellCheck: false })
+          : h('div', {
+              className: 'cabilo-text-rich',
+              contentEditable: true,
+              suppressContentEditableWarning: true,
+              ref: function (node) { this.richNode = node; }.bind(this),
+              onInput: this.handleInput,
+              onFocus: function () { this.isEditing = true; },
+              onBlur: function () { this.isEditing = false; },
+            })
+      );
+    },
+  });
 
   var LayoutBlocksControl = createClass({
     getInitialState: function () {
@@ -790,10 +988,10 @@
       var contentControl;
 
       if (selected.type === 'text') {
-        contentControl = this.renderField('Content', h('textarea', {
+        contentControl = this.renderField('Content', h(CabiloTextEditor, {
           value: selected.content || '',
-          onChange: function (event) {
-            this.updateSelectedField('content', event.target.value);
+          onChange: function (value) {
+            this.updateSelectedField('content', value);
           }.bind(this),
         }));
       } else if (selected.type === 'image') {
