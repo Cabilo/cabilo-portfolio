@@ -165,26 +165,19 @@
       box-shadow: 0 12px 28px rgba(1,4,9,.55);
     }
 
-    /*
-     * When the widget itself is inside Decap's scrolling editor, keep the
-     * inspector attached to the bottom of the viewport without taking it
-     * out of Decap's normal field layout.
-     *
-     * The fixed presentation is applied to the inspector only after the
-     * widget is known to be visible; the widget itself remains untouched.
-     */
-    .cabilo-layout-widget.is-inspector-floating {
-      padding-bottom: 110px;
+    .cabilo-layout-inspector {
+      margin-top: 12px;
+      padding: 14px;
+      border: 1px solid #484f58;
+      border-radius: 6px;
+      background: #161b22;
+      box-shadow: 0 12px 28px rgba(1,4,9,.55);
     }
 
-    .cabilo-layout-widget.is-inspector-floating .cabilo-layout-inspector {
+    .cabilo-layout-inspector.is-floating-overlay {
       position: fixed;
-      left: var(--cabilo-layout-inspector-left, 0px);
-      bottom: var(--cabilo-layout-inspector-bottom, 12px);
-      width: var(--cabilo-layout-inspector-width, auto);
-      max-height: min(42vh, 520px);
-      overflow: auto;
-      z-index: 1000;
+      box-sizing: border-box;
+      z-index: 2147483640;
       margin: 0;
     }
 
@@ -406,6 +399,12 @@
       window.addEventListener('scroll', this.inspectorScrollHandler, true);
       window.addEventListener('resize', this.inspectorScrollHandler);
 
+      this.inspectorPortal = document.createElement('div');
+      this.inspectorPortal.className = 'cabilo-layout-inspector-portal';
+      document.body.appendChild(this.inspectorPortal);
+
+      this.setState({ inspectorPortalReady: true });
+
       this.inspectorFrame = requestAnimationFrame(this.updateInspectorFloating);
     },
 
@@ -425,32 +424,37 @@
     },
 
     updateInspectorFloating: function () {
-      if (!this.inspectorNode) return;
+      if (!this.inspectorNode || !this.inspectorPortal) return;
 
       var widget = this.inspectorNode.closest('.cabilo-layout-widget');
       if (!widget) return;
 
       var rect = widget.getBoundingClientRect();
-      var inspector = this.inspectorNode;
-
       var visible = rect.bottom > 0 && rect.top < window.innerHeight;
+
       if (!visible) {
-        widget.classList.remove('is-inspector-floating');
+        this.inspectorPortal.style.display = 'none';
         return;
       }
 
       var width = Math.min(rect.width, window.innerWidth - 24);
       var left = Math.max(12, Math.min(rect.left, window.innerWidth - width - 12));
+      var bottom = 12;
 
-      widget.style.setProperty('--cabilo-layout-inspector-left', left + 'px');
-      widget.style.setProperty('--cabilo-layout-inspector-width', width + 'px');
-      widget.style.setProperty('--cabilo-layout-inspector-bottom', '12px');
-
-      widget.classList.add('is-inspector-floating');
+      this.inspectorPortal.style.display = 'block';
+      this.inspectorPortal.style.position = 'fixed';
+      this.inspectorPortal.style.left = left + 'px';
+      this.inspectorPortal.style.bottom = bottom + 'px';
+      this.inspectorPortal.style.width = width + 'px';
+      this.inspectorPortal.style.zIndex = '2147483640';
     },
 
     componentWillUnmount: function () {
       this.stopInspectorFloating();
+      if (this.inspectorPortal && this.inspectorPortal.parentNode) {
+        this.inspectorPortal.parentNode.removeChild(this.inspectorPortal);
+      }
+      this.inspectorPortal = null;
       document.removeEventListener('keydown', this.handleKeyDown);
       document.removeEventListener('pointermove', this.handlePointerMove);
       document.removeEventListener('pointerup', this.handlePointerUp);
@@ -995,7 +999,6 @@
           'Constrained snaps to the 5-column grid; Free snaps to half-columns and half-rows. ',
           'The visible grid is only an editing aid — it is not stored as content.'
         ),
-        this.renderInspector(selected),
         h('div', { className: 'cabilo-layout-grid-wrap' },
           h('div', {
             className: 'cabilo-layout-grid',
@@ -1009,6 +1012,12 @@
               className: 'cabilo-layout-button cabilo-layout-add-row',
               onClick: this.addRows,
             }, '+ Add 1 Row')
+          : null,
+        this.state.inspectorPortalReady && this.inspectorPortal
+          ? window.ReactDOM.createPortal(
+              this.renderInspector(selected),
+              this.inspectorPortal
+            )
           : null
       );
     },
