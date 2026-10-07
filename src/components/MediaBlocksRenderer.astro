@@ -292,7 +292,8 @@ const getAlignmentClasses = (
         )}
 
         <DynamicAov
-          passes={block.aovPasses.map((pass) => ({ ...pass, image: getOptimizedImagePath(pass.image, block.compress) }))}
+          passes={block.aovPasses}
+          compress={block.compress}
           fitToViewport={block.fitToViewport}
         />
 
