@@ -14,12 +14,10 @@ const portugueseHref = cleanPath === '/' ? '/pt-br/' : `${getLocalePrefix('pt-br
 </div>
 
 <script>
-  document.addEventListener('astro:page-load', () => {
-    document.querySelectorAll('[data-language]').forEach((link) => {
-      link.addEventListener('click', () => {
-        const language = link.getAttribute('data-language');
-        if (language) localStorage.setItem('cabilo-language', language);
-      });
+  document.querySelectorAll('[data-language]').forEach((link) => {
+    link.addEventListener('click', () => {
+      const language = link.getAttribute('data-language');
+      if (language) localStorage.setItem('cabilo-language', language);
     });
   });
 </script>
