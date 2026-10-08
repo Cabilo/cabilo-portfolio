@@ -399,3 +399,52 @@ body {
 #nc-root [class*="Sidebar"] input:not([type="checkbox"]):not([type="radio"]) {
   padding-left: 28px !important;
 }
+
+/*
+ * Entry editor surfaces.
+ * Keep the editor pane on the same dark hierarchy as the collection overview.
+ * The preview/split-pane containers are explicitly covered because Decap can
+ * leave these surfaces on its light-theme default.
+ */
+#nc-root [class*="PreviewPane"],
+#nc-root [class*="PreviewContainer"],
+#nc-root [class*="NoPreviewContainer"],
+#nc-root [class*="splitPane"] {
+  background-color: var(--cabilo-cms-bg) !important;
+  color: var(--cabilo-cms-text) !important;
+  border-color: var(--cabilo-cms-border) !important;
+}
+
+#nc-root [class*="PreviewPane"] > div,
+#nc-root [class*="PreviewContainer"] > div,
+#nc-root [class*="NoPreviewContainer"] > div {
+  background-color: var(--cabilo-cms-bg) !important;
+  color: var(--cabilo-cms-text) !important;
+}
+
+/* Editor controls keep the same surface hierarchy as the collection page. */
+#nc-root [class*="EditorControlPane"] {
+  background-color: var(--cabilo-cms-bg) !important;
+}
+
+#nc-root [class*="EditorControlPane"] [class*="ControlContainer"] {
+  background-color: var(--cabilo-cms-surface) !important;
+}
+
+#nc-root [class*="EditorControlPane"] [class*="FieldLabel"] {
+  background-color: var(--cabilo-cms-surface) !important;
+}
+
+#nc-root [class*="EditorControlPane"] [class*="ControlContainer"] input,
+#nc-root [class*="EditorControlPane"] [class*="ControlContainer"] textarea,
+#nc-root [class*="EditorControlPane"] [class*="ControlContainer"] select {
+  background-color: var(--cabilo-cms-field) !important;
+}
+
+/* Disabled image/file actions should remain readable on dark surfaces. */
+#nc-root button:disabled {
+  color: var(--cabilo-cms-text-secondary) !important;
+  background-color: var(--cabilo-cms-field) !important;
+  border-color: var(--cabilo-cms-border) !important;
+  opacity: 0.9;
+}
