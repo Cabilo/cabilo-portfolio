@@ -66,6 +66,7 @@ const uniqueCategories = [locale === 'pt-br' ? 'Todos' : 'All', ...new Set(allPr
 
       button.addEventListener('click', () => {
         const selectedCategory = button.getAttribute('data-category');
+        const isAllFilter = button.getAttribute('data-all-filter') === 'true';
 
         buttons.forEach((btn) => {
           btn.classList.remove('text-brand-gold');
@@ -77,10 +78,7 @@ const uniqueCategories = [locale === 'pt-br' ? 'Todos' : 'All', ...new Set(allPr
         items.forEach((item) => {
           const itemCategory = item.getAttribute('data-category');
 
-          if (
-            selectedCategory === (locale === 'pt-br' ? 'Todos' : 'All') ||
-            itemCategory === selectedCategory
-          ) {
+          if (isAllFilter || itemCategory === selectedCategory) {
 
             item.setAttribute('style', 'display: block; opacity: 1; transform: scale(1);');
           } else {
