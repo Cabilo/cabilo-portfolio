@@ -18,7 +18,7 @@ layoutBlocks:
     x: 0
     y: 6
     w: 10
-    h: 6
+    h: 4
     snap: grid
     title: Image 1
     fitMode: width-to-height
@@ -35,7 +35,7 @@ layoutBlocks:
     x: 0
     y: 0
     w: 10
-    h: 6
+    h: 4
     snap: grid
     title: Image 2
     fitMode: width-to-height
@@ -118,9 +118,9 @@ layoutBlocks:
   - id: game-ready-arms-unannounced-game-title-07
     type: image
     x: 0
-    y: 32
-    w: 5
-    h: 6
+    y: 34
+    w: 10
+    h: 4
     snap: grid
     title: Image 7
     fitMode: width-to-height
@@ -134,10 +134,10 @@ layoutBlocks:
     aovPasses: []
   - id: game-ready-arms-unannounced-game-title-08
     type: image
-    x: 5
-    y: 32
-    w: 5
-    h: 6
+    x: 0
+    y: 30
+    w: 10
+    h: 4
     snap: grid
     title: Image 8
     fitMode: width-to-height
