@@ -1,6 +1,5 @@
 ---
 import { getEntry } from 'astro:content';
-import { ClientRouter } from 'astro:transitions';
 import '../styles/global.css';
 import Navbar from '../components/Navbar.astro';
 import Footer from '../components/Footer.astro';
@@ -78,7 +77,6 @@ const absoluteImageUrl = image.startsWith('http') ? image : new URL(image, siteU
       })();
     </script>
 
-    <ClientRouter />
   </head>
   <body class="bg-cabilo-obsidian text-text-silver min-h-screen font-sans antialiased flex flex-col">
     <Navbar />
