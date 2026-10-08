@@ -55,8 +55,8 @@ const uniqueCategories = [locale === 'pt-br' ? 'Todos' : 'All', ...new Set(allPr
 <!-- 3. The JavaScript that makes the filtering actually work! -->
 <script>
   function initPortfolioFilters() {
-    const buttons = document.querySelectorAll('.filter-btn');
-    const items = document.querySelectorAll('.project-item');
+    const buttons = document.querySelectorAll<HTMLButtonElement>('.filter-btn');
+    const items = document.querySelectorAll<HTMLElement>('.project-item');
 
     if (!buttons.length || !items.length) return;
 
@@ -66,6 +66,7 @@ const uniqueCategories = [locale === 'pt-br' ? 'Todos' : 'All', ...new Set(allPr
 
       button.addEventListener('click', () => {
         const selectedCategory = button.getAttribute('data-category');
+        const isAllFilter = button.getAttribute('data-all-filter') === 'true';
 
         buttons.forEach((btn) => {
           btn.classList.remove('text-brand-gold');
@@ -77,20 +78,17 @@ const uniqueCategories = [locale === 'pt-br' ? 'Todos' : 'All', ...new Set(allPr
         items.forEach((item) => {
           const itemCategory = item.getAttribute('data-category');
 
-          if (
-            selectedCategory === (locale === 'pt-br' ? 'Todos' : 'All') ||
-            itemCategory === selectedCategory
-          ) {
-            (item as HTMLElement).style.display = 'block';
+          if (isAllFilter || itemCategory === selectedCategory) {
+            item.style.display = 'block';
             setTimeout(() => {
-              (item as HTMLElement).style.opacity = '1';
-              (item as HTMLElement).style.transform = 'scale(1)';
+              item.style.opacity = '1';
+              item.style.transform = 'scale(1)';
             }, 50);
           } else {
-            (item as HTMLElement).style.opacity = '0';
-            (item as HTMLElement).style.transform = 'scale(0.95');
+            item.style.opacity = '0';
+            item.style.transform = 'scale(0.95');
             setTimeout(() => {
-              (item as HTMLElement).style.display = 'none';
+              item.style.display = 'none';
             }, 300);
           }
         });
