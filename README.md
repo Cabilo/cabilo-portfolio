@@ -469,3 +469,33 @@ When extending the system:
 5. Avoid adding compensating hacks in child components.
 
 The goal is a portfolio system that stays flexible as CABILO adds more projects, breakdowns, tutorials, media types, and interactive presentation features.
+
+
+---
+
+# Post Bilingual Check
+
+This section records the health-audit items identified after the bilingual EN/PT-BR implementation and the Vercel deployment/cache incident. These are reminders for future maintenance, not instructions to refactor immediately.
+
+## Known-good checkpoint
+
+Current confirmed working production checkpoint:
+
+- Commit: `1c95bdb8eac220f32903387a1ee354502cbe85e0`
+- Message: `fix: remove custom browser language redirect`
+- Production required a Vercel cache purge before the current CSS/assets loaded correctly.
+- Treat this commit as a rollback/safety point before risky future work.
+
+## Health-audit follow-ups
+
+1. **Navbar mobile hamburger** — currently broken on mobile after the latest changes. Audit and fix separately; do not mix this with unrelated architecture work.
+2. **LanguageSwitcher architecture** — currently working, but the language preference mechanism should eventually be reviewed so URL state is the authoritative source and unnecessary lifecycle/localStorage complexity is avoided.
+3. **Navbar lifecycle code** — review remaining `astro:page-load` / `astro:after-swap` handling now that `ClientRouter` has been removed. Do not change casually because Navbar desktop/mobile/iPad behavior has previously required several fixes.
+4. **Experimental Layout Block test content** — decide later which playground/test pages and test project entries should remain, be hidden, or be removed once Layout Blocks are considered stable.
+5. **Decap CMS repeated definitions** — consider a conservative DRY improvement later; do not refactor while working on unrelated features.
+6. **Tutorials/Breakdowns page duplication** — possible future shared detail-page component; leave untouched until there is a dedicated refactor pass.
+7. **Temporary test/deployment artifacts** — keep the repository free of one-off deployment trigger files after they are no longer needed.
+
+## ArtStation migration rule
+
+Before attempting the ArtStation migration again, start from this known-good checkpoint and add the imported project assets/content as a separate, controlled change. Do not combine the migration with unrelated cleanup or architecture changes.
