@@ -373,3 +373,18 @@ body {
 #nc-root [class*="Toolbar"] svg {
   background-color: transparent !important;
 }
+
+/*
+ * Collection overview surface hierarchy.
+ * These targeted overrides restore the visual separation chosen for the
+ * CMS overview: the sidebar and collection header sit one level above
+ * the page/card surfaces.
+ */
+#nc-root [class*="Sidebar"] {
+  background-color: var(--cabilo-cms-border) !important;
+}
+
+#nc-root [class*="CollectionTop"],
+#nc-root [class*="CollectionHeader"] {
+  background-color: var(--cabilo-cms-border) !important;
+}
