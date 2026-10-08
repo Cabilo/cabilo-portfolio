@@ -83,16 +83,16 @@ layoutBlocks:
     aovPasses: []
   - id: game-ready-arms-unannounced-game-title-05
     type: image
-    x: 0
+    x: 1
     y: 20
-    w: 5
+    w: 4
     h: 6
-    snap: grid
+    snap: free
     title: Image 5
     fitMode: width-to-height
     fitToViewport: true
     compress: true
-    assetAlignment: center
+    assetAlignment: right
     content: ""
     image: /artstation-organized/game-ready-arms-unannounced-game-title/game-ready-arms-unannounced-game-title_05.jpg
     videoUrl: ""
@@ -102,14 +102,14 @@ layoutBlocks:
     type: image
     x: 5
     y: 20
-    w: 5
+    w: 4
     h: 6
-    snap: grid
+    snap: free
     title: Image 6
     fitMode: width-to-height
     fitToViewport: true
     compress: true
-    assetAlignment: center
+    assetAlignment: left
     content: ""
     image: /artstation-organized/game-ready-arms-unannounced-game-title/game-ready-arms-unannounced-game-title_06.jpg
     videoUrl: ""
@@ -135,7 +135,7 @@ layoutBlocks:
   - id: game-ready-arms-unannounced-game-title-08
     type: image
     x: 0
-    y: 30
+    y: 28
     w: 10
     h: 4
     snap: grid
