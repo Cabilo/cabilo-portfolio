@@ -58,7 +58,7 @@ layoutBlocks:
     fitMode: width-to-height
     fitToViewport: true
     compress: true
-    assetAlignment: right
+    assetAlignment: center
     content: ""
     image: /artstation-organized/game-ready-arms-unannounced-game-title/game-ready-arms-unannounced-game-title_03.jpg
     videoUrl: ""
@@ -75,7 +75,7 @@ layoutBlocks:
     fitMode: width-to-height
     fitToViewport: true
     compress: true
-    assetAlignment: left
+    assetAlignment: center
     content: ""
     image: /artstation-organized/game-ready-arms-unannounced-game-title/game-ready-arms-unannounced-game-title_04.jpg
     videoUrl: ""
@@ -92,7 +92,7 @@ layoutBlocks:
     fitMode: width-to-height
     fitToViewport: true
     compress: true
-    assetAlignment: right
+    assetAlignment: center
     content: ""
     image: /artstation-organized/game-ready-arms-unannounced-game-title/game-ready-arms-unannounced-game-title_05.jpg
     videoUrl: ""
@@ -109,7 +109,7 @@ layoutBlocks:
     fitMode: width-to-height
     fitToViewport: true
     compress: true
-    assetAlignment: left
+    assetAlignment: center
     content: ""
     image: /artstation-organized/game-ready-arms-unannounced-game-title/game-ready-arms-unannounced-game-title_06.jpg
     videoUrl: ""
