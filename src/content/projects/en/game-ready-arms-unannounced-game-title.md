@@ -49,9 +49,9 @@ layoutBlocks:
     aovPasses: []
   - id: game-ready-arms-unannounced-game-title-03
     type: image
-    x: 1
+    x: 0
     y: 12
-    w: 4
+    w: 2
     h: 6
     snap: free
     title: Image 3
@@ -66,9 +66,9 @@ layoutBlocks:
     aovPasses: []
   - id: game-ready-arms-unannounced-game-title-04
     type: image
-    x: 5
+    x: 2
     y: 12
-    w: 4
+    w: 2
     h: 6
     snap: free
     title: Image 4
@@ -83,9 +83,9 @@ layoutBlocks:
     aovPasses: []
   - id: game-ready-arms-unannounced-game-title-05
     type: image
-    x: 1
-    y: 20
-    w: 4
+    x: 6
+    y: 12
+    w: 2
     h: 6
     snap: free
     title: Image 5
@@ -100,9 +100,9 @@ layoutBlocks:
     aovPasses: []
   - id: game-ready-arms-unannounced-game-title-06
     type: image
-    x: 5
-    y: 20
-    w: 4
+    x: 8
+    y: 12
+    w: 2
     h: 6
     snap: free
     title: Image 6
@@ -118,7 +118,7 @@ layoutBlocks:
   - id: game-ready-arms-unannounced-game-title-07
     type: image
     x: 0
-    y: 34
+    y: 26
     w: 10
     h: 4
     snap: grid
@@ -135,7 +135,7 @@ layoutBlocks:
   - id: game-ready-arms-unannounced-game-title-08
     type: image
     x: 0
-    y: 28
+    y: 20
     w: 10
     h: 4
     snap: grid
