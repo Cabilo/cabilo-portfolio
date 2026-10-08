@@ -544,3 +544,95 @@ body {
   color: var(--cabilo-cms-text) !important;
   -webkit-text-fill-color: var(--cabilo-cms-text) !important;
 }
+
+/* Manually tuned project-editor controls. */
+#nc-root [class*="ToggleBackground-BooleanBackground-css"] {
+  background-color: #4d4d4d !important;
+}
+
+#nc-root button[style*="padding: 10px 14px"][style*="font-weight: 600"] {
+  background-color: #24472d !important;
+  color: var(--cabilo-cms-text) !important;
+  border-color: var(--cabilo-cms-border-strong) !important;
+}
+
+#nc-root button[class*="FileWidgetButtonRemove-button-button-badge-backgroundBadge-backgroundBadge-badgeDanger-badgeDanger"] {
+  background-color: #971414 !important;
+  color: #fff !important;
+}
+
+/* React-select style dropdowns need a little internal breathing room so the
+ * first character never sits underneath the control edge/icon. */
+#nc-root [class*="ControlContainer"] div[class$="-control"] [class*="-singleValue"],
+#nc-root [class*="ControlContainer"] div[class$="-control"] [class*="-Input"] {
+  padding-left: 6px !important;
+}
+
+#nc-root select {
+  padding-left: 16px !important;
+}
+
+/* Toggle: dark grey when off, CABILO blue when on. */
+#nc-root [class*="ToggleBackground-BooleanBackground-css"] {
+  background-color: #4d4d4d !important;
+}
+
+#nc-root [role="switch"][aria-checked="true"] [class*="ToggleBackground-BooleanBackground-css"],
+#nc-root [class*="ToggleBackground-BooleanBackground-css"][aria-checked="true"] {
+  background-color: #0f4c75 !important;
+}
+
+/*
+ * Decap's media library is rendered in a portal outside #nc-root, so the
+ * normal CMS surface rules do not reach this dialog.
+ */
+body [role="dialog"] {
+  background-color: var(--cabilo-cms-surface) !important;
+  color: var(--cabilo-cms-text) !important;
+  border-color: var(--cabilo-cms-border) !important;
+  box-shadow: var(--cabilo-cms-shadow) !important;
+}
+
+body [role="dialog"] input:not([type="checkbox"]):not([type="radio"]),
+body [role="dialog"] textarea,
+body [role="dialog"] select {
+  background-color: var(--cabilo-cms-field) !important;
+  color: var(--cabilo-cms-text) !important;
+  border-color: var(--cabilo-cms-border-strong) !important;
+  -webkit-text-fill-color: var(--cabilo-cms-text) !important;
+}
+
+body [role="dialog"] button {
+  background-color: var(--cabilo-cms-field) !important;
+  color: var(--cabilo-cms-text) !important;
+  border-color: var(--cabilo-cms-border-strong) !important;
+}
+
+body [role="dialog"] button:hover {
+  background-color: var(--cabilo-cms-field-hover) !important;
+  color: #fff !important;
+}
+
+body [role="dialog"] [class*="Tab"],
+body [role="dialog"] [class*="Toolbar"] {
+  background-color: var(--cabilo-cms-surface) !important;
+  color: var(--cabilo-cms-text) !important;
+}
+
+body [role="dialog"] [class*="Search"],
+body [role="dialog"] [class*="search"] {
+  background-color: var(--cabilo-cms-field) !important;
+  color: var(--cabilo-cms-text) !important;
+}
+
+body [role="dialog"] [class*="FileCard"],
+body [role="dialog"] [class*="Card"] {
+  background-color: var(--cabilo-cms-field) !important;
+  color: var(--cabilo-cms-text) !important;
+  border-color: var(--cabilo-cms-border) !important;
+}
+
+body [role="dialog"] [class*="FileCard"]:hover,
+body [role="dialog"] [class*="Card"]:hover {
+  background-color: var(--cabilo-cms-field-hover) !important;
+}

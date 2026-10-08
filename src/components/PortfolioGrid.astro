@@ -22,8 +22,10 @@ const uniqueCategories = [locale === 'pt-br' ? 'Todos' : 'All', ...new Set(allPr
     <div id="filter-buttons" class="flex flex-wrap gap-4 md:gap-6 text-sm uppercase tracking-widest font-medium">
       {uniqueCategories.map((category, index) => (
         <button 
+          type="button"
           class={`filter-btn transition-colors duration-300 ${index === 0 ? 'text-brand-gold' : 'text-text-silver hover:text-text-white'}`}
           data-category={category}
+          data-all-filter={index === 0 ? 'true' : 'false'}
         >
           {category}
         </button>
@@ -52,46 +54,56 @@ const uniqueCategories = [locale === 'pt-br' ? 'Todos' : 'All', ...new Set(allPr
 
 <!-- 3. The JavaScript that makes the filtering actually work! -->
 <script>
-  // Wait for Astro to finish loading the page
-  document.addEventListener('astro:page-load', () => {
+  function initPortfolioFilters() {
     const buttons = document.querySelectorAll('.filter-btn');
     const items = document.querySelectorAll('.project-item');
 
-    buttons.forEach(button => {
+    if (!buttons.length || !items.length) return;
+
+    buttons.forEach((button) => {
+      if (button.getAttribute('data-filter-bound') === 'true') return;
+      button.setAttribute('data-filter-bound', 'true');
+
       button.addEventListener('click', () => {
-        // Find out what category was clicked
         const selectedCategory = button.getAttribute('data-category');
 
-        // Update Button Colors
-        buttons.forEach(btn => {
+        buttons.forEach((btn) => {
           btn.classList.remove('text-brand-gold');
           btn.classList.add('text-text-silver', 'hover:text-text-white');
         });
         button.classList.add('text-brand-gold');
         button.classList.remove('text-text-silver', 'hover:text-text-white');
 
-        // Filter the Items
-        items.forEach(item => {
+        items.forEach((item) => {
           const itemCategory = item.getAttribute('data-category');
-          
-          if (selectedCategory === (locale === 'pt-br' ? 'Todos' : 'All') || itemCategory === selectedCategory) {
-            // Show the item
+
+          if (
+            selectedCategory === (locale === 'pt-br' ? 'Todos' : 'All') ||
+            itemCategory === selectedCategory
+          ) {
             (item as HTMLElement).style.display = 'block';
-            // Slight delay for a smooth fade-in effect
             setTimeout(() => {
               (item as HTMLElement).style.opacity = '1';
               (item as HTMLElement).style.transform = 'scale(1)';
             }, 50);
           } else {
-            // Hide the item smoothly
             (item as HTMLElement).style.opacity = '0';
-            (item as HTMLElement).style.transform = 'scale(0.95)';
+            (item as HTMLElement).style.transform = 'scale(0.95');
             setTimeout(() => {
               (item as HTMLElement).style.display = 'none';
-            }, 300); // Matches the CSS transition duration
+            }, 300);
           }
         });
       });
     });
-  });
+  }
+
+  // Support both the first page load and Astro client-side navigation.
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', initPortfolioFilters, { once: true });
+  } else {
+    initPortfolioFilters();
+  }
+
+  document.addEventListener('astro:page-load', initPortfolioFilters);
 </script>
