@@ -441,6 +441,11 @@ const maxBottom = Math.max(
     cursor: zoom-out;
   }
 
+  .cabilo-layout-media[data-layout-image-idle="true"],
+  .cabilo-layout-media[data-layout-image-idle="true"] img {
+    cursor: none;
+  }
+
   .cabilo-layout-image-open {
     position: absolute;
     left: 50%;
@@ -679,6 +684,7 @@ const maxBottom = Math.max(
 
       const resetIdleTimer = () => {
         openButton.removeAttribute('data-idle');
+        container.dataset.layoutImageIdle = 'false';
 
         if (idleTimer !== undefined) {
           window.clearTimeout(idleTimer);
@@ -686,7 +692,8 @@ const maxBottom = Math.max(
 
         idleTimer = window.setTimeout(() => {
           openButton.setAttribute('data-idle', 'true');
-        }, 1500);
+          container.dataset.layoutImageIdle = 'true';
+        }, 900);
       };
 
       const setZoomOrigin = (event) => {
