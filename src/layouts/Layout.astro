@@ -53,30 +53,6 @@ const absoluteImageUrl = image.startsWith('http') ? image : new URL(image, siteU
 
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
 
-    <script is:inline>
-      (() => {
-        const path = window.location.pathname.replace(/\/+$/, '') || '/';
-        if (path !== '/' && path !== '/pt-br') return;
-
-        const stored = window.localStorage.getItem('cabilo-language');
-        const browserWantsPortuguese = navigator.languages?.some((language) => language.toLowerCase().startsWith('pt'))
-          || navigator.language.toLowerCase().startsWith('pt');
-
-        const preferred = stored === 'pt-br'
-          ? 'pt-br'
-          : stored === 'en'
-            ? 'en'
-            : browserWantsPortuguese
-              ? 'pt-br'
-              : 'en';
-
-        const target = preferred === 'pt-br' ? '/pt-br/' : '/';
-        const current = window.location.pathname.replace(/\/+$/, '') || '/';
-
-        if (target.replace(/\/+$/, '') !== current) window.location.replace(target);
-      })();
-    </script>
-
   </head>
   <body class="bg-cabilo-obsidian text-text-silver min-h-screen font-sans antialiased flex flex-col">
     <Navbar />
