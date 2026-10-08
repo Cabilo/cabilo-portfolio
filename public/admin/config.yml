@@ -117,7 +117,6 @@ collections:
         widget: "markdown"
         required: false
         i18n: true
-        i18n: true
 
   - name: "projects"
     label: "Projects"
