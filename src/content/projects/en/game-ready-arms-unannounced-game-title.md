@@ -2,6 +2,7 @@
 title: Game ready Arms - Unannounced Game Title
 category: Game Art
 thumbnail: /artstation-organized/game-ready-arms-unannounced-game-title/game-ready-arms-unannounced-game-title_01.jpg
+compressThumbnail: false
 role: Lead 3D Artist
 client: Personal Project
 tags:
@@ -15,11 +16,11 @@ layoutBlocks:
   - id: game-ready-arms-unannounced-game-title-01
     type: image
     x: 0
-    y: 0
-    w: 5
+    y: 6
+    w: 10
     h: 6
     snap: grid
-    title: "Image 1"
+    title: Image 1
     fitMode: width-to-height
     fitToViewport: true
     compress: true
@@ -31,12 +32,12 @@ layoutBlocks:
     aovPasses: []
   - id: game-ready-arms-unannounced-game-title-02
     type: image
-    x: 5
+    x: 0
     y: 0
-    w: 5
+    w: 10
     h: 6
     snap: grid
-    title: "Image 2"
+    title: Image 2
     fitMode: width-to-height
     fitToViewport: true
     compress: true
@@ -48,16 +49,16 @@ layoutBlocks:
     aovPasses: []
   - id: game-ready-arms-unannounced-game-title-03
     type: image
-    x: 0
-    y: 6
-    w: 5
+    x: 1
+    y: 12
+    w: 4
     h: 6
-    snap: grid
-    title: "Image 3"
+    snap: free
+    title: Image 3
     fitMode: width-to-height
     fitToViewport: true
     compress: true
-    assetAlignment: center
+    assetAlignment: right
     content: ""
     image: /artstation-organized/game-ready-arms-unannounced-game-title/game-ready-arms-unannounced-game-title_03.jpg
     videoUrl: ""
@@ -66,15 +67,15 @@ layoutBlocks:
   - id: game-ready-arms-unannounced-game-title-04
     type: image
     x: 5
-    y: 6
-    w: 5
+    y: 12
+    w: 4
     h: 6
-    snap: grid
-    title: "Image 4"
+    snap: free
+    title: Image 4
     fitMode: width-to-height
     fitToViewport: true
     compress: true
-    assetAlignment: center
+    assetAlignment: left
     content: ""
     image: /artstation-organized/game-ready-arms-unannounced-game-title/game-ready-arms-unannounced-game-title_04.jpg
     videoUrl: ""
@@ -83,11 +84,11 @@ layoutBlocks:
   - id: game-ready-arms-unannounced-game-title-05
     type: image
     x: 0
-    y: 12
+    y: 20
     w: 5
     h: 6
     snap: grid
-    title: "Image 5"
+    title: Image 5
     fitMode: width-to-height
     fitToViewport: true
     compress: true
@@ -100,11 +101,11 @@ layoutBlocks:
   - id: game-ready-arms-unannounced-game-title-06
     type: image
     x: 5
-    y: 12
+    y: 20
     w: 5
     h: 6
     snap: grid
-    title: "Image 6"
+    title: Image 6
     fitMode: width-to-height
     fitToViewport: true
     compress: true
@@ -117,11 +118,11 @@ layoutBlocks:
   - id: game-ready-arms-unannounced-game-title-07
     type: image
     x: 0
-    y: 18
+    y: 32
     w: 5
     h: 6
     snap: grid
-    title: "Image 7"
+    title: Image 7
     fitMode: width-to-height
     fitToViewport: true
     compress: true
@@ -134,11 +135,11 @@ layoutBlocks:
   - id: game-ready-arms-unannounced-game-title-08
     type: image
     x: 5
-    y: 18
+    y: 32
     w: 5
     h: 6
     snap: grid
-    title: "Image 8"
+    title: Image 8
     fitMode: width-to-height
     fitToViewport: true
     compress: true

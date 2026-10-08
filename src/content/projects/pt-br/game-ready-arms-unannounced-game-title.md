@@ -12,142 +12,142 @@ tags:
 softwareUsed:
   - Unreal Engine 4
 layoutBlocks:
-  - id: game-ready-arms-unannounced-game-title-01
-    type: image
-    x: 0
-    y: 0
-    w: 5
+  - compress: true
+    aovPasses: []
     h: 6
     snap: grid
-    title: "Image 1"
-    fitMode: width-to-height
+    folder: ""
     fitToViewport: true
-    compress: true
     assetAlignment: center
+    fitMode: width-to-height
+    videoUrl: ""
+    w: 5
+    x: 0
+    title: Image 1
+    y: 0
     content: ""
+    type: image
+    id: game-ready-arms-unannounced-game-title-01
     image: /artstation-organized/game-ready-arms-unannounced-game-title/game-ready-arms-unannounced-game-title_01.jpg
-    videoUrl: ""
-    folder: ""
+  - compress: true
     aovPasses: []
-  - id: game-ready-arms-unannounced-game-title-02
-    type: image
+    h: 6
+    snap: grid
+    folder: ""
+    fitToViewport: true
+    assetAlignment: center
+    fitMode: width-to-height
+    videoUrl: ""
+    w: 5
     x: 5
+    title: Image 2
     y: 0
-    w: 5
-    h: 6
-    snap: grid
-    title: "Image 2"
-    fitMode: width-to-height
-    fitToViewport: true
-    compress: true
-    assetAlignment: center
     content: ""
+    type: image
+    id: game-ready-arms-unannounced-game-title-02
     image: /artstation-organized/game-ready-arms-unannounced-game-title/game-ready-arms-unannounced-game-title_02.jpg
-    videoUrl: ""
-    folder: ""
+  - compress: true
     aovPasses: []
-  - id: game-ready-arms-unannounced-game-title-03
-    type: image
-    x: 0
-    y: 6
-    w: 5
     h: 6
     snap: grid
-    title: "Image 3"
-    fitMode: width-to-height
+    folder: ""
     fitToViewport: true
-    compress: true
     assetAlignment: center
+    fitMode: width-to-height
+    videoUrl: ""
+    w: 5
+    x: 0
+    title: Image 3
+    y: 6
     content: ""
+    type: image
+    id: game-ready-arms-unannounced-game-title-03
     image: /artstation-organized/game-ready-arms-unannounced-game-title/game-ready-arms-unannounced-game-title_03.jpg
-    videoUrl: ""
-    folder: ""
+  - compress: true
     aovPasses: []
-  - id: game-ready-arms-unannounced-game-title-04
-    type: image
+    h: 6
+    snap: grid
+    folder: ""
+    fitToViewport: true
+    assetAlignment: center
+    fitMode: width-to-height
+    videoUrl: ""
+    w: 5
     x: 5
+    title: Image 4
     y: 6
-    w: 5
-    h: 6
-    snap: grid
-    title: "Image 4"
-    fitMode: width-to-height
-    fitToViewport: true
-    compress: true
-    assetAlignment: center
     content: ""
+    type: image
+    id: game-ready-arms-unannounced-game-title-04
     image: /artstation-organized/game-ready-arms-unannounced-game-title/game-ready-arms-unannounced-game-title_04.jpg
-    videoUrl: ""
-    folder: ""
+  - compress: true
     aovPasses: []
-  - id: game-ready-arms-unannounced-game-title-05
-    type: image
-    x: 0
-    y: 12
-    w: 5
     h: 6
     snap: grid
-    title: "Image 5"
-    fitMode: width-to-height
+    folder: ""
     fitToViewport: true
-    compress: true
     assetAlignment: center
+    fitMode: width-to-height
+    videoUrl: ""
+    w: 5
+    x: 0
+    title: Image 5
+    y: 12
     content: ""
+    type: image
+    id: game-ready-arms-unannounced-game-title-05
     image: /artstation-organized/game-ready-arms-unannounced-game-title/game-ready-arms-unannounced-game-title_05.jpg
-    videoUrl: ""
-    folder: ""
+  - compress: true
     aovPasses: []
-  - id: game-ready-arms-unannounced-game-title-06
-    type: image
+    h: 6
+    snap: grid
+    folder: ""
+    fitToViewport: true
+    assetAlignment: center
+    fitMode: width-to-height
+    videoUrl: ""
+    w: 5
     x: 5
+    title: Image 6
     y: 12
-    w: 5
-    h: 6
-    snap: grid
-    title: "Image 6"
-    fitMode: width-to-height
-    fitToViewport: true
-    compress: true
-    assetAlignment: center
     content: ""
+    type: image
+    id: game-ready-arms-unannounced-game-title-06
     image: /artstation-organized/game-ready-arms-unannounced-game-title/game-ready-arms-unannounced-game-title_06.jpg
-    videoUrl: ""
-    folder: ""
+  - compress: true
     aovPasses: []
-  - id: game-ready-arms-unannounced-game-title-07
-    type: image
+    h: 6
+    snap: grid
+    folder: ""
+    fitToViewport: true
+    assetAlignment: center
+    fitMode: width-to-height
+    videoUrl: ""
+    w: 5
     x: 0
+    title: Image 7
     y: 18
-    w: 5
-    h: 6
-    snap: grid
-    title: "Image 7"
-    fitMode: width-to-height
-    fitToViewport: true
-    compress: true
-    assetAlignment: center
     content: ""
-    image: /artstation-organized/game-ready-arms-unannounced-game-title/game-ready-arms-unannounced-game-title_07.jpg
-    videoUrl: ""
-    folder: ""
-    aovPasses: []
-  - id: game-ready-arms-unannounced-game-title-08
     type: image
-    x: 5
-    y: 18
-    w: 5
+    id: game-ready-arms-unannounced-game-title-07
+    image: /artstation-organized/game-ready-arms-unannounced-game-title/game-ready-arms-unannounced-game-title_07.jpg
+  - compress: true
+    aovPasses: []
     h: 6
     snap: grid
-    title: "Image 8"
-    fitMode: width-to-height
-    fitToViewport: true
-    compress: true
-    assetAlignment: center
-    content: ""
-    image: /artstation-organized/game-ready-arms-unannounced-game-title/game-ready-arms-unannounced-game-title_08.jpg
-    videoUrl: ""
     folder: ""
-    aovPasses: []
+    fitToViewport: true
+    assetAlignment: center
+    fitMode: width-to-height
+    videoUrl: ""
+    w: 5
+    x: 5
+    title: Image 8
+    y: 18
+    content: ""
+    type: image
+    id: game-ready-arms-unannounced-game-title-08
+    image: /artstation-organized/game-ready-arms-unannounced-game-title/game-ready-arms-unannounced-game-title_08.jpg
 ---
 Game ready Arms - Unannounced Game Title.
 
