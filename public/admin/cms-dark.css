@@ -448,3 +448,51 @@ body {
   border-color: var(--cabilo-cms-border) !important;
   opacity: 0.9;
 }
+
+/* Entry-editor controls: make utility buttons readable on dark fields. */
+#nc-root [class*="EditorControlPane"] button {
+  background-color: var(--cabilo-cms-field) !important;
+  color: var(--cabilo-cms-text) !important;
+  border-color: var(--cabilo-cms-border-strong) !important;
+}
+
+#nc-root [class*="EditorControlPane"] button:hover {
+  background-color: var(--cabilo-cms-field-hover) !important;
+  color: #fff !important;
+}
+
+/* Toggle controls: make the on/off state obvious against the dark field. */
+#nc-root [class*="EditorControlPane"] [role="switch"] {
+  background-color: var(--cabilo-cms-border-strong) !important;
+  border-color: var(--cabilo-cms-border-strong) !important;
+}
+
+#nc-root [class*="EditorControlPane"] [role="switch"][aria-checked="true"] {
+  background-color: #0f4c75 !important;
+  border-color: #0f4c75 !important;
+}
+
+#nc-root [class*="EditorControlPane"] input[type="checkbox"]:checked + * {
+  background-color: #0f4c75 !important;
+}
+
+/* Rich-text / Markdown editing area: use the same field surface and text. */
+#nc-root [class*="EditorControlPane"] [contenteditable="true"],
+#nc-root [class*="EditorControlPane"] [class*="DraftEditor"],
+#nc-root [class*="EditorControlPane"] [class*="RichTextEditor"],
+#nc-root [class*="EditorControlPane"] [class*="MarkdownEditor"] {
+  background-color: var(--cabilo-cms-field) !important;
+  color: var(--cabilo-cms-text) !important;
+  border-color: var(--cabilo-cms-border-strong) !important;
+  -webkit-text-fill-color: var(--cabilo-cms-text) !important;
+}
+
+#nc-root [class*="EditorControlPane"] [contenteditable="true"] p,
+#nc-root [class*="EditorControlPane"] [contenteditable="true"] div {
+  color: var(--cabilo-cms-text) !important;
+}
+
+#nc-root [class*="EditorControlPane"] [class*="RichTextEditor"] [class*="Toolbar"],
+#nc-root [class*="EditorControlPane"] [class*="MarkdownEditor"] [class*="Toolbar"] {
+  background-color: var(--cabilo-cms-surface) !important;
+}
