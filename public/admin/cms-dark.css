@@ -496,3 +496,51 @@ body {
 #nc-root [class*="EditorControlPane"] [class*="MarkdownEditor"] [class*="Toolbar"] {
   background-color: var(--cabilo-cms-surface) !important;
 }
+
+/*
+ * Exact Decap file-widget controls.
+ * These widgets use generated class names and their own badge backgrounds,
+ * so the generic button rules above do not reach the visible backgrounds.
+ */
+#nc-root button[class*="FileWidgetButton-button-button-badge-backgroundBadge-backgroundBadge-badge"] {
+  background-color: var(--cabilo-cms-field) !important;
+  color: var(--cabilo-cms-text) !important;
+  border-color: var(--cabilo-cms-border-strong) !important;
+}
+
+#nc-root button[class*="FileWidgetButtonRemove-button-button-badgeDanger-badgeDanger"] {
+  background-color: var(--cabilo-cms-danger-bg) !important;
+  color: #ffb4ad !important;
+  border-color: var(--cabilo-cms-danger) !important;
+}
+
+/* The custom thumbnail crop button has inline colors, so override those
+ * inline values explicitly while keeping the button's existing layout. */
+#nc-root button[style*="background: rgb(123 46 46)"] {
+  background-color: var(--cabilo-cms-field) !important;
+  color: var(--cabilo-cms-text) !important;
+  border-color: var(--cabilo-cms-border-strong) !important;
+}
+
+/*
+ * Slate rich-text editor.
+ * Decap's editor body is a contenteditable surface, not a normal textarea,
+ * so the generic input rules do not apply to it.
+ */
+#nc-root [class*="lshhuz"] {
+  background-color: var(--cabilo-cms-field) !important;
+  color: var(--cabilo-cms-text) !important;
+  border-color: var(--cabilo-cms-border-strong) !important;
+}
+
+#nc-root [data-slate-editor="true"] {
+  background-color: var(--cabilo-cms-field) !important;
+  color: var(--cabilo-cms-text) !important;
+  -webkit-text-fill-color: var(--cabilo-cms-text) !important;
+}
+
+#nc-root [data-slate-editor="true"] [data-slate-string="true"],
+#nc-root [data-slate-editor="true"] p {
+  color: var(--cabilo-cms-text) !important;
+  -webkit-text-fill-color: var(--cabilo-cms-text) !important;
+}
