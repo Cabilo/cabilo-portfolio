@@ -388,3 +388,14 @@ body {
 #nc-root [class*="CollectionHeader"] {
   background-color: var(--cabilo-cms-border) !important;
 }
+
+/* Active collection and sidebar search. */
+#nc-root [class*="Sidebar"] [aria-selected="true"],
+#nc-root [class*="Sidebar"] [class*="active"] {
+  background-color: #0f4c75 !important;
+  color: var(--cabilo-cms-text) !important;
+}
+
+#nc-root [class*="Sidebar"] input:not([type="checkbox"]):not([type="radio"]) {
+  padding-left: 28px !important;
+}
