@@ -109,14 +109,35 @@ const maxBottom = Math.max(
 
         if (block.type === 'image') {
           return (
-            <div class="cabilo-layout-media">
+            <div class="cabilo-layout-media" data-layout-image-container>
               <img
                 src={getOptimizedImagePath(block.image, block.compress)}
                 alt={block.title || 'Project media'}
                 loading="lazy"
                 draggable="false"
                 data-layout-asset
+                data-layout-zoom-image
               />
+
+              <a
+                href={block.image}
+                target="_blank"
+                rel="noopener noreferrer"
+                class="cabilo-layout-image-open"
+                data-layout-image-open
+                aria-label="Open image in a new tab"
+                title="Open image in a new tab"
+              >
+                <svg
+                  viewBox="0 0 24 24"
+                  aria-hidden="true"
+                >
+                  <path d="M14 5h5v5"></path>
+                  <path d="M19 5l-8 8"></path>
+                  <path d="M18 13v5a1 1 0 0 1-1 1H6a1 1 0 0 1-1-1V7a1 1 0 0 1 1-1h5"></path>
+                </svg>
+                <span>Open image</span>
+              </a>
             </div>
           );
         }
@@ -409,6 +430,65 @@ const maxBottom = Math.max(
     height: 100%;
     object-fit: contain;
     object-position: center;
+    transform: scale(1);
+    transform-origin: 50% 50%;
+    transition: transform 120ms ease-out;
+    will-change: transform;
+    cursor: zoom-in;
+    user-select: none;
+  }
+
+  .cabilo-layout-media[data-layout-image-zoomed="true"] img {
+    cursor: zoom-out;
+  }
+
+  .cabilo-layout-image-open {
+    position: absolute;
+    left: 50%;
+    bottom: 12px;
+    z-index: 10;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 7px;
+    min-width: 112px;
+    min-height: 38px;
+    padding: 8px 14px;
+    box-sizing: border-box;
+    transform: translateX(-50%);
+    border: 1px solid rgb(255 255 255 / 18%);
+    border-radius: 6px;
+    background: rgb(20 20 24 / 78%);
+    color: rgb(255 255 255 / 92%);
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    text-decoration: none;
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
+    opacity: 1;
+    transition: opacity 300ms ease, background-color 200ms ease;
+  }
+
+  .cabilo-layout-image-open:hover {
+    background: rgb(20 20 24 / 92%);
+  }
+
+  .cabilo-layout-image-open svg {
+    width: 15px;
+    height: 15px;
+    fill: none;
+    stroke: currentColor;
+    stroke-width: 1.8;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+    flex: 0 0 auto;
+  }
+
+  .cabilo-layout-image-open[data-idle="true"] {
+    opacity: 0;
+    pointer-events: none;
   }
 
   .cabilo-layout-video iframe,
@@ -578,6 +658,99 @@ const maxBottom = Math.max(
 <script>
   const layoutSections = document.querySelectorAll('.cabilo-layout-blocks');
 
+  const setupLayoutImageInteractions = (section) => {
+    const containers = section.querySelectorAll('[data-layout-image-container]');
+
+    containers.forEach((container) => {
+      if (!(container instanceof HTMLElement)) return;
+      if (container.dataset.imageInteractionInitialized === 'true') return;
+
+      const image = container.querySelector('[data-layout-zoom-image]');
+      const openButton = container.querySelector('[data-layout-image-open]');
+
+      if (!(image instanceof HTMLImageElement)) return;
+      if (!(openButton instanceof HTMLAnchorElement)) return;
+
+      container.dataset.imageInteractionInitialized = 'true';
+
+      let scale = 1;
+      const minScale = 1;
+      const maxScale = 4;
+      let idleTimer;
+
+      const resetIdleTimer = () => {
+        openButton.removeAttribute('data-idle');
+
+        if (idleTimer !== undefined) {
+          window.clearTimeout(idleTimer);
+        }
+
+        idleTimer = window.setTimeout(() => {
+          openButton.setAttribute('data-idle', 'true');
+        }, 1500);
+      };
+
+      const setZoomOrigin = (event) => {
+        const rect = container.getBoundingClientRect();
+
+        if (!rect.width || !rect.height) return;
+
+        const x = Math.max(
+          0,
+          Math.min(100, ((event.clientX - rect.left) / rect.width) * 100),
+        );
+
+        const y = Math.max(
+          0,
+          Math.min(100, ((event.clientY - rect.top) / rect.height) * 100),
+        );
+
+        image.style.transformOrigin = `${x}% ${y}%`;
+      };
+
+      const updateZoom = (event) => {
+        if (event.deltaY === 0) return;
+
+        const nextScale = Math.min(
+          maxScale,
+          Math.max(minScale, scale + event.deltaY * -0.0025),
+        );
+
+        if (nextScale !== scale) {
+          event.preventDefault();
+          setZoomOrigin(event);
+          scale = nextScale;
+          image.style.transform = `scale(${scale})`;
+          container.dataset.layoutImageZoomed = scale > minScale ? 'true' : 'false';
+        }
+
+        resetIdleTimer();
+      };
+
+      const resetZoom = () => {
+        scale = 1;
+        image.style.transform = 'scale(1)';
+        image.style.transformOrigin = '50% 50%';
+        container.dataset.layoutImageZoomed = 'false';
+      };
+
+      container.addEventListener('wheel', updateZoom, { passive: false });
+
+      container.addEventListener('mousemove', (event) => {
+        resetIdleTimer();
+
+        if (scale > minScale) {
+          setZoomOrigin(event);
+        }
+      });
+
+      container.addEventListener('mouseenter', resetIdleTimer);
+      container.addEventListener('mouseleave', resetZoom);
+
+      resetIdleTimer();
+    });
+  };
+
   const setAssetRatio = (frame, width, height) => {
     if (!width || !height) return;
 
@@ -666,6 +839,8 @@ const maxBottom = Math.max(
   };
 
   layoutSections.forEach((section) => {
+    setupLayoutImageInteractions(section);
+
     const aspectFrames = section.querySelectorAll(
       '.cabilo-layout-frame[data-fit-mode]:not([data-fit-mode="none"])',
     );
