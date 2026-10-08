@@ -917,6 +917,7 @@ const maxBottom = Math.max(
           y,
           w,
           h,
+          resolvedX: x,
           resolvedY: y,
           resolvedW: w,
           resolvedH: h,
@@ -1063,23 +1064,80 @@ const maxBottom = Math.max(
 
       const rowOffsets = new Map();
       let previousPhysicalBottom = 0;
+      let previousAuthoredBottom = 0;
 
       rowStarts.forEach((rowStart) => {
         const rowItems = resolved.filter((item) => item.y === rowStart);
-        const rowOffset = Math.max(0, previousPhysicalBottom - rowStart);
+
+        /*
+         * Preserve the gap the author created in the CMS.
+         *
+         * If a previous row grows because of its real content footprint,
+         * later rows are pushed down, but their authored empty rows remain
+         * intact. Collision handling therefore expands a row without
+         * collapsing the deliberate spacing after it.
+         */
+        const authoredGap = Math.max(0, rowStart - previousAuthoredBottom);
+        const physicalTop = Math.max(
+          rowStart,
+          previousPhysicalBottom + authoredGap,
+        );
+        const rowOffset = physicalTop - rowStart;
 
         rowOffsets.set(rowStart, rowOffset);
 
         const physicalBottom = Math.max(
           ...rowItems.map(
-            (item) => rowStart + rowOffset + item.collisionH,
+            (item) => physicalTop + item.collisionH,
           ),
         );
 
-        previousPhysicalBottom = Math.max(
-          previousPhysicalBottom,
-          physicalBottom,
+        previousPhysicalBottom = physicalBottom;
+        previousAuthoredBottom = Math.max(
+          previousAuthoredBottom,
+          ...rowItems.map((item) => rowStart + item.h),
         );
+      });
+
+      /*
+       * A common intentional composition is four equal one-column blocks
+       * with one empty column between the pairs in the 5-column CMS grid.
+       *
+       * The editor cannot express 1.25 columns because it snaps to half
+       * columns. At render time, however, four equal blocks can fill the
+       * available row evenly without changing the authored CMS data.
+       *
+       * Keep this limited to four equal blocks whose authored widths total
+       * eight half-columns. Height → Width blocks are excluded because
+       * their height is the authoritative dimension.
+       */
+      rowStarts.forEach((rowStart) => {
+        const rowItems = resolved.filter((item) => item.y === rowStart);
+
+        if (
+          rowItems.length !== 4 ||
+          rowItems.some((item) => item.frame.dataset.fitMode === 'height-to-width')
+        ) {
+          return;
+        }
+
+        const authoredWidth = rowItems[0].w;
+        const equalWidths = rowItems.every(
+          (item) => item.w === authoredWidth,
+        );
+
+        if (!equalWidths || authoredWidth * rowItems.length !== 8) {
+          return;
+        }
+
+        const distributedWidth = 10 / 4;
+
+        rowItems
+          .sort((a, b) => a.x - b.x)
+          .forEach((item, index) => {
+            item.resolvedX = index * distributedWidth;
+            item.resolvedW = distributedWidth;
+          });
       });
 
       resolved.forEach((item) => {
@@ -1088,17 +1146,16 @@ const maxBottom = Math.max(
 
         item.resolvedY = item.y + rowOffset;
 
+        item.frame.style.left =
+          String(item.resolvedX / 10 * section.clientWidth) + 'px';
         item.frame.style.top =
           String(item.resolvedY / 2 * rowHeight) + 'px';
+        item.frame.style.width =
+          String(item.resolvedW / 10 * section.clientWidth) + 'px';
 
         if (fitMode === 'width-to-height') {
           item.frame.style.height =
             String(item.resolvedH / 2 * rowHeight) + 'px';
-        }
-
-        if (fitMode === 'height-to-width') {
-          item.frame.style.width =
-            String(item.resolvedW / 10 * section.clientWidth) + 'px';
         }
       });
 
