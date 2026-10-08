@@ -55,8 +55,8 @@ const uniqueCategories = [locale === 'pt-br' ? 'Todos' : 'All', ...new Set(allPr
 <!-- 3. The JavaScript that makes the filtering actually work! -->
 <script>
   function initPortfolioFilters() {
-    const buttons = document.querySelectorAll<HTMLButtonElement>('.filter-btn');
-    const items = document.querySelectorAll<HTMLElement>('.project-item');
+    const buttons = document.querySelectorAll('.filter-btn');
+    const items = document.querySelectorAll('.project-item');
 
     if (!buttons.length || !items.length) return;
 
@@ -76,6 +76,8 @@ const uniqueCategories = [locale === 'pt-br' ? 'Todos' : 'All', ...new Set(allPr
         button.classList.remove('text-text-silver', 'hover:text-text-white');
 
         items.forEach((item) => {
+          if (!(item instanceof HTMLElement)) return;
+
           const itemCategory = item.getAttribute('data-category');
 
           if (isAllFilter || itemCategory === selectedCategory) {
