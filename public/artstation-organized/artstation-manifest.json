@@ -1,0 +1,623 @@
+{
+  "source": "H:\\Artstation Download\\artstation-download\\artstation\\cabilo",
+  "output": "H:\\Artstation Download\\artstation-organized._building",
+  "project_count": 11,
+  "unrecognized_files": [],
+  "projects": [
+    {
+      "number": 1,
+      "project_id": "4862655",
+      "title": "Giant",
+      "folder": "giant",
+      "image_count": 4,
+      "video_count": 0,
+      "special_count": 0,
+      "other_count": 0,
+      "thumbnail": "giant_01.jpg",
+      "images": [
+        {
+          "output": "giant_01.jpg",
+          "source": "artstation_4862655_17299297_Giant.jpg",
+          "asset_id": 17299297
+        },
+        {
+          "output": "giant_02.jpg",
+          "source": "artstation_4862655_17299300_Giant.jpg",
+          "asset_id": 17299300
+        },
+        {
+          "output": "giant_03.jpg",
+          "source": "artstation_4862655_17299302_Giant.jpg",
+          "asset_id": 17299302
+        },
+        {
+          "output": "giant_04.jpg",
+          "source": "artstation_4862655_17299303_Giant.jpg",
+          "asset_id": 17299303
+        }
+      ],
+      "videos": [],
+      "specials": [],
+      "others": []
+    },
+    {
+      "number": 2,
+      "project_id": "4912629",
+      "title": "Pharaoh Sethos",
+      "folder": "pharaoh-sethos",
+      "image_count": 20,
+      "video_count": 0,
+      "special_count": 0,
+      "other_count": 0,
+      "thumbnail": "pharaoh-sethos_01.jpg",
+      "images": [
+        {
+          "output": "pharaoh-sethos_01.jpg",
+          "source": "artstation_4912629_17488435_Pharaoh Sethos.jpg",
+          "asset_id": 17488435
+        },
+        {
+          "output": "pharaoh-sethos_02.jpg",
+          "source": "artstation_4912629_17488436_Pharaoh Sethos.jpg",
+          "asset_id": 17488436
+        },
+        {
+          "output": "pharaoh-sethos_03.jpg",
+          "source": "artstation_4912629_17488437_Pharaoh Sethos.jpg",
+          "asset_id": 17488437
+        },
+        {
+          "output": "pharaoh-sethos_04.jpg",
+          "source": "artstation_4912629_17488438_Pharaoh Sethos.jpg",
+          "asset_id": 17488438
+        },
+        {
+          "output": "pharaoh-sethos_05.jpg",
+          "source": "artstation_4912629_17488439_Pharaoh Sethos.jpg",
+          "asset_id": 17488439
+        },
+        {
+          "output": "pharaoh-sethos_06.jpg",
+          "source": "artstation_4912629_17488440_Pharaoh Sethos.jpg",
+          "asset_id": 17488440
+        },
+        {
+          "output": "pharaoh-sethos_07.jpg",
+          "source": "artstation_4912629_17488441_Pharaoh Sethos.jpg",
+          "asset_id": 17488441
+        },
+        {
+          "output": "pharaoh-sethos_08.jpg",
+          "source": "artstation_4912629_17488442_Pharaoh Sethos.jpg",
+          "asset_id": 17488442
+        },
+        {
+          "output": "pharaoh-sethos_09.jpg",
+          "source": "artstation_4912629_17488443_Pharaoh Sethos.jpg",
+          "asset_id": 17488443
+        },
+        {
+          "output": "pharaoh-sethos_10.jpg",
+          "source": "artstation_4912629_17488444_Pharaoh Sethos.jpg",
+          "asset_id": 17488444
+        },
+        {
+          "output": "pharaoh-sethos_11.jpg",
+          "source": "artstation_4912629_17488445_Pharaoh Sethos.jpg",
+          "asset_id": 17488445
+        },
+        {
+          "output": "pharaoh-sethos_12.jpg",
+          "source": "artstation_4912629_17488446_Pharaoh Sethos.jpg",
+          "asset_id": 17488446
+        },
+        {
+          "output": "pharaoh-sethos_13.jpg",
+          "source": "artstation_4912629_17488447_Pharaoh Sethos.jpg",
+          "asset_id": 17488447
+        },
+        {
+          "output": "pharaoh-sethos_14.jpg",
+          "source": "artstation_4912629_17488450_Pharaoh Sethos.jpg",
+          "asset_id": 17488450
+        },
+        {
+          "output": "pharaoh-sethos_15.jpg",
+          "source": "artstation_4912629_17488451_Pharaoh Sethos.jpg",
+          "asset_id": 17488451
+        },
+        {
+          "output": "pharaoh-sethos_16.jpg",
+          "source": "artstation_4912629_17488453_Pharaoh Sethos.jpg",
+          "asset_id": 17488453
+        },
+        {
+          "output": "pharaoh-sethos_17.jpg",
+          "source": "artstation_4912629_17488457_Pharaoh Sethos.jpg",
+          "asset_id": 17488457
+        },
+        {
+          "output": "pharaoh-sethos_18.jpg",
+          "source": "artstation_4912629_17488459_Pharaoh Sethos.jpg",
+          "asset_id": 17488459
+        },
+        {
+          "output": "pharaoh-sethos_19.jpg",
+          "source": "artstation_4912629_17488592_Pharaoh Sethos.jpg",
+          "asset_id": 17488592
+        },
+        {
+          "output": "pharaoh-sethos_20.jpg",
+          "source": "artstation_4912629_17488594_Pharaoh Sethos.jpg",
+          "asset_id": 17488594
+        }
+      ],
+      "videos": [],
+      "specials": [],
+      "others": []
+    },
+    {
+      "number": 3,
+      "project_id": "5955279",
+      "title": "Old Bass",
+      "folder": "old-bass",
+      "image_count": 14,
+      "video_count": 0,
+      "special_count": 1,
+      "other_count": 0,
+      "thumbnail": "old-bass_01.jpg",
+      "images": [
+        {
+          "output": "old-bass_01.jpg",
+          "source": "artstation_5955279_21494391_Old Bass.jpg",
+          "asset_id": 21494391
+        },
+        {
+          "output": "old-bass_02.jpg",
+          "source": "artstation_5955279_21494487_Old Bass.jpg",
+          "asset_id": 21494487
+        },
+        {
+          "output": "old-bass_03.jpg",
+          "source": "artstation_5955279_21494493_Old Bass.jpg",
+          "asset_id": 21494493
+        },
+        {
+          "output": "old-bass_04.jpg",
+          "source": "artstation_5955279_21495133_Old Bass.jpg",
+          "asset_id": 21495133
+        },
+        {
+          "output": "old-bass_05.jpg",
+          "source": "artstation_5955279_21495135_Old Bass.jpg",
+          "asset_id": 21495135
+        },
+        {
+          "output": "old-bass_06.jpg",
+          "source": "artstation_5955279_21495138_Old Bass.jpg",
+          "asset_id": 21495138
+        },
+        {
+          "output": "old-bass_07.jpg",
+          "source": "artstation_5955279_21495139_Old Bass.jpg",
+          "asset_id": 21495139
+        },
+        {
+          "output": "old-bass_08.jpg",
+          "source": "artstation_5955279_21495141_Old Bass.jpg",
+          "asset_id": 21495141
+        },
+        {
+          "output": "old-bass_09.jpg",
+          "source": "artstation_5955279_21495142_Old Bass.jpg",
+          "asset_id": 21495142
+        },
+        {
+          "output": "old-bass_10.jpg",
+          "source": "artstation_5955279_21495145_Old Bass.jpg",
+          "asset_id": 21495145
+        },
+        {
+          "output": "old-bass_11.jpg",
+          "source": "artstation_5955279_21496060_Old Bass.jpg",
+          "asset_id": 21496060
+        },
+        {
+          "output": "old-bass_12.jpg",
+          "source": "artstation_5955279_21496065_Old Bass.jpg",
+          "asset_id": 21496065
+        },
+        {
+          "output": "old-bass_13.jpg",
+          "source": "artstation_5955279_21507280_Old Bass.jpg",
+          "asset_id": 21507280
+        },
+        {
+          "output": "old-bass_14.jpg",
+          "source": "artstation_5955279_21508237_Old Bass.jpg",
+          "asset_id": 21508237
+        }
+      ],
+      "videos": [],
+      "specials": [
+        {
+          "source": "artstation_5955279_21495552_Old Bass.mview",
+          "asset_id": 21495552,
+          "category": "special",
+          "output": "old-bass_special_01.mview"
+        }
+      ],
+      "others": []
+    },
+    {
+      "number": 4,
+      "project_id": "7391347",
+      "title": "Abdul Alhazred The Eldritch warlock",
+      "folder": "abdul-alhazred-the-eldritch-warlock",
+      "image_count": 12,
+      "video_count": 0,
+      "special_count": 0,
+      "other_count": 0,
+      "thumbnail": "abdul-alhazred-the-eldritch-warlock_01.jpg",
+      "images": [
+        {
+          "output": "abdul-alhazred-the-eldritch-warlock_01.jpg",
+          "source": "artstation_7391347_26952893_Abdul Alhazred The Eldritch warlock.jpg",
+          "asset_id": 26952893
+        },
+        {
+          "output": "abdul-alhazred-the-eldritch-warlock_02.jpg",
+          "source": "artstation_7391347_26952922_Abdul Alhazred The Eldritch warlock.jpg",
+          "asset_id": 26952922
+        },
+        {
+          "output": "abdul-alhazred-the-eldritch-warlock_03.jpg",
+          "source": "artstation_7391347_26953048_Abdul Alhazred The Eldritch warlock.jpg",
+          "asset_id": 26953048
+        },
+        {
+          "output": "abdul-alhazred-the-eldritch-warlock_04.jpg",
+          "source": "artstation_7391347_26953066_Abdul Alhazred The Eldritch warlock.jpg",
+          "asset_id": 26953066
+        },
+        {
+          "output": "abdul-alhazred-the-eldritch-warlock_05.jpg",
+          "source": "artstation_7391347_26953086_Abdul Alhazred The Eldritch warlock.jpg",
+          "asset_id": 26953086
+        },
+        {
+          "output": "abdul-alhazred-the-eldritch-warlock_06.jpg",
+          "source": "artstation_7391347_26953106_Abdul Alhazred The Eldritch warlock.jpg",
+          "asset_id": 26953106
+        },
+        {
+          "output": "abdul-alhazred-the-eldritch-warlock_07.jpg",
+          "source": "artstation_7391347_26953126_Abdul Alhazred The Eldritch warlock.jpg",
+          "asset_id": 26953126
+        },
+        {
+          "output": "abdul-alhazred-the-eldritch-warlock_08.jpg",
+          "source": "artstation_7391347_26953151_Abdul Alhazred The Eldritch warlock.jpg",
+          "asset_id": 26953151
+        },
+        {
+          "output": "abdul-alhazred-the-eldritch-warlock_09.jpg",
+          "source": "artstation_7391347_26953167_Abdul Alhazred The Eldritch warlock.jpg",
+          "asset_id": 26953167
+        },
+        {
+          "output": "abdul-alhazred-the-eldritch-warlock_10.jpg",
+          "source": "artstation_7391347_30673183_Abdul Alhazred The Eldritch warlock.jpg",
+          "asset_id": 30673183
+        },
+        {
+          "output": "abdul-alhazred-the-eldritch-warlock_11.jpg",
+          "source": "artstation_7391347_30673189_Abdul Alhazred The Eldritch warlock.jpg",
+          "asset_id": 30673189
+        },
+        {
+          "output": "abdul-alhazred-the-eldritch-warlock_12.jpg",
+          "source": "artstation_7391347_30673192_Abdul Alhazred The Eldritch warlock.jpg",
+          "asset_id": 30673192
+        }
+      ],
+      "videos": [],
+      "specials": [],
+      "others": []
+    },
+    {
+      "number": 5,
+      "project_id": "8451027",
+      "title": "Haunted Pumpkin",
+      "folder": "haunted-pumpkin",
+      "image_count": 7,
+      "video_count": 0,
+      "special_count": 0,
+      "other_count": 0,
+      "thumbnail": "haunted-pumpkin_01.jpg",
+      "images": [
+        {
+          "output": "haunted-pumpkin_01.jpg",
+          "source": "artstation_8451027_31215998_Haunted Pumpkin.jpg",
+          "asset_id": 31215998
+        },
+        {
+          "output": "haunted-pumpkin_02.jpg",
+          "source": "artstation_8451027_31216014_Haunted Pumpkin.jpg",
+          "asset_id": 31216014
+        },
+        {
+          "output": "haunted-pumpkin_03.jpg",
+          "source": "artstation_8451027_31216015_Haunted Pumpkin.jpg",
+          "asset_id": 31216015
+        },
+        {
+          "output": "haunted-pumpkin_04.jpg",
+          "source": "artstation_8451027_31216020_Haunted Pumpkin.jpg",
+          "asset_id": 31216020
+        },
+        {
+          "output": "haunted-pumpkin_05.jpg",
+          "source": "artstation_8451027_31216024_Haunted Pumpkin.jpg",
+          "asset_id": 31216024
+        },
+        {
+          "output": "haunted-pumpkin_06.jpg",
+          "source": "artstation_8451027_31216026_Haunted Pumpkin.jpg",
+          "asset_id": 31216026
+        },
+        {
+          "output": "haunted-pumpkin_07.jpg",
+          "source": "artstation_8451027_31216037_Haunted Pumpkin.jpg",
+          "asset_id": 31216037
+        }
+      ],
+      "videos": [],
+      "specials": [],
+      "others": []
+    },
+    {
+      "number": 6,
+      "project_id": "8817883",
+      "title": "Biofuel",
+      "folder": "biofuel",
+      "image_count": 2,
+      "video_count": 0,
+      "special_count": 0,
+      "other_count": 0,
+      "thumbnail": "biofuel_01.jpg",
+      "images": [
+        {
+          "output": "biofuel_01.jpg",
+          "source": "artstation_8817883_32723638_Biofuel.jpg",
+          "asset_id": 32723638
+        },
+        {
+          "output": "biofuel_02.jpg",
+          "source": "artstation_8817883_32723719_Biofuel.jpg",
+          "asset_id": 32723719
+        }
+      ],
+      "videos": [],
+      "specials": [],
+      "others": []
+    },
+    {
+      "number": 7,
+      "project_id": "8824772",
+      "title": "Oni Mask",
+      "folder": "oni-mask",
+      "image_count": 5,
+      "video_count": 0,
+      "special_count": 0,
+      "other_count": 0,
+      "thumbnail": "oni-mask_01.jpg",
+      "images": [
+        {
+          "output": "oni-mask_01.jpg",
+          "source": "artstation_8824772_32753094_Oni Mask.jpg",
+          "asset_id": 32753094
+        },
+        {
+          "output": "oni-mask_02.jpg",
+          "source": "artstation_8824772_32753318_Oni Mask.jpg",
+          "asset_id": 32753318
+        },
+        {
+          "output": "oni-mask_03.jpg",
+          "source": "artstation_8824772_32753322_Oni Mask.jpg",
+          "asset_id": 32753322
+        },
+        {
+          "output": "oni-mask_04.jpg",
+          "source": "artstation_8824772_32753327_Oni Mask.jpg",
+          "asset_id": 32753327
+        },
+        {
+          "output": "oni-mask_05.jpg",
+          "source": "artstation_8824772_32753329_Oni Mask.jpg",
+          "asset_id": 32753329
+        }
+      ],
+      "videos": [],
+      "specials": [],
+      "others": []
+    },
+    {
+      "number": 8,
+      "project_id": "10980170",
+      "title": "Comic Con Experience Worlds - Thunder Arena",
+      "folder": "comic-con-experience-worlds-thunder-arena",
+      "image_count": 2,
+      "video_count": 0,
+      "special_count": 0,
+      "other_count": 0,
+      "thumbnail": "comic-con-experience-worlds-thunder-arena_01.jpg",
+      "images": [
+        {
+          "output": "comic-con-experience-worlds-thunder-arena_01.jpg",
+          "source": "artstation_10980170_41664593_Comic Con Experience Worlds - Thunder Arena.jpg",
+          "asset_id": 41664593
+        },
+        {
+          "output": "comic-con-experience-worlds-thunder-arena_02.jpg",
+          "source": "artstation_10980170_41664596_Comic Con Experience Worlds - Thunder Arena.jpg",
+          "asset_id": 41664596
+        }
+      ],
+      "videos": [],
+      "specials": [],
+      "others": []
+    },
+    {
+      "number": 9,
+      "project_id": "10980231",
+      "title": "Active Presence",
+      "folder": "active-presence",
+      "image_count": 2,
+      "video_count": 0,
+      "special_count": 0,
+      "other_count": 0,
+      "thumbnail": "active-presence_01.jpg",
+      "images": [
+        {
+          "output": "active-presence_01.jpg",
+          "source": "artstation_10980231_41665313_Active Presence.jpg",
+          "asset_id": 41665313
+        },
+        {
+          "output": "active-presence_02.jpg",
+          "source": "artstation_10980231_41665371_Active Presence.jpg",
+          "asset_id": 41665371
+        }
+      ],
+      "videos": [],
+      "specials": [],
+      "others": []
+    },
+    {
+      "number": 10,
+      "project_id": "12120502",
+      "title": "3D Scan to Portrait",
+      "folder": "3d-scan-to-portrait",
+      "image_count": 9,
+      "video_count": 1,
+      "special_count": 0,
+      "other_count": 0,
+      "thumbnail": "3d-scan-to-portrait_01.gif",
+      "images": [
+        {
+          "output": "3d-scan-to-portrait_01.gif",
+          "source": "artstation_12120502_46500565_3D Scan to Portrait.gif",
+          "asset_id": 46500565
+        },
+        {
+          "output": "3d-scan-to-portrait_02.jpg",
+          "source": "artstation_12120502_46500860_3D Scan to Portrait.jpg",
+          "asset_id": 46500860
+        },
+        {
+          "output": "3d-scan-to-portrait_03.jpg",
+          "source": "artstation_12120502_46503102_3D Scan to Portrait.jpg",
+          "asset_id": 46503102
+        },
+        {
+          "output": "3d-scan-to-portrait_04.jpg",
+          "source": "artstation_12120502_46504163_3D Scan to Portrait.jpg",
+          "asset_id": 46504163
+        },
+        {
+          "output": "3d-scan-to-portrait_05.jpg",
+          "source": "artstation_12120502_46504170_3D Scan to Portrait.jpg",
+          "asset_id": 46504170
+        },
+        {
+          "output": "3d-scan-to-portrait_06.jpg",
+          "source": "artstation_12120502_46504174_3D Scan to Portrait.jpg",
+          "asset_id": 46504174
+        },
+        {
+          "output": "3d-scan-to-portrait_07.jpg",
+          "source": "artstation_12120502_46504294_3D Scan to Portrait.jpg",
+          "asset_id": 46504294
+        },
+        {
+          "output": "3d-scan-to-portrait_08.jpg",
+          "source": "artstation_12120502_46504493_3D Scan to Portrait.jpg",
+          "asset_id": 46504493
+        },
+        {
+          "output": "3d-scan-to-portrait_09.jpg",
+          "source": "artstation_12120502_46504715_3D Scan to Portrait.jpg",
+          "asset_id": 46504715
+        }
+      ],
+      "videos": [
+        {
+          "source": "artstation_12120502_46501779_3D Scan to Portrait.mp4",
+          "asset_id": 46501779,
+          "category": "video",
+          "output": "3d-scan-to-portrait_video_01.mp4"
+        }
+      ],
+      "specials": [],
+      "others": []
+    },
+    {
+      "number": 11,
+      "project_id": "12123968",
+      "title": "Game ready Arms - Unannounced Game Title",
+      "folder": "game-ready-arms-unannounced-game-title",
+      "image_count": 8,
+      "video_count": 0,
+      "special_count": 0,
+      "other_count": 0,
+      "thumbnail": "game-ready-arms-unannounced-game-title_01.jpg",
+      "images": [
+        {
+          "output": "game-ready-arms-unannounced-game-title_01.jpg",
+          "source": "artstation_12123968_46517480_Game ready Arms - Unannounced Game Title.jpg",
+          "asset_id": 46517480
+        },
+        {
+          "output": "game-ready-arms-unannounced-game-title_02.jpg",
+          "source": "artstation_12123968_46517485_Game ready Arms - Unannounced Game Title.jpg",
+          "asset_id": 46517485
+        },
+        {
+          "output": "game-ready-arms-unannounced-game-title_03.jpg",
+          "source": "artstation_12123968_46517778_Game ready Arms - Unannounced Game Title.jpg",
+          "asset_id": 46517778
+        },
+        {
+          "output": "game-ready-arms-unannounced-game-title_04.jpg",
+          "source": "artstation_12123968_46517779_Game ready Arms - Unannounced Game Title.jpg",
+          "asset_id": 46517779
+        },
+        {
+          "output": "game-ready-arms-unannounced-game-title_05.jpg",
+          "source": "artstation_12123968_46517786_Game ready Arms - Unannounced Game Title.jpg",
+          "asset_id": 46517786
+        },
+        {
+          "output": "game-ready-arms-unannounced-game-title_06.jpg",
+          "source": "artstation_12123968_46517788_Game ready Arms - Unannounced Game Title.jpg",
+          "asset_id": 46517788
+        },
+        {
+          "output": "game-ready-arms-unannounced-game-title_07.jpg",
+          "source": "artstation_12123968_46519820_Game ready Arms - Unannounced Game Title.jpg",
+          "asset_id": 46519820
+        },
+        {
+          "output": "game-ready-arms-unannounced-game-title_08.jpg",
+          "source": "artstation_12123968_46519821_Game ready Arms - Unannounced Game Title.jpg",
+          "asset_id": 46519821
+        }
+      ],
+      "videos": [],
+      "specials": [],
+      "others": []
+    }
+  ]
+}
