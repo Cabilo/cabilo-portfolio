@@ -1118,6 +1118,18 @@ const maxBottom = Math.max(
       ) + 'px';
     };
 
+    /*
+     * Asset ratios can become available after the first layout pass when an
+     * image or other media finishes loading. Re-run the resolver immediately
+     * so the authored grid uses the real asset footprint instead of waiting
+     * for an unrelated window resize.
+     */
+    frames.forEach((frame) => {
+      frame.addEventListener('layout-aspect-ready', () => {
+        requestAnimationFrame(resolveLayout);
+      });
+    });
+
     resolveLayout();
 
     const observer = new ResizeObserver(() => {
