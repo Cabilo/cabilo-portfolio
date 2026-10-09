@@ -2,7 +2,7 @@
 title: Game ready Arms - Unannounced Game Title
 category: Game Art
 thumbnail: /uploads/game-ready-arms-unannounced-game-title_08.jpg
-compressThumbnail: true
+compressThumbnail: false
 thumbnailCrop:
   zoom: 1
   positionX: 100
