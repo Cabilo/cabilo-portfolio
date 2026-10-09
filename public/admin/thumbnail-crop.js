@@ -19,11 +19,19 @@
     return Number.isFinite(number) ? number : fallback;
   }
 
+  function readValueField(value, key, fallback) {
+    if (value && typeof value.get === 'function') {
+      return value.get(key, fallback);
+    }
+
+    return value && value[key] !== undefined ? value[key] : fallback;
+  }
+
   function normalizeValue(value) {
     return {
-      zoom: clamp(numberOr(value && value.zoom, DEFAULTS.zoom), 1, 3),
-      positionX: clamp(numberOr(value && value.positionX, DEFAULTS.positionX), 0, 100),
-      positionY: clamp(numberOr(value && value.positionY, DEFAULTS.positionY), 0, 100)
+      zoom: clamp(numberOr(readValueField(value, 'zoom', DEFAULTS.zoom), DEFAULTS.zoom), 1, 3),
+      positionX: clamp(numberOr(readValueField(value, 'positionX', DEFAULTS.positionX), DEFAULTS.positionX), 0, 100),
+      positionY: clamp(numberOr(readValueField(value, 'positionY', DEFAULTS.positionY), DEFAULTS.positionY), 0, 100)
     };
   }
 
@@ -175,10 +183,7 @@
       if (!frame || !image || !image.naturalWidth || !image.naturalHeight) return;
 
       var frameRect = frame.getBoundingClientRect();
-      var baseScale = Math.max(
-        frameRect.width / image.naturalWidth,
-        frameRect.height / image.naturalHeight
-      );
+      var baseScale = frameRect.height / image.naturalHeight;
       var movementWidth = Math.max(
         0,
         image.naturalWidth * baseScale * this.state.draft.zoom - frameRect.width
@@ -251,10 +256,7 @@
 
       if (frameElement && imageElement && imageElement.naturalWidth && imageElement.naturalHeight) {
         var frame = frameElement.getBoundingClientRect();
-        var baseScale = Math.max(
-          frame.width / imageElement.naturalWidth,
-          frame.height / imageElement.naturalHeight
-        );
+        var baseScale = frame.height / imageElement.naturalHeight;
         var movementWidth = Math.max(
           0,
           imageElement.naturalWidth * baseScale * next.zoom - frame.width
@@ -348,10 +350,7 @@
       var movementHeight = 0;
 
       if (imageElement && imageElement.naturalWidth && imageElement.naturalHeight) {
-        var baseScale = Math.max(
-          frameRect.width / imageElement.naturalWidth,
-          frameRect.height / imageElement.naturalHeight
-        );
+        var baseScale = frameRect.height / imageElement.naturalHeight;
 
         movementWidth = Math.max(
           0,
@@ -474,10 +473,7 @@
 
       if (!naturalWidth || !naturalHeight) return;
 
-      var baseScale = Math.max(
-        frame.width / naturalWidth,
-        frame.height / naturalHeight
-      );
+      var baseScale = frame.height / naturalHeight;
 
       var baseImageWidth = naturalWidth * baseScale;
       var baseImageHeight = naturalHeight * baseScale;
