@@ -157,6 +157,22 @@ body {
   color: #fff !important;
 }
 
+/* Keep publish-menu actions readable on the dark CMS surface. */
+#nc-root [class*="Publish"] button,
+#nc-root button[aria-label*="Publish"],
+#nc-root button[title*="Publish"] {
+  color: var(--cabilo-cms-text) !important;
+  -webkit-text-fill-color: var(--cabilo-cms-text) !important;
+}
+
+#nc-root [class*="Publish"] button:hover,
+#nc-root [class*="Publish"] button:focus-visible,
+#nc-root button[aria-label*="Publish"]:hover,
+#nc-root button[title*="Publish"]:hover {
+  color: #fff !important;
+  -webkit-text-fill-color: #fff !important;
+}
+
 #nc-root [class*="ButtonRound"],
 #nc-root [class*="ToolbarButton"] {
   background: var(--cabilo-cms-field) !important;
