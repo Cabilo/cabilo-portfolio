@@ -8,11 +8,10 @@ tags:
   - Prop
   - Sculpting
   - Texturing
-  - Unreal Engine
 softwareUsed:
   - ZBrush
   - Substance Painter
-  - Unreal Engine 5
+  - Unreal Engine
 layoutBlocks:
   - id: haunted-pumpkin-01
     type: image

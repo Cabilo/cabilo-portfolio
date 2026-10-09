@@ -13,7 +13,7 @@ tags:
 softwareUsed:
   - ZBrush
   - Substance Painter
-  - Unreal Engine 5
+  - Unreal Engine
 layoutBlocks:
   - id: hard-surface-armor-1-turntable
     type: turntable
@@ -29,6 +29,6 @@ layoutBlocks:
     folder: turntables/test/
 ---
 
-A hard surface design project focusing on mechanical articulation, weathering, and optimized topology for real-time cinematic rendering in Unreal Engine 5. 
+A hard surface design project focusing on mechanical articulation, weathering, and optimized topology for real-time cinematic rendering in Unreal Engine. 
 
 Special attention was paid to the micro-details of the metal plating, edge wear, and grease buildup to give the armor a grounded, battle-tested history.

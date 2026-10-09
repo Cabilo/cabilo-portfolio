@@ -9,12 +9,11 @@ tags:
   - Sculpting
   - Retopology
   - Texturing
-  - Unreal Engine
 softwareUsed:
   - ZBrush
   - Maya
   - Substance Painter
-  - Unreal Engine 5
+  - Unreal Engine
 layoutBlocks:
   - id: giant-01
     type: image

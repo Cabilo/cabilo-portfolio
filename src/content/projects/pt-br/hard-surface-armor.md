@@ -9,7 +9,7 @@ client: Personal Project
 softwareUsed:
   - ZBrush
   - Substance Painter
-  - Unreal Engine 5
+  - Unreal Engine
 layoutBlocks:
   - id: hard-surface-armor-turntable
     type: turntable
@@ -25,6 +25,6 @@ layoutBlocks:
     folder: turntables/test/
 ---
 
-Um projeto de design hard surface focado em articulação mecânica, desgaste e topologia otimizada para renderização cinematográfica em tempo real no Unreal Engine 5. 
+Um projeto de design hard surface focado em articulação mecânica, desgaste e topologia otimizada para renderização cinematográfica em tempo real no Unreal Engine. 
 
 Atenção especial foi dada aos microdetalhes das placas metálicas, desgaste das bordas e acúmulo de graxa para dar à armadura uma história realista e marcada por batalha.

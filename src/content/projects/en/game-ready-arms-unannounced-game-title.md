@@ -9,9 +9,8 @@ tags:
   - Character
   - Game Ready
   - First Person
-  - Unreal Engine
 softwareUsed:
-  - Unreal Engine 4
+  - Unreal Engine
 layoutBlocks:
   - id: game-ready-arms-unannounced-game-title-01
     type: image
@@ -150,6 +149,6 @@ layoutBlocks:
     folder: ""
     aovPasses: []
 ---
-These two sets of arms were made for a first-person unannounced game. Modeled, textured, rigged and animated by me, with the final work running in Unreal Engine 4.
+These two sets of arms were made for a first-person unannounced game. Modeled, textured, rigged and animated by me, with the final work running in Unreal Engine.
 
 [View the original ArtStation project](https://cabilo.artstation.com/projects/6bkZx6)

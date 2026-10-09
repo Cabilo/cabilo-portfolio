@@ -8,11 +8,10 @@ tags:
   - Character
   - Texturing
   - Real-Time
-  - Unreal Engine
 softwareUsed:
   - ZBrush
   - Substance Painter
-  - Unreal Engine 4
+  - Unreal Engine
 layoutBlocks:
   - id: pharaoh-sethos-01
     type: image

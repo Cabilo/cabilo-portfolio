@@ -1,5 +1,5 @@
 ---
-title: Cinematic Lighting in Unreal Engine 5
+title: Cinematic Lighting in Unreal Engine
 description: A deep dive into Lumen, physically based light values, and
   cinematic post-processing volumes for realistic character lighting.
 publishDate: 2024-10-15
@@ -8,7 +8,7 @@ tags:
   - Lighting
   - Cinematics
 softwareUsed:
-  - Unreal Engine 5
+  - Unreal Engine
 thumbnail: https://images.unsplash.com/photo-1605379399642-870262d3d051?w=800
 featured: true
 layoutBlocks:
@@ -26,7 +26,7 @@ layoutBlocks:
     videoUrl: https://www.youtube.com/watch?v=doUDJFKLyZs
 ---
 
-Lighting is the cornerstone of any cinematic shot. In this tutorial, we will break down how to properly expose your virtual camera and utilize Unreal Engine 5's Lumen system to achieve realistic bounce lighting.
+Lighting is the cornerstone of any cinematic shot. In this tutorial, we will break down how to properly expose your virtual camera and utilize Unreal Engine's Lumen system to achieve realistic bounce lighting.
 
 ### 1. Camera Exposure
 Always start by locking your camera exposure to manual...

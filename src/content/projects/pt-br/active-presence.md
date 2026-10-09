@@ -7,9 +7,8 @@ client: Personal Project
 tags:
   - Cinematics
   - Real-Time
-  - Unreal Engine
 softwareUsed:
-  - Unreal Engine 5
+  - Unreal Engine
 layoutBlocks:
   - id: active-presence-01
     type: image

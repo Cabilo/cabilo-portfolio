@@ -7,9 +7,8 @@ client: Personal Project
 tags:
   - Environment
   - Real-Time
-  - Unreal Engine
 softwareUsed:
-  - Unreal Engine 5
+  - Unreal Engine
 layoutBlocks:
   - id: comic-con-experience-worlds-thunder-arena-01
     type: image

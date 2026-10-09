@@ -8,9 +8,8 @@ tags:
   - Character
   - Game Ready
   - First Person
-  - Unreal Engine
 softwareUsed:
-  - Unreal Engine 4
+  - Unreal Engine
 layoutBlocks:
   - compress: true
     aovPasses: []
