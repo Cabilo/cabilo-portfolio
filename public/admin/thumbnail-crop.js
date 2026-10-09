@@ -66,26 +66,6 @@
     );
   }
 
-  /*
-   * All crop interactions use one virtual 16:9 output geometry.
-   * The editor remains square; its height defines the output height.
-   */
-  function getThumbnailMovement(frameRect, image, zoom) {
-    var outputWidth = frameRect.height * (16 / 9);
-
-    if (!image || !image.naturalWidth || !image.naturalHeight) {
-      return { outputWidth: outputWidth, width: 0, height: 0 };
-    }
-
-    var baseScale = frameRect.height / image.naturalHeight;
-
-    return {
-      outputWidth: outputWidth,
-      width: Math.max(0, image.naturalWidth * baseScale * zoom - outputWidth),
-      height: Math.max(0, image.naturalHeight * baseScale * zoom - frameRect.height)
-    };
-  }
-
   function cropCenterFromSavedPosition(position, movement, frameSize, cropSize) {
     if (movement <= 0 || frameSize <= 0) return 50;
 
@@ -203,9 +183,22 @@
       if (!frame || !image || !image.naturalWidth || !image.naturalHeight) return;
 
       var frameRect = frame.getBoundingClientRect();
-      var movement = getThumbnailMovement(frameRect, image, this.state.draft.zoom);
-      var movementWidth = movement.width;
-      var movementHeight = movement.height;
+      var baseScale = frameRect.height / image.naturalHeight;
+
+      /*
+       * Saved crop positions are consumed by the 16:9 portfolio thumbnail,
+       * not by the square editor frame. Use the final output width here so
+       * reopening the editor restores the same framing the grid can render.
+       */
+      var outputWidth = frameRect.height * (16 / 9);
+      var movementWidth = Math.max(
+        0,
+        image.naturalWidth * baseScale * this.state.draft.zoom - outputWidth
+      );
+      var movementHeight = Math.max(
+        0,
+        image.naturalHeight * baseScale * this.state.draft.zoom - frameRect.height
+      );
       var cropSize = cropSizeForZoom(this.state.draft.zoom);
 
       /*
@@ -266,10 +259,23 @@
 
       if (frameElement && imageElement && imageElement.naturalWidth && imageElement.naturalHeight) {
         var frame = frameElement.getBoundingClientRect();
-        var movement = getThumbnailMovement(frame, imageElement, next.zoom);
-        var outputWidth = movement.outputWidth;
-        var movementWidth = movement.width;
-        var movementHeight = movement.height;
+        var baseScale = frame.height / imageElement.naturalHeight;
+
+        /*
+         * The editor is square, but the site thumbnail is 16:9.
+         * Convert the selection to the movement range of the final 16:9
+         * output; using the square frame here makes the saved crop disagree
+         * with the thumbnail shown on the portfolio grid.
+         */
+        var outputWidth = frame.height * (16 / 9);
+        var movementWidth = Math.max(
+          0,
+          imageElement.naturalWidth * baseScale * next.zoom - outputWidth
+        );
+        var movementHeight = Math.max(
+          0,
+          imageElement.naturalHeight * baseScale * next.zoom - frame.height
+        );
 
         /*
          * imagePanX/Y are editor-only pixels added after the crop reaches
@@ -282,7 +288,7 @@
         next.positionX = movementWidth > 0
           ? clamp(
               50 +
-                (((this.state.cropCenterX - 50) * outputWidth - this.state.imagePanX) /
+                (((this.state.cropCenterX - 50) * frame.width - this.state.imagePanX) /
                   movementWidth) * 100,
               0,
               100
@@ -355,14 +361,19 @@
       var movementHeight = 0;
 
       if (imageElement && imageElement.naturalWidth && imageElement.naturalHeight) {
-        var movement = getThumbnailMovement(
-          frameRect,
-          imageElement,
-          this.state.draft.zoom
+        var baseScale = frameRect.height / imageElement.naturalHeight;
+
+        movementWidth = Math.max(
+          0,
+          imageElement.naturalWidth * baseScale * this.state.draft.zoom -
+            frameRect.width
         );
 
-        movementWidth = movement.width;
-        movementHeight = movement.height;
+        movementHeight = Math.max(
+          0,
+          imageElement.naturalHeight * baseScale * this.state.draft.zoom -
+            frameRect.height
+        );
       }
 
       var start = {
@@ -473,10 +484,16 @@
 
       if (!naturalWidth || !naturalHeight) return;
 
+      var baseScale = frame.height / naturalHeight;
+
+      var baseImageWidth = naturalWidth * baseScale;
+      var baseImageHeight = naturalHeight * baseScale;
       var zoom = this.state.draft.zoom;
-      var movement = getThumbnailMovement(frame, imageElement, zoom);
-      var movementWidth = movement.width;
-      var movementHeight = movement.height;
+
+      // Position values map across the full movement range of the
+      // final zoomed image, including square images.
+      var movementWidth = Math.max(0, baseImageWidth * zoom - frame.width);
+      var movementHeight = Math.max(0, baseImageHeight * zoom - frame.height);
 
       var start = {
         x: event.clientX,
@@ -612,16 +629,23 @@
         var nextImagePanY = this.state.imagePanY;
 
         if (imageElement && imageElement.naturalWidth && imageElement.naturalHeight) {
-          var oldMovement = getThumbnailMovement(
-            frameRect,
-            imageElement,
-            this.state.draft.zoom
+          var baseScale = frameRect.height / imageElement.naturalHeight;
+          var oldMovementWidth = Math.max(
+            0,
+            imageElement.naturalWidth * baseScale * this.state.draft.zoom - frameRect.width
           );
-          var nextMovement = getThumbnailMovement(frameRect, imageElement, next.zoom);
-          var oldMovementWidth = oldMovement.width;
-          var oldMovementHeight = oldMovement.height;
-          var nextMovementWidth = nextMovement.width;
-          var nextMovementHeight = nextMovement.height;
+          var oldMovementHeight = Math.max(
+            0,
+            imageElement.naturalHeight * baseScale * this.state.draft.zoom - frameRect.height
+          );
+          var nextMovementWidth = Math.max(
+            0,
+            imageElement.naturalWidth * baseScale * next.zoom - frameRect.width
+          );
+          var nextMovementHeight = Math.max(
+            0,
+            imageElement.naturalHeight * baseScale * next.zoom - frameRect.height
+          );
 
           nextImagePanX = oldMovementWidth > 0
             ? (this.state.imagePanX / oldMovementWidth) * nextMovementWidth
