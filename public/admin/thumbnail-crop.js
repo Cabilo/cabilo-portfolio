@@ -491,34 +491,30 @@
       var start = {
         x: event.clientX,
         y: event.clientY,
-        positionX: this.state.draft.positionX,
-        positionY: this.state.draft.positionY
+        imagePanX: this.state.imagePanX,
+        imagePanY: this.state.imagePanY
       };
 
       var onMove = function (moveEvent) {
         moveEvent.preventDefault();
 
-        var next = normalizeValue(this.state.draft);
+        var nextImagePanX = clamp(
+          start.imagePanX + (moveEvent.clientX - start.x),
+          -movementWidth / 2,
+          movementWidth / 2
+        );
 
-        next.positionX = movementWidth > 0
-          ? clamp(
-              start.positionX -
-                ((moveEvent.clientX - start.x) / movementWidth) * 100,
-              0,
-              100
-            )
-          : 50;
+        var nextImagePanY = clamp(
+          start.imagePanY + (moveEvent.clientY - start.y),
+          -movementHeight / 2,
+          movementHeight / 2
+        );
 
-        next.positionY = movementHeight > 0
-          ? clamp(
-              start.positionY -
-                ((moveEvent.clientY - start.y) / movementHeight) * 100,
-              0,
-              100
-            )
-          : 50;
+        this.setState({
+          imagePanX: nextImagePanX,
+          imagePanY: nextImagePanY
+        });
 
-        this.setState({ draft: next });
         clearSelection();
       }.bind(this);
 
@@ -687,8 +683,8 @@
         position: 'relative',
         width: 'min(640px, 80vh)',
         maxWidth: '100%',
-        aspectRatio: '16 / 9',
-        overflow: 'hidden',
+        aspectRatio: '1 / 1',
+        overflow: 'visible',
         background: '#111',
         border: '2px solid #fff',
         borderRadius: '0',
@@ -702,7 +698,7 @@
         position: 'absolute',
         inset: '0',
         zIndex: '1',
-        overflow: 'hidden',
+        overflow: 'visible',
         cursor: 'grab',
         touchAction: 'none',
         userSelect: 'none',
@@ -710,20 +706,23 @@
       };
 
       var imageStyle = {
+        position: 'absolute',
+        left: '50%',
+        top: '50%',
         display: 'block',
-        width: '100%',
+        width: 'auto',
         height: '100%',
-        objectFit: 'cover',
-        objectPosition: draft.positionX + '% ' + draft.positionY + '%',
+        maxWidth: 'none',
+        maxHeight: 'none',
         transform:
-          'translate(' +
+          'translate(-50%, -50%) translate(' +
           this.state.imagePanX +
           'px, ' +
           this.state.imagePanY +
           'px) scale(' +
           draft.zoom +
           ')',
-        transformOrigin: draft.positionX + '% ' + draft.positionY + '%',
+        transformOrigin: 'center center',
         pointerEvents: 'none',
         userSelect: 'none',
         WebkitUserSelect: 'none'
