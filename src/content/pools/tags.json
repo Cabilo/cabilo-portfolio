@@ -59,6 +59,39 @@
     },
     {
       "name": "VFX"
+    },
+    {
+      "name": "Retopology"
+    },
+    {
+      "name": "Unreal Engine"
+    },
+    {
+      "name": "Real-Time"
+    },
+    {
+      "name": "Prop"
+    },
+    {
+      "name": "Hard Surface"
+    },
+    {
+      "name": "Game Art"
+    },
+    {
+      "name": "Warlock"
+    },
+    {
+      "name": "Wireframe"
+    },
+    {
+      "name": "Visualization"
+    },
+    {
+      "name": "Game Ready"
+    },
+    {
+      "name": "First Person"
     }
   ]
 }

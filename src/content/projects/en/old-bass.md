@@ -13,7 +13,7 @@ softwareUsed:
   - Maya
   - ZBrush
   - Substance Painter
-  - Marmoset
+  - Marmoset Toolbag
 layoutBlocks:
   - id: old-bass-01
     type: image

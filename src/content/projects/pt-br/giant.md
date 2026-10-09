@@ -14,7 +14,7 @@ softwareUsed:
   - ZBrush
   - Maya
   - Substance Painter
-  - Unreal Engine
+  - Unreal Engine 5
 layoutBlocks:
   - id: giant-01
     type: image

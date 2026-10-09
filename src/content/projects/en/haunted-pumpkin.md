@@ -12,7 +12,7 @@ tags:
 softwareUsed:
   - ZBrush
   - Substance Painter
-  - Unreal Engine
+  - Unreal Engine 5
 layoutBlocks:
   - id: haunted-pumpkin-01
     type: image

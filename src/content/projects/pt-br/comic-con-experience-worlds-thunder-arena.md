@@ -9,7 +9,7 @@ tags:
   - Real-Time
   - Unreal Engine
 softwareUsed:
-  - Unreal Engine
+  - Unreal Engine 5
 layoutBlocks:
   - id: comic-con-experience-worlds-thunder-arena-01
     type: image
