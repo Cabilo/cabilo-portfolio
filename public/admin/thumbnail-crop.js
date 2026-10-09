@@ -194,21 +194,17 @@
       );
       var cropSize = cropSizeForZoom(this.state.draft.zoom);
 
+      /*
+       * Restore saved framing by positioning the image itself.
+       * The square crop frame cannot encode an off-centre image position
+       * when its crop window is at 100%, so restoring the crop centre alone
+       * always snapped wide images back to the middle.
+       */
       this.setState({
-        cropCenterX: cropCenterFromSavedPosition(
-          this.state.draft.positionX,
-          movementWidth,
-          frameRect.width,
-          cropSize
-        ),
-        cropCenterY: cropCenterFromSavedPosition(
-          this.state.draft.positionY,
-          movementHeight,
-          frameRect.height,
-          cropSize
-        ),
-        imagePanX: 0,
-        imagePanY: 0,
+        cropCenterX: 50,
+        cropCenterY: 50,
+        imagePanX: ((50 - this.state.draft.positionX) / 100) * movementWidth,
+        imagePanY: ((50 - this.state.draft.positionY) / 100) * movementHeight,
         thumbnailAspectCenterY: thumbnailPositionToCenter(
           this.state.draft.positionY
         )
@@ -276,9 +272,9 @@
          */ 
         next.positionX = movementWidth > 0
           ? clamp(
-              next.positionX +
-                ((this.state.cropCenterX - 50) * frame.width / movementWidth) * 100 -
-                (this.state.imagePanX / movementWidth) * 100,
+              50 +
+                (((this.state.cropCenterX - 50) * frame.width - this.state.imagePanX) /
+                  movementWidth) * 100,
               0,
               100
             )
@@ -286,9 +282,9 @@
 
         next.positionY = movementHeight > 0
           ? clamp(
-              next.positionY +
-                ((this.state.cropCenterY - 50) * frame.height / movementHeight) * 100 -
-                (this.state.imagePanY / movementHeight) * 100,
+              50 +
+                (((this.state.cropCenterY - 50) * frame.height - this.state.imagePanY) /
+                  movementHeight) * 100,
               0,
               100
             )
@@ -580,6 +576,7 @@
       if (!frame) return;
 
       var frameRect = frame.getBoundingClientRect();
+      var imageElement = frame.querySelector('img');
       var direction = handle.getAttribute('data-direction') || 'se';
 
       var start = {
@@ -613,8 +610,40 @@
         var minCenter = nextCropSize / 2;
         var maxCenter = 100 - minCenter;
 
+        var nextImagePanX = this.state.imagePanX;
+        var nextImagePanY = this.state.imagePanY;
+
+        if (imageElement && imageElement.naturalWidth && imageElement.naturalHeight) {
+          var baseScale = frameRect.height / imageElement.naturalHeight;
+          var oldMovementWidth = Math.max(
+            0,
+            imageElement.naturalWidth * baseScale * this.state.draft.zoom - frameRect.width
+          );
+          var oldMovementHeight = Math.max(
+            0,
+            imageElement.naturalHeight * baseScale * this.state.draft.zoom - frameRect.height
+          );
+          var nextMovementWidth = Math.max(
+            0,
+            imageElement.naturalWidth * baseScale * next.zoom - frameRect.width
+          );
+          var nextMovementHeight = Math.max(
+            0,
+            imageElement.naturalHeight * baseScale * next.zoom - frameRect.height
+          );
+
+          nextImagePanX = oldMovementWidth > 0
+            ? (this.state.imagePanX / oldMovementWidth) * nextMovementWidth
+            : 0;
+          nextImagePanY = oldMovementHeight > 0
+            ? (this.state.imagePanY / oldMovementHeight) * nextMovementHeight
+            : 0;
+        }
+
         this.setState({
           draft: next,
+          imagePanX: nextImagePanX,
+          imagePanY: nextImagePanY,
           cropCenterX: clamp(this.state.cropCenterX, minCenter, maxCenter),
           cropCenterY: clamp(this.state.cropCenterY, minCenter, maxCenter),
           thumbnailAspectCenterY: clamp(

@@ -658,3 +658,18 @@ body [role="dialog"] [class*="FileCard"]:hover,
 body [role="dialog"] [class*="Card"]:hover {
   background-color: var(--cabilo-cms-field-hover) !important;
 }
+
+
+/* Improve the low-contrast entry status and navigation icons in the top bar. */
+#nc-root [class*="Status"],
+#nc-root [class*="status"] {
+  color: #4ade80 !important;
+  -webkit-text-fill-color: #4ade80 !important;
+}
+
+#nc-root [class*="EntryEditor"] button svg,
+#nc-root [class*="TopBar"] button svg,
+#nc-root [class*="Toolbar"] button svg {
+  color: #c8d1dc !important;
+  stroke: #c8d1dc !important;
+}
