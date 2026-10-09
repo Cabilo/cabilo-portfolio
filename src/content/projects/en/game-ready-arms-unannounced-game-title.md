@@ -6,7 +6,7 @@ compressThumbnail: true
 thumbnailCrop:
   zoom: 1
   positionX: 100
-  positionY: 81.58131176999103
+  positionY: 50
 role: Lead 3D Artist
 client: Personal Project
 tags:
