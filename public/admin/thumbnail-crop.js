@@ -687,7 +687,7 @@
         position: 'relative',
         width: 'min(640px, 80vh)',
         maxWidth: '100%',
-        aspectRatio: '1 / 1',
+        aspectRatio: '16 / 9',
         overflow: 'hidden',
         background: '#111',
         border: '2px solid #fff',
