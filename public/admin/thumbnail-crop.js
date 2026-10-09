@@ -184,9 +184,16 @@
 
       var frameRect = frame.getBoundingClientRect();
       var baseScale = frameRect.height / image.naturalHeight;
+
+      /*
+       * Saved crop positions are consumed by the 16:9 portfolio thumbnail,
+       * not by the square editor frame. Use the final output width here so
+       * reopening the editor restores the same framing the grid can render.
+       */
+      var outputWidth = frameRect.height * (16 / 9);
       var movementWidth = Math.max(
         0,
-        image.naturalWidth * baseScale * this.state.draft.zoom - frameRect.width
+        image.naturalWidth * baseScale * this.state.draft.zoom - outputWidth
       );
       var movementHeight = Math.max(
         0,
@@ -253,9 +260,17 @@
       if (frameElement && imageElement && imageElement.naturalWidth && imageElement.naturalHeight) {
         var frame = frameElement.getBoundingClientRect();
         var baseScale = frame.height / imageElement.naturalHeight;
+
+        /*
+         * The editor is square, but the site thumbnail is 16:9.
+         * Convert the selection to the movement range of the final 16:9
+         * output; using the square frame here makes the saved crop disagree
+         * with the thumbnail shown on the portfolio grid.
+         */
+        var outputWidth = frame.height * (16 / 9);
         var movementWidth = Math.max(
           0,
-          imageElement.naturalWidth * baseScale * next.zoom - frame.width
+          imageElement.naturalWidth * baseScale * next.zoom - outputWidth
         );
         var movementHeight = Math.max(
           0,
