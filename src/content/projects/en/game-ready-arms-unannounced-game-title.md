@@ -5,7 +5,7 @@ thumbnail: /uploads/game-ready-arms-unannounced-game-title_08.jpg
 compressThumbnail: true
 thumbnailCrop:
   zoom: 1
-  positionX: 91.61222375690609
+  positionX: 100
   positionY: 81.58131176999103
 role: Lead 3D Artist
 client: Personal Project
