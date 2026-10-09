@@ -157,18 +157,24 @@ body {
   color: #fff !important;
 }
 
-/* Keep publish-menu actions readable on the dark CMS surface. */
-#nc-root [class*="Publish"] button,
-#nc-root button[aria-label*="Publish"],
-#nc-root button[title*="Publish"] {
+/* Publish dropdowns can be rendered in a portal outside #nc-root. */
+body button,
+body button *,
+body [role="menu"] *,
+body [role="menuitem"],
+body [role="menuitem"] *,
+body [class*="Dropdown"] *,
+body [class*="dropdown"] *,
+body [class*="Publish"] *,
+body [class*="publish"] * {
   color: var(--cabilo-cms-text) !important;
   -webkit-text-fill-color: var(--cabilo-cms-text) !important;
 }
 
-#nc-root [class*="Publish"] button:hover,
-#nc-root [class*="Publish"] button:focus-visible,
-#nc-root button[aria-label*="Publish"]:hover,
-#nc-root button[title*="Publish"]:hover {
+body button:hover,
+body button:hover *,
+body [role="menuitem"]:hover,
+body [role="menuitem"]:hover * {
   color: #fff !important;
   -webkit-text-fill-color: #fff !important;
 }
