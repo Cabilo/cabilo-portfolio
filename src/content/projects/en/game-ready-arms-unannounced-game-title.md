@@ -2,11 +2,11 @@
 title: Game ready Arms - Unannounced Game Title
 category: Game Art
 thumbnail: /uploads/game-ready-arms-unannounced-game-title_08.jpg
-compressThumbnail: false
+compressThumbnail: true
 thumbnailCrop:
   zoom: 1
-  positionX: 50
-  positionY: 50
+  positionX: 91.61222375690609
+  positionY: 81.58131176999103
 role: Lead 3D Artist
 client: Personal Project
 tags:
